@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres-nest
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres-nest
+      PGDATA: /data/postgres
+    volumes:
+       - postgres-volume:/data/postgres
+    ports:
+      - 5432:5432
+    networks:
+      - postgres-network
+    restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin-nest
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+       - pgadmin-volume:/data/pgadmin
+    ports:
+      - 8080:80
+    depends_on:
+      - postgres
+    networks:
+      - postgres-network
+    restart: unless-stopped
+
+  redis:
+    container_name: redis-nest
+    image: redis:latest
+    ports:
+      - 6379:6379
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-volume:/data/redis
+    restart: unless-stopped
+
+  redis-commander:
+    container_name: redis-commander-nest
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - HTTP_USER=root
+      - HTTP_PASSWORD=qwerty
+    ports:
+      - 8081:8081
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+networks:
+  postgres-network:
+    driver: bridge
+
+volumes:
+    postgres-volume:
+    pgadmin-volume:
+    redis-volume:
