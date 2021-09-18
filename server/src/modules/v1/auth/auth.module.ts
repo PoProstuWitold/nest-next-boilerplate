@@ -1,13 +1,16 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'common/entities';
 import { UserRepository } from 'common/repositories';
+import * as passport from 'passport';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
+import { GoogleOauthStrategy } from './strategies/google-oauth.strategy';
+import { JwtAuthStrategy } from './strategies/jwt-auth.strategy';
 
 @Module({
     imports: [
@@ -15,8 +18,10 @@ import { AuthService } from './auth.service';
             User, UserRepository
         ]),
         UserModule,
-        PassportModule.register({ 
-            defaultStrategy: 'jwt'
+        PassportModule.register({
+            defaultStrategy: 'jwt',
+            property: 'user',
+            session: false,
         }),
         JwtModule.registerAsync({
             imports: [ConfigModule],
@@ -24,14 +29,23 @@ import { AuthService } from './auth.service';
             useFactory: async (configService: ConfigService) => ({
                     secret: configService.get('JWT_ACCESS_SECRET_KEY'),
                     signOptions: {
-                        ...({ expiresIn: configService.get('JWT_ACCESS_EXPIRATION_TIME') })
+                        expiresIn: configService.get('JWT_ACCESS_EXPIRATION_TIME')
                     }
             })
         })
     ],
     controllers: [AuthController],
     providers: [
-        AuthService
+        AuthService,
+        GoogleOauthStrategy,
+        JwtAuthStrategy
     ]
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+    public configure(consumer: MiddlewareConsumer) {
+    
+        consumer
+          .apply(passport.authenticate('google', { session: false }))
+          .forRoutes('v1/auth/google/redirect', 'v1/auth/google');
+    }
+}

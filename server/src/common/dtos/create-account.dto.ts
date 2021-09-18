@@ -53,5 +53,5 @@ export class CreateAccountDto {
         // tslint:disable-next-line:quotemark
         message: "Username can only contain lowercase letters, numbers, '_', '-' and '.' with min 3 max 17 length"
     })
-    nickName: string
+    displayName: string
 }

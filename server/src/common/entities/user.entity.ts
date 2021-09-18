@@ -7,6 +7,14 @@ import * as argon2 from 'argon2'
 export class User extends AbstractEntity<User> {
 
     @Index()
+    @Column({
+        length: 75,
+        name: 'provider',
+        nullable: false
+    })
+    public provider: string
+
+    @Index()
     @Column({ 
         unique: true,
         length: 75,
@@ -43,7 +51,7 @@ export class User extends AbstractEntity<User> {
         name: 'nick_name',
         nullable: false
     })
-    public nickName: string
+    public displayName: string
 
     @BeforeInsert()
     async hashPassword() {

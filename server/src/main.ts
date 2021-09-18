@@ -12,6 +12,7 @@ import * as helmet from 'helmet'
 import * as cookieParser from 'cookie-parser'
 import * as RateLimit from 'express-rate-limit'
 import * as compression from 'compression'
+import * as passport from 'passport'
 
 export async function bootstrap(): Promise<NestExpressApplication> {
     const app = await NestFactory.create<NestExpressApplication>(
@@ -50,6 +51,7 @@ export async function bootstrap(): Promise<NestExpressApplication> {
         stopAtFirstError: true,
         whitelist: true,
         forbidNonWhitelisted: true,
+        transform: true,
         exceptionFactory: (errors: ValidationError[]) => {
             new BadRequestException(errors)
         }

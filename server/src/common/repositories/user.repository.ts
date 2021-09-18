@@ -16,7 +16,7 @@ export class UserRepository extends Repository<User> {
             password: dto.password,
             firstName: dto.firstName,
             lastName: dto.lastName,
-            nickName: dto.nickName
+            displayName: dto.displayName
         })
 
         try {
@@ -26,9 +26,9 @@ export class UserRepository extends Repository<User> {
         }
     }
 
-    async getUserByNick(nickName: string): Promise<User> {
+    async getUserByNick(displayName: string): Promise<User> {
         try {
-            const profile: User = await this.findOneOrFail({ nickName })
+            const profile: User = await this.findOneOrFail({ displayName })
             return profile
         } catch (err) {
             throw new NotFoundException('User with provided nick not found')
