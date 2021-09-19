@@ -6,18 +6,23 @@ import * as argon2 from 'argon2'
 @Entity()
 export class User extends AbstractEntity<User> {
 
-    @Index()
     @Column({
-        length: 75,
-        name: 'provider',
-        nullable: false
+        length: 200,
+        name: 'provider'
     })
     public provider: string
 
     @Index()
+    @Column({
+        length: 200,
+        name: 'provider_id'
+    })
+    public providerId: string
+
+    @Index()
     @Column({ 
         unique: true,
-        length: 75,
+        length: 200,
         name: 'email',
         nullable: false
     })
@@ -25,21 +30,21 @@ export class User extends AbstractEntity<User> {
 
     @Exclude()
     @Column({
-        length: 75,
+        length: 200,
         name: 'password',
         nullable: false
     })
     public password: string
 
     @Column({
-        length: 75,
+        length: 200,
         name: 'first_name',
         nullable: false
     })
     public firstName: string
 
     @Column({
-        length: 75,
+        length: 200,
         name: 'last_name',
         nullable: false
     })
@@ -47,7 +52,7 @@ export class User extends AbstractEntity<User> {
 
     @Column({
         unique: true,
-        length: 75,
+        length: 200,
         name: 'nick_name',
         nullable: false
     })

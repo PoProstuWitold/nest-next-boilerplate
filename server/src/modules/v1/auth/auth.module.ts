@@ -18,11 +18,6 @@ import { JwtAuthStrategy } from './strategies/jwt-auth.strategy';
             User, UserRepository
         ]),
         UserModule,
-        PassportModule.register({
-            defaultStrategy: 'jwt',
-            property: 'user',
-            session: false,
-        }),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -41,11 +36,4 @@ import { JwtAuthStrategy } from './strategies/jwt-auth.strategy';
         JwtAuthStrategy
     ]
 })
-export class AuthModule implements NestModule {
-    public configure(consumer: MiddlewareConsumer) {
-    
-        consumer
-          .apply(passport.authenticate('google', { session: false }))
-          .forRoutes('v1/auth/google/redirect', 'v1/auth/google');
-    }
-}
+export class AuthModule {}

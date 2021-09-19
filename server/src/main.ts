@@ -12,18 +12,15 @@ import * as helmet from 'helmet'
 import * as cookieParser from 'cookie-parser'
 import * as RateLimit from 'express-rate-limit'
 import * as compression from 'compression'
-import * as passport from 'passport'
 
 export async function bootstrap(): Promise<NestExpressApplication> {
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule,
-        new ExpressAdapter(),
-        {
-            cors: true
-        }
+        new ExpressAdapter()
     )
 
     // GLOBAL MIDDLEWARES
+    app.enableCors()
     app.use(express.json())
     app.use(cookieParser())
     app.use(helmet())

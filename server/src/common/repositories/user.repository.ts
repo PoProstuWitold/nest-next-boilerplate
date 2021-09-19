@@ -1,4 +1,4 @@
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
+import { HttpException, HttpStatus, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 import { EntityRepository, Repository } from 'typeorm'
 import { CreateAccountDto } from 'common/dtos'
 import { User } from 'common/entities'
@@ -10,7 +10,7 @@ export class UserRepository extends Repository<User> {
       super()
     }
 
-    async createUser(dto: CreateAccountDto): Promise<void> {
+    async createUser(dto: CreateAccountDto): Promise<User> {
         const newUser: User = new User({
             email: dto.email,
             password: dto.password,
@@ -21,6 +21,7 @@ export class UserRepository extends Repository<User> {
 
         try {
             await this.save(newUser)
+            return newUser
         } catch (err) {
             throw new UnprocessableEntityException('Something went wrong with saving user')
         }
@@ -49,5 +50,15 @@ export class UserRepository extends Repository<User> {
         } catch (err) {
             throw new NotFoundException('User with provided id not found')
         }
+    }
+
+    async getUserByProviderId(providerId: number): Promise<User | null> {
+        const user = await this.findOne({ where: { providerId } })
+
+        if(!user) {
+            throw new HttpException('User with this providerId does not exist', HttpStatus.NOT_FOUND)
+        }
+
+        return user
     }
 }

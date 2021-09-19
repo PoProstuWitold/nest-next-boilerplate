@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'modules/v1/user/user.service';
 
@@ -20,18 +20,26 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
     }
 
     async validate(
-        accessToken: string, refreshToken: string, profile: any, done: VerifyCallback
+        accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback
     ): Promise<any> {
-        const { id, name, emails } = profile
+        try {
+            const { id, name, emails } = profile
 
-        const user = {
-            provider: 'google',
-            providerId: id,
-            name: name.givenName,
-            username: emails[0].value,
-            accessToken
+            const user = {
+                provider: 'google',
+                providerId: id,
+                email: emails[0].value,
+                password: 'provided',
+                firstName: name.givenName,
+                lastName: name.familyName,
+                displayName: profile.displayName,
+                accessToken
+            }
+            
+            return user
+        } catch (err) {
+            console.log(err)
+            throw new InternalServerErrorException()
         }
-
-        return user
     }
 }
