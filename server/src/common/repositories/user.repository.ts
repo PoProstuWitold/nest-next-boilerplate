@@ -45,11 +45,13 @@ export class UserRepository extends Repository<User> {
     }
 
     async getUserById(id: number): Promise<User> {
-        try {
-            return await this.findOneOrFail({ where: { id } })
-        } catch (err) {
-            throw new NotFoundException('User with provided id not found')
+        const user = await this.findOne({ where: { id } })
+
+        if(!user) {
+            throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND)
         }
+
+        return user
     }
 
     async getUserByProviderId(providerId: number): Promise<User | null> {

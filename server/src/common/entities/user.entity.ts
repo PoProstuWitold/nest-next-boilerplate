@@ -8,14 +8,16 @@ export class User extends AbstractEntity<User> {
 
     @Column({
         length: 200,
-        name: 'provider'
+        name: 'provider',
+        nullable: true
     })
     public provider: string
 
     @Index()
     @Column({
         length: 200,
-        name: 'provider_id'
+        name: 'provider_id',
+        nullable: true
     })
     public providerId: string
 

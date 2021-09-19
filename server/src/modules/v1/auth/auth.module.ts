@@ -11,6 +11,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './services/auth.service';
 import { GoogleOauthStrategy } from './strategies/google-oauth.strategy';
 import { JwtAuthStrategy } from './strategies/jwt-auth.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
     imports: [
@@ -33,7 +34,8 @@ import { JwtAuthStrategy } from './strategies/jwt-auth.strategy';
     providers: [
         AuthService,
         GoogleOauthStrategy,
-        JwtAuthStrategy
+        JwtAuthStrategy,
+        LocalStrategy
     ]
 })
 export class AuthModule {}

@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 config()
 import { NestFactory, Reflector } from '@nestjs/core'
-import { BadRequestException, ClassSerializerInterceptor, ValidationError, ValidationPipe } from '@nestjs/common'
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common'
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express'
 import { useContainer } from 'class-validator'
 import { AppModule } from './modules/app.module'
@@ -48,10 +48,7 @@ export async function bootstrap(): Promise<NestExpressApplication> {
         stopAtFirstError: true,
         whitelist: true,
         forbidNonWhitelisted: true,
-        transform: true,
-        exceptionFactory: (errors: ValidationError[]) => {
-            new BadRequestException(errors)
-        }
+        transform: true
     }))
 
 

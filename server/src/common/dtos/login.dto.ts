@@ -19,13 +19,6 @@ export class LoginDto {
 
     @ApiProperty({
         required: true,
-        example: true
-    })
-    @IsBoolean()
-    rememberMe: boolean
-
-    @ApiProperty({
-        required: true,
         example: 'password',
     })
     @IsNotEmpty()
