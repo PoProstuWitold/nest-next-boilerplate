@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { UserService } from 'modules/v1/user/user.service';
@@ -6,6 +6,8 @@ import { JwtAccessPayload } from '../dto/jwt-access.payload';
 import * as argon2 from 'argon2'
 import { LoginDto } from 'common/dtos';
 import { ConfigService } from '@nestjs/config';
+import { UniqueViolation } from 'common/exceptions/unique-violation.exception';
+import PostgresErrorCode from 'common/utils/postgres-errors.enum';
 @Injectable()
 export class AuthService {
     constructor(
@@ -14,7 +16,7 @@ export class AuthService {
         private readonly configService: ConfigService
     ) {}
 
-    async register(registrationData, req) {
+    async register(registrationData: any, req: Request) {
         try {
             const user = await this.userService.create({
                 ...registrationData
@@ -25,9 +27,17 @@ export class AuthService {
                 user,
                 accessToken
             }
+        } catch (err: any) {
+            if(err.code == PostgresErrorCode.UniqueViolation) {
+                if(err.detail.includes('email')) {
+                    throw new UniqueViolation('email')
+                }
 
-        } catch (err) {
-            
+                if(err.detail.includes('nick_name' || 'nick' || 'nickName')) {
+                    throw new UniqueViolation('nickName')
+                }
+            }
+            throw new InternalServerErrorException()
         }
     }
 
@@ -38,16 +48,20 @@ export class AuthService {
     }
 
     async login(credentials: LoginDto, req: Request) {
-        const { email, password } = credentials
+        try {
+            const { email, password } = credentials
 
-        const user = await this.getAuthenticatedUser(email, password)
-        const accessToken = await this.createAccessToken(user)
+            const user = await this.getAuthenticatedUser(email, password)
+            const accessToken = await this.createAccessToken(user)
 
-        await this.setTokens(req, accessToken)
+            await this.setTokens(req, accessToken)
 
-        return {
-            user,
-            accessToken
+            return {
+                user,
+                accessToken
+            }
+        } catch (err) {
+            throw new HttpException(err.response, err.status)
         }
     }
 
@@ -61,7 +75,7 @@ export class AuthService {
     }
 
 
-    async logout(req) {
+    async logout(req: Request) {
         req.res.clearCookie('access_token')
     }
 
@@ -81,6 +95,10 @@ export class AuthService {
                 throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST)
             }
 
+            if(user.provider !== 'local') {
+                throw new HttpException('This user was already registered with social provider', HttpStatus.BAD_REQUEST)
+            }
+
             const isMatch = await argon2.verify(user.password, password)
             if(!isMatch) {
                 throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST)
@@ -88,7 +106,13 @@ export class AuthService {
             return user
         } catch (err) {
             console.log(err)
-            throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST)
+            if(err.response.includes('provider' && 'social' )) {
+                throw new HttpException('This user was already registered with social provider', HttpStatus.BAD_REQUEST)
+            }
+            // if(err.response.includes('Invalid' || 'credentials' )) {
+            //     throw new HttpException('Invalid credentialssss', HttpStatus.BAD_REQUEST)
+            // }
+            throw err
         }
     }
 

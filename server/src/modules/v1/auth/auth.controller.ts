@@ -1,5 +1,5 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, HttpCode, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { ApiCookieAuth, ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { RateLimit } from 'nestjs-rate-limiter'
 import { AuthService } from './services/auth.service';
@@ -45,8 +45,8 @@ export class AuthController {
         return this.authService.login(credentials, req)
     }
 
-    @ApiBearerAuth()
-    @Post('logout')
+    @ApiCookieAuth()
+    @Delete('logout')
     @UseGuards(JwtAuthGuard)
     async logout(
         @Req() req: Request
@@ -54,21 +54,24 @@ export class AuthController {
         return this.authService.logout(req)
     }
 
+    @ApiOAuth2(['email', 'profile'], 'google')
     @Get('google')
     @UseGuards(GoogleOauthGuard)
     async googleAuth(@Req() _req: Request) {
         // Guard redirects
     }
 
+    @ApiOAuth2(['email', 'profile'], 'google')
     @Get('google/redirect')
     @UseGuards(GoogleOauthGuard)
     async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
         return this.authService.googleLogin(req)
     }
 
+    @ApiCookieAuth()
     @UseGuards(JwtAuthGuard)
     @Get('me')
-    getProfile(@Req() req) {
+    getProfile(@Req() req: Request) {
         return req.user
     }
 

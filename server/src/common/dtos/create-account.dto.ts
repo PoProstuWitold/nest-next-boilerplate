@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, NotContains, Length, Matches } from 'class-validator'
+import { IsNotEmpty, NotContains, Length, Matches, IsEmail } from 'class-validator'
 
 export class CreateAccountDto {
 
@@ -7,9 +7,7 @@ export class CreateAccountDto {
         required: true,
         example: 'demo@demo.com',
     })
-    @Matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, {
-        message: 'Email must be a type of email'
-    })
+    @IsEmail()
     email: string
 
 
@@ -25,7 +23,7 @@ export class CreateAccountDto {
 
     @ApiProperty({
         required: true,
-        example: 'Demo User',
+        example: 'John',
     })
     @Matches(/^(?!\s*$).+/, {
         message: 'Name can not be empty or whitespace'
@@ -36,7 +34,7 @@ export class CreateAccountDto {
 
     @ApiProperty({
         required: true,
-        example: 'Demo User',
+        example: 'Doe',
     })
     @Matches(/^(?!\s*$).+/, {
         message: 'Name can not be empty or whitespace'
@@ -46,12 +44,11 @@ export class CreateAccountDto {
 
     @ApiProperty({
         required: true,
-        example: 'demo_user',
+        example: 'JohnDoe2137',
     })
     @IsNotEmpty()
-    @Matches(/^[a-z0-9_.-]{3,17}$/, {
-        // tslint:disable-next-line:quotemark
-        message: "displayName can only contain lowercase letters, numbers, '_', '-' and '.' with min 3 max 17 length"
+    @Matches(/^[\w](?!.*?\.{2})[\w. ]{1,28}[\w]$/, {
+        message: "Display name can include only letters, numbers and space between words and be max 28 characters long"
     })
     displayName: string
 }

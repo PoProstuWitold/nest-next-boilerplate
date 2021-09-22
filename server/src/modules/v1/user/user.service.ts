@@ -23,10 +23,7 @@ export class UserService {
                 lastName: data.lastName,
                 displayName: data.displayName
         })
-        console.log(user)
-        await this.userRepository.save(user).catch((err) => {
-            console.log(err)
-        })
+        await this.userRepository.save(user)
         return user
     }
 

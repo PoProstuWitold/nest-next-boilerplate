@@ -4,22 +4,14 @@ import { IsEmail, IsNotEmpty, IsOptional, IsBoolean, NotContains, Length } from 
 export class LoginDto {
     @ApiProperty({
         required: false,
-        example: 'test@test.com',
+        example: 'demo@demo.com',
     })
-    @IsOptional()
     @IsEmail()
     email: string
 
     @ApiProperty({
-        required: false,
-        example: 'test_user',
-    })
-    @IsOptional()
-    nickName: string
-
-    @ApiProperty({
         required: true,
-        example: 'password',
+        example: 'demo123',
     })
     @IsNotEmpty()
     @NotContains(' ')
