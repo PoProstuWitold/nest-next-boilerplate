@@ -2,16 +2,18 @@ import { Exclude } from 'class-transformer'
 import { BeforeInsert, Column, Entity, Index } from 'typeorm'
 import { AbstractEntity } from './'
 import * as argon2 from 'argon2'
+import Providers from 'modules/v1/auth/types/providers.enum'
 
 @Entity()
 export class User extends AbstractEntity<User> {
 
     @Column({
-        length: 200,
         name: 'provider',
-        nullable: true
+        nullable: true,
+        type: 'enum',
+        enum: Providers
     })
-    public provider: string
+    public provider: Providers
 
     @Index()
     @Column({

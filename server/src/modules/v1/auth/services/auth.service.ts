@@ -8,6 +8,7 @@ import { LoginDto } from 'common/dtos';
 import { ConfigService } from '@nestjs/config';
 import { UniqueViolation } from 'common/exceptions/unique-violation.exception';
 import PostgresErrorCode from 'common/utils/postgres-errors.enum';
+import Providers from '../types/providers.enum';
 @Injectable()
 export class AuthService {
     constructor(
@@ -95,7 +96,7 @@ export class AuthService {
                 throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST)
             }
 
-            if(user.provider !== 'local') {
+            if(user.provider !== Providers.Local) {
                 throw new HttpException('This user was already registered with social provider', HttpStatus.BAD_REQUEST)
             }
 
@@ -105,7 +106,6 @@ export class AuthService {
             }
             return user
         } catch (err) {
-            console.log(err)
             if(err.response.includes('provider' && 'social' )) {
                 throw new HttpException('This user was already registered with social provider', HttpStatus.BAD_REQUEST)
             }

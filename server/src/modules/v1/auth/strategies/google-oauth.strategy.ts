@@ -3,6 +3,7 @@ import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'modules/v1/user/user.service';
+import Providers from '../types/providers.enum';
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
@@ -26,7 +27,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
             const { id, name, emails } = profile
 
             const user = {
-                provider: 'google',
+                provider: Providers.Google,
                 providerId: id,
                 email: emails[0].value,
                 password: 'provided',

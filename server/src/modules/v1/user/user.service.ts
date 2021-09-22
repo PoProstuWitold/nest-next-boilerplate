@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAccountDto } from 'common/dtos';
 import { User } from 'common/entities';
 import { UserRepository } from 'common/repositories';
+import Providers from '../auth/types/providers.enum';
 
 @Injectable()
 export class UserService {
@@ -15,7 +16,7 @@ export class UserService {
     public async create(data: CreateAccountDto) {
         
         const user = this.userRepository.create({
-                provider: 'local',
+                provider: Providers.Local,
                 providerId: null,
                 email: data.email,
                 password: data.password,
