@@ -1,11 +1,10 @@
 import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiCookieAuth, ApiOAuth2, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { RateLimit } from 'nestjs-rate-limiter'
 import { AuthService } from './services/auth.service';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ConfigService } from '@nestjs/config';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CreateAccountDto, LoginDto } from 'common/dtos';
 
@@ -14,9 +13,11 @@ import { CreateAccountDto, LoginDto } from 'common/dtos';
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
-        private readonly configService: ConfigService
     ) {}
     
+    @ApiCreatedResponse({
+        description: 'Create an account with provided data if correct'
+    })
     @RateLimit({
         points: 1,
         duration: 120,
@@ -30,6 +31,9 @@ export class AuthController {
         return this.authService.register(credentials, req)
     }
 
+    @ApiOkResponse({
+        description: 'Logs in user'
+    })
     @RateLimit({
         points: 5,
         duration: 300,
@@ -46,6 +50,9 @@ export class AuthController {
     }
 
     @ApiCookieAuth()
+    @ApiOkResponse({
+        description: 'Logs out user'
+    })
     @Delete('logout')
     @UseGuards(JwtAuthGuard)
     async logout(
@@ -54,14 +61,19 @@ export class AuthController {
         return this.authService.logout(req)
     }
 
-    @ApiOAuth2(['email', 'profile'], 'google')
+    
+    @ApiOkResponse({
+        description: 'Basic URL to initiate Google Strategy (NOT WORKING IN SWAGGER)'
+    })
     @Get('google')
     @UseGuards(GoogleOauthGuard)
     async googleAuth(@Req() _req: Request) {
         // Guard redirects
     }
 
-    @ApiOAuth2(['email', 'profile'], 'google')
+    @ApiOkResponse({
+        description: 'Redirect URL for Google Strategy (NOT WORKING IN SWAGGER)'
+    })
     @Get('google/redirect')
     @UseGuards(GoogleOauthGuard)
     async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
@@ -69,6 +81,9 @@ export class AuthController {
     }
 
     @ApiCookieAuth()
+    @ApiOkResponse({
+        description: 'Currently logged user profile'
+    })
     @UseGuards(JwtAuthGuard)
     @Get('me')
     getProfile(@Req() req: Request) {
