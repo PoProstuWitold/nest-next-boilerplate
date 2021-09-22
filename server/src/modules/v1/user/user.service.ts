@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAccountDto } from 'common/dtos';
 import { User } from 'common/entities';
@@ -38,8 +38,21 @@ export class UserService {
     }
 
     public async continueWithProvider(req: any) {
-        let user: any
-        user = await this.userRepository.findOne({ where: { providerId: req.user.providerId } })
+        let user: User
+        // user = await this.userRepository.findOne({ where: { providerId: req.user.providerId } })
+        const { providerId, email } = req.user
+        user = await this.userRepository
+            .createQueryBuilder()
+            .where('provider_id = :providerId', { providerId })
+            .orWhere('email = :email', { email })
+            .getOne()
+
+        if(user) {
+            if(req.user.email === user.email && user.provider == 'local') {
+                throw new BadRequestException('User with email same as the social provider already exists')
+            }
+        }
+
         // console.log('oldUser', user)
         if(!user) {
             user = this.userRepository.create({
