@@ -20,8 +20,14 @@ export async function bootstrap(): Promise<NestExpressApplication> {
     )
 
     // GLOBAL MIDDLEWARES
-    app.enableCors()
+    app.enableCors({
+        credentials: true,
+        origin: process.env.ORIGIN,
+        optionsSuccessStatus: 200,
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
+    })
     app.use(express.json())
+    app.use(express.urlencoded({ extended: false }))
     app.use(cookieParser())
     app.use(helmet())
     app.use(

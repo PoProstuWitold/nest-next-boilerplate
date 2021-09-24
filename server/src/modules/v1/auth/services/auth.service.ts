@@ -122,7 +122,8 @@ export class AuthService {
         const accessToken = await this.createAccessToken(user)
         this.setTokens(req, accessToken)
 
-        req.res.redirect('/api/v1/auth/me')
+        // req.res.redirect('/api/v1/auth/me')
+        req.res.redirect(`${process.env.ORIGIN}/me`)
 
         return {
             user,
