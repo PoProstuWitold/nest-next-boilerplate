@@ -9,6 +9,7 @@ import * as passport from 'passport';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './services/auth.service';
+import { FacebookOauthStrategy } from './strategies/facebook-oauth.strategy';
 import { GoogleOauthStrategy } from './strategies/google-oauth.strategy';
 import { JwtAuthStrategy } from './strategies/jwt-auth.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
@@ -34,6 +35,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     providers: [
         AuthService,
         GoogleOauthStrategy,
+        FacebookOauthStrategy,
         JwtAuthStrategy,
         LocalStrategy
     ]

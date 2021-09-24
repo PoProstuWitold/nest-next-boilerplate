@@ -7,6 +7,7 @@ import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CreateAccountDto, LoginDto } from 'common/dtos';
+import { FacebookOauthGuard } from './guards/facebook.-oauth.guard';
 
 @ApiTags('v1/auth')
 @Controller('auth')
@@ -77,7 +78,25 @@ export class AuthController {
     @Get('google/redirect')
     @UseGuards(GoogleOauthGuard)
     async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
-        return this.authService.googleLogin(req)
+        return this.authService.socialProviderLogin(req)
+    }
+
+    @ApiOkResponse({
+        description: 'Basic URL to initiate Google Strategy (NOT WORKING IN SWAGGER)'
+    })
+    @Get('facebook')
+    @UseGuards(FacebookOauthGuard)
+    async facebookAuth(@Req() _req: Request) {
+        // Guard redirects
+    }
+
+    @ApiOkResponse({
+        description: 'Redirect URL for Google Strategy (NOT WORKING IN SWAGGER)'
+    })
+    @Get('facebook/redirect')
+    @UseGuards(FacebookOauthGuard)
+    async facebookAuthRedirect(@Req() req: Request, @Res() res: Response) {
+        return this.authService.socialProviderLogin(req)
     }
 
     @ApiCookieAuth()

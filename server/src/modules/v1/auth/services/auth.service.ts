@@ -117,12 +117,12 @@ export class AuthService {
     }
 
 
-    async googleLogin(req: Request) {
+    async socialProviderLogin(req: Request) {
         const user = await this.userService.continueWithProvider(req)
         const accessToken = await this.createAccessToken(user)
         this.setTokens(req, accessToken)
 
-        await req.res.redirect('/api/v1/auth/me')
+        req.res.redirect('/api/v1/auth/me')
 
         return {
             user,
