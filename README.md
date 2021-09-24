@@ -1,4 +1,4 @@
-# nest-next-boilerplate
+# nest-next-boilerplate (WORK IN PROGRESS; PROJECT IS IN VERY EARLY PHASE)
 
 NodeJS boilerplate for building fullstack applications built in TypeScript, TypeORM, NestJS and NextJS
 
