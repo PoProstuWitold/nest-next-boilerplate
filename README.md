@@ -53,12 +53,12 @@ DB_SYNC=true
 # GOOGLE
 OAUTH_GOOGLE_ID=[YOUR_GOOGLE_OAUTH_ID]
 OAUTH_GOOGLE_SECRET=[YOUR_GOOGLE_SECRET]
-OAUTH_GOOGLE_REDIRECT_URL=[YOUR_GOOGLE_REDIRECT_URL] //may be relative
+OAUTH_GOOGLE_REDIRECT_URL='/api/v1/auth/google/redirect'
 
 # FACEBOOK
 OAUTH_FACEBOOK_ID=[YOUR_FACEBOOK_ID]
 OAUTH_FACEBOOK_SECRET=[YOUR_FACEBOOK_SECRET]
-OAUTH_FACEBOOK_REDIRECT_URL=[YOUR_FACEBOOK_REDIRECT_UR] //may be relative
+OAUTH_FACEBOOK_REDIRECT_URL='/api/v1/auth/facebook/redirect'
 ``` 
 
 ### 3. Client setup
@@ -73,10 +73,10 @@ yarn add
 
 
 ## TO DO
-- [x] Setup Local login
-- [x] Setup Google login
-- [x] Setup Facebook login
-- [ ] NextJS client app routing
+- [x] Local login
+- [x] Google login
+- [x] Facebook login
+- [ ] Client app routing
 
 
 
