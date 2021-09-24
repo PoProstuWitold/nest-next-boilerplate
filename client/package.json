@@ -9,14 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "axios": "^0.21.4",
+    "formik": "^2.2.9",
     "next": "11.1.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
-    "@types/react": "17.0.20",
+    "@types/node": "^16.9.6",
+    "@types/react": "^17.0.24",
+    "autoprefixer": "^10.3.5",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
+    "postcss": "^8.3.7",
+    "tailwindcss": "^2.2.15",
     "typescript": "4.4.3"
   }
 }
