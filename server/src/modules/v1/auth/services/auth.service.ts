@@ -123,7 +123,7 @@ export class AuthService {
         this.setTokens(req, accessToken)
 
         // req.res.redirect('/api/v1/auth/me')
-        req.res.redirect(`${process.env.ORIGIN}/me`)
+        req.res.redirect(`${process.env.ORIGIN}/login/success`)
 
         return {
             user,
