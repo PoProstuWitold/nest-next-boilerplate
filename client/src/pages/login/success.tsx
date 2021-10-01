@@ -13,7 +13,7 @@ const LoginSuccess: React.FC<LoginSuccessProps> = ({}) => {
     }, [])
 
     return (
-        <div>
+        <div className="center">
             Login success, closing page
         </div>
     );
