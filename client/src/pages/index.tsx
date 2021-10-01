@@ -15,7 +15,6 @@ const Index: React.FC<indexProps> = ({}) => {
             <link rel="icon" href="/favicon.ico" />
             </Head>
             <div>
-            <button className="rounded-full btn btn-primary" data-theme="retro">daisyUI Button</button>
                 <br />
                 <SocialLogin provider="Google" url={`${SERVER_URL}/auth/google`}/>
                 <br />

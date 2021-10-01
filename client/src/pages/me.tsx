@@ -1,32 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import { SERVER_URL } from '../utils/constants'
+import React from 'react'
+import { useAuthState } from '../context/auth'
 
 interface MeProps {
 
 }
 
 const Me: React.FC<MeProps> = ({}) => {
-    const fetchData = async (url: string) => {
-        try {
-            const res = await axios.get(url, {
-                withCredentials: true
-            })
-            setUser(res.data)
-            console.log(res.data)
-        } catch (err) {
-            console.log(err)
-        }
-    }
-    const [user, setUser] = useState<any>({})
-    useEffect(() => {
-        fetchData(`${SERVER_URL}/auth/me`)
-    }, [])
-
+    const { authenticated, loading, user, provider } = useAuthState()
+    console.log('authenticated', authenticated)
+    console.log('loading', loading)
+    console.log('user', user)
+    console.log('provider', provider)
     return (
         <div>
             {
-                user.id ? 
+                !loading && authenticated && user ?
                 <div style={{ padding: '2rem' }}>
                     <p style={{ padding: '0.5rem' }}>id: {user.id}</p>
                     <p style={{ padding: '0.5rem' }}>createdAt: {user.createdAt}</p>
