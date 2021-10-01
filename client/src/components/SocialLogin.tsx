@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import axios from 'axios'
-import { SERVER_URL } from "../utils/constants";
+import { useAuthDispatch } from "../context/auth";
 
 interface SocialLoginProps {
     provider: string
@@ -8,24 +8,19 @@ interface SocialLoginProps {
 }
 
 export const SocialLogin: React.FC<SocialLoginProps> = ({ provider, url }) => {
-
+    const dispatch = useAuthDispatch()
     const router = useRouter()
 
     const fetchAuthUser = async () => {
-        const response = await axios
-          .get(`${SERVER_URL}/auth/me`, { withCredentials: true })
+        const response = await axios.get('/auth/me')
           .catch((err) => {
-            console.log("Not properly authenticated");
-            // dispatch(setIsAuthenticated(false));
-            // dispatch(setAuthUser(null));
-            router.push("/login/error");
+            console.log('Not properly authenticated')
+            router.push('/login/error')
           });
     
         if (response && response.data) {
-          console.log("User: ", response.data);
-        //   dispatch(setIsAuthenticated(true));
-        //   dispatch(setAuthUser(response.data));
-            router.push("/me");
+            dispatch('LOCAL_LOGIN', response.data)
+            router.push('/me')
         }
       }
 

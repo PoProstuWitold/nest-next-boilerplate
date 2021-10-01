@@ -21,7 +21,7 @@ const StateContext = createContext<State>({
     provider: null
 })
 
-const DispatchContext = createContext(null)
+const DispatchContext = createContext<any>(null)
 
 const reducer = (state: State, { type, payload }: Action) => {
     switch (type) {
@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, [])
 
     return (
-        //@ts-ignore
         <DispatchContext.Provider value={dispatch}>
             <StateContext.Provider value={state}>{children}</StateContext.Provider>
         </DispatchContext.Provider>
