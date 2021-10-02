@@ -2,6 +2,18 @@ module.exports = {
     mode: 'jit',
     purge: ['./src/**/*.{js,ts,jsx,tsx}'],
     theme: {
+        container: {
+            center: true,
+            margin: 'auto',
+            width: '100%',
+            padding: {
+                DEFAULT: '1rem',
+                sm: '2rem',
+                lg: '4rem',
+                xl: '5rem',
+                '2xl': '6rem'
+            }
+        },
         fontSize: {
             xs: '0.75rem',
             sm: '0.875rem',
