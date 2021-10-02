@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { SideBar } from './SideBar'
 
 interface NavBarProps {
 
@@ -7,14 +8,16 @@ interface NavBarProps {
 
 export const NavBar: React.FC<any> = () => {
 
-    const [VerticalMenu, setVerticalMenu] = useState<boolean>(false)
+    const [isOpen, setIsOpen] = useState<boolean>(false)
 
     const toggleMenu = async () => {
-        console.log('gowno');
+        setIsOpen(!isOpen)
+        console.log(isOpen)
     }
 
     return (
-        <div className="mb-2 shadow-lg navbar bg-neutral text-neutral-content">
+        <>
+        <div className="h-5 shadow-lg navbar bg-neutral text-neutral-content">
             <div className="flex-none px-2 mx-2">
                 <Link href="/">
                         <a className="text-lg font-bold">
@@ -38,10 +41,13 @@ export const NavBar: React.FC<any> = () => {
                 </div>
             </div> 
             <div className="flex-none">
-            <button onClick={toggleMenu}>
+            <button onClick={toggleMenu} className="flex items-stretch lg:hidden">
                 Menu
             </button>
         </div>
         </div>
+
+    <SideBar isOpen={isOpen} />
+    </>
     )
 }
