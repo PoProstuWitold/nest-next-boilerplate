@@ -76,8 +76,8 @@ yarn add
 - [x] Local login
 - [x] Google login
 - [x] Facebook login
-- [ ] Client app routing
-
+- [x] Client app routing
+- [ ] Write tests for API
 
 
 ## License

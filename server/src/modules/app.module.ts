@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { V1Module } from './v1/v1.module'
+import { MainController } from './app.controller'
 
 @Module({
     imports: [
@@ -28,7 +29,7 @@ import { V1Module } from './v1/v1.module'
         }),
         V1Module
     ],
-    controllers: [],
+    controllers: [MainController],
     providers: []
 })
 export class AppModule {}
