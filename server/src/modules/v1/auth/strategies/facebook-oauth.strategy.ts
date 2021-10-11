@@ -2,7 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy, VerifyFunction } from 'passport-facebook';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from 'modules/v1/user/user.service';
+import { UserService } from '../../../../modules/v1/user/user.service';
 import Providers from '../types/providers.enum';
 
 @Injectable()

@@ -1,13 +1,13 @@
 import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UserService } from 'modules/v1/user/user.service';
+import { UserService } from '../../../../modules/v1/user/user.service';
 import { JwtAccessPayload } from '../dto/jwt-access.payload';
 import * as argon2 from 'argon2'
-import { LoginDto } from 'common/dtos';
+import { LoginDto } from '../../../../common/dtos';
 import { ConfigService } from '@nestjs/config';
-import { UniqueViolation } from 'common/exceptions/unique-violation.exception';
-import PostgresErrorCode from 'common/utils/postgres-errors.enum';
+import { UniqueViolation } from '../../../../common/exceptions/unique-violation.exception';
+import PostgresErrorCode from '../../../../common/utils/postgres-errors.enum';
 import Providers from '../types/providers.enum';
 @Injectable()
 export class AuthService {
