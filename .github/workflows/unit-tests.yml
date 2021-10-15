@@ -31,8 +31,18 @@ jobs:
     defaults:
       run:
         working-directory: ./server
+    services:
+      postgres-tests:
+        image: postgres:alpine
+        env:
+          POSTGRES_USER: tests
+          POSTGRES_PASSWORD: tests
+          POSTGRES_DB: postgres-tests
+        ports:
+          - 5431:5432
     steps:
     - uses: actions/checkout@v1
+      name: Postgres setup
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -41,3 +51,4 @@ jobs:
       run: yarn
     - name: Test
       run: yarn test
+    
