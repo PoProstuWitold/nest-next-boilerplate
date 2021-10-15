@@ -56,8 +56,31 @@ services:
       - redis
     restart: unless-stopped
 
+  postgres-tests:
+    container_name: postgres-tests
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: tests
+      POSTGRES_PASSWORD: tests
+      POSTGRES_DB: postgres-tests
+    ports:
+      - 5431:5432
+    restart: unless-stopped
+    networks:
+      - postgres-tests-network
+
+  redis-tests:
+    container_name: redis-test
+    image: redis:alpine
+    ports:
+      - 6378:6379
+    command: ["redis-server", "--appendonly", "yes"]
+    restart: unless-stopped
+
 networks:
   postgres-network:
+    driver: bridge
+  postgres-tests-network:
     driver: bridge
 
 volumes:
