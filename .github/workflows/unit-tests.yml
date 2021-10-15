@@ -21,6 +21,9 @@ jobs:
           POSTGRES_DB: postgres-tests
         ports:
           - 5431:5432
+    steps:
+    - uses: actions/checkout@v1
+      name: Postgres setup
     
   test:
     name: Running units tests
