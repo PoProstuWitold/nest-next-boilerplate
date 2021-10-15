@@ -5,7 +5,6 @@ import { UserRepository } from '../../../../modules/v1/user/user.repository'
 import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
 import { AuthService } from './auth.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'
-import { AuthModule } from '../auth.module'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule } from '@nestjs/config'
 import { UserModule } from '../../../../modules/v1/user/user.module'
@@ -23,7 +22,6 @@ describe('AuthService', () => {
                     isGlobal: true
                 }),
                 UserModule,
-                AuthModule,
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 TypeOrmModule.forFeature([User]),
                 JwtModule.registerAsync(createJwtConfiguration())
