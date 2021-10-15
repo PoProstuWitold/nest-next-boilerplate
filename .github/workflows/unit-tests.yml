@@ -9,6 +9,19 @@ on:
 
 
 jobs:
+  build:
+    name: Setting up PostgreSQL database
+    runs-on: ubuntu-latest
+    services:
+      postgres-tests:
+        image: postgres:alpine
+        env:
+          POSTGRES_USER: tests
+          POSTGRES_PASSWORD: tests
+          POSTGRES_DB: postgres-tests
+        ports:
+          - 5431:5432
+    
   test:
     name: Running units tests
     runs-on: ubuntu-latest
