@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Running units tests
+    name: Running e2e tests
     runs-on: ubuntu-latest
     defaults:
       run:
