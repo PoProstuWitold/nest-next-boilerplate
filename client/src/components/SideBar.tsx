@@ -8,20 +8,24 @@ interface SideBarProps {
 export const SideBar: React.FC<SideBarProps> = ({ isOpen }) => {
     return (
         isOpen ? 
-        <div className="absolute w-full min-w-full menu">
-            <div className="z-50 bg-gray-800">
+        <div className="absolute w-full min-w-full menu lg:hidden">
+            <div className="z-50 bg-base-200">
             <div className="flex flex-col flex-1">
-                <a className="m-1 btn btn-ghost btn-sm">
-                    Home
-                </a> 
                 <Link href="/me">
-                <a className="m-1 btn btn-ghost btn-sm">
+                <a className="m-1 btn btn-ghost">
                     Me
                 </a>
                 </Link>
-                <a className="m-1 btn btn-ghost btn-sm">
-                    Contact
+                <Link href="/signup">
+                <a className="m-1 btn btn-ghost">
+                    Sign up
                 </a>
+                </Link>
+                <Link href="/signin">
+                <a className="m-1 btn btn-ghost">
+                    Sign in
+                </a>
+                </Link>
                 </div>
             </div>
         </div>
