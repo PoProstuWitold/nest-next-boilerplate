@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '../../../../common/entities'
-import { UserRepository } from '../../../../modules/v1/user/user.repository'
+import { UserRepository } from '../../../../modules/v1/user/repositories/user.repository'
 import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
 import { AuthService } from './auth.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'

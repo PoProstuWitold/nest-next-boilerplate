@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 import { EntityRepository, Repository } from 'typeorm'
-import { CreateAccountDto } from '../../../common/dtos'
-import { User } from '../../../common/entities'
+import { CreateAccountDto } from '../../../../common/dtos'
+import { User } from '../../../../common/entities'
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {

@@ -2,12 +2,12 @@ import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, UseGuards } fr
 import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { RateLimit } from 'nestjs-rate-limiter'
-import { AuthService } from './services/auth.service';
-import { GoogleOauthGuard } from './guards/google-oauth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { CreateAccountDto, LoginDto } from '../../../common/dtos';
-import { FacebookOauthGuard } from './guards/facebook.-oauth.guard';
+import { AuthService } from '../services/auth.service';
+import { GoogleOauthGuard } from '../guards/google-oauth.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { CreateAccountDto, LoginDto } from '../../../../common/dtos';
+import { FacebookOauthGuard } from '../guards/facebook.-oauth.guard';
 
 @ApiTags('v1/auth')
 @Controller('auth')
