@@ -21,7 +21,7 @@ cd server
 ```bash
 npm install 
 # OR 
-yarn add
+yarn
 ```
 
 ####  2.1
@@ -68,7 +68,7 @@ cd client
 ```bash
 npm install 
 # OR 
-yarn add
+yarn
 ```
 
 
@@ -77,7 +77,7 @@ yarn add
 - [x] Google login
 - [x] Facebook login
 - [x] Client app routing
-- [ ] Write tests for API
+- [x] Write tests for API
 
 
 ## License
