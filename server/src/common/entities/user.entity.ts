@@ -3,6 +3,7 @@ import { BeforeInsert, Column, Entity, Index } from 'typeorm'
 import { AbstractEntity } from './'
 import * as argon2 from 'argon2'
 import Providers from '../../modules/v1/auth/types/providers.enum'
+import { Role } from '../../common/enums/role.enum'
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -61,6 +62,23 @@ export class User extends AbstractEntity<User> {
         nullable: false
     })
     public displayName: string
+
+    @Column({
+        length: 400,
+        name: 'image',
+        nullable: true,
+        default: null
+    })
+    public image: string
+
+    @Column({
+        name: 'role',
+        nullable: false,
+        default: Role.USER,
+        type: 'enum',
+        enum: Role
+    })
+    public role: Role
 
     @BeforeInsert()
     async hashPassword() {

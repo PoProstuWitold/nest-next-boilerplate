@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { RateLimit } from 'nestjs-rate-limiter'
@@ -8,6 +8,9 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { CreateAccountDto, LoginDto } from '../../../../common/dtos';
 import { FacebookOauthGuard } from '../guards/facebook.-oauth.guard';
+import { RolesGuard } from '../guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../../../../common/enums/role.enum';
 
 @ApiTags('v1/auth')
 @Controller('auth')
@@ -107,6 +110,18 @@ export class AuthController {
     @Get('me')
     getProfile(@Req() req: Request) {
         return req.user
+    }
+
+    @ApiCookieAuth()
+    @ApiOkResponse({
+        description: 'Admin restricted resource'
+    })
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @UseGuards()
+    @Get('admin')
+    getAdminData() {
+        return 'only admins should see this'
     }
 
 }
