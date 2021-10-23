@@ -17,7 +17,7 @@ export class AuthService {
         private readonly configService: ConfigService
     ) {}
 
-    async register(registrationData: any, req: Request) {
+    public async register(registrationData: any, req: Request) {
         try {
             const user = await this.userService.create({
                 ...registrationData
@@ -42,13 +42,13 @@ export class AuthService {
         }
     }
 
-    async createAccessToken(user: any) {
+    private async createAccessToken(user: any) {
         const payload: JwtAccessPayload = { displayName: user.displayName, id: user.id }
         const accessToken = this.jwtService.sign(payload)
         return accessToken
     }
 
-    async login(credentials: LoginDto, req: Request) {
+    public async login(credentials: LoginDto, req: Request) {
         try {
             const { email, password } = credentials
 
@@ -76,7 +76,7 @@ export class AuthService {
     }
 
 
-    async logout(req: Request) {
+    public async logout(req: Request) {
         req.res.clearCookie('access_token')
     }
 
@@ -117,7 +117,7 @@ export class AuthService {
     }
 
 
-    async socialProviderLogin(req: Request) {
+    public async socialProviderLogin(req: Request) {
         const user = await this.userService.continueWithProvider(req)
         const accessToken = await this.createAccessToken(user)
         this.setTokens(req, accessToken)
