@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { SideBar } from './SideBar'
+import { useAuthDispatch, useAuthState } from '../context/auth'
+import axios from 'axios'
 
 interface NavBarProps {
 
 }
 
 export const NavBar: React.FC<NavBarProps> = () => {
+    const { user } = useAuthState()
     const node = useRef<any>()
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const dispatch = useAuthDispatch()
 
     const handleClickOutside = (e: any) => {
         console.log("clicking anywhere")
@@ -39,6 +43,15 @@ export const NavBar: React.FC<NavBarProps> = () => {
         }
     }, [isOpen])
 
+    const logout = async () => {
+        try {
+            await axios.delete('/auth/logout')
+            await dispatch('LOGOUT')
+        } catch (err) {
+            console.log(err)
+        }     
+    }
+
     return (
         <div ref={node}>
         <div className="h-5 shadow-lg navbar bg-neutral text-neutral-content">
@@ -50,23 +63,35 @@ export const NavBar: React.FC<NavBarProps> = () => {
                 </Link>
             </div> 
             <div className="flex-1 px-2 mx-2">
-                <div className="items-stretch hidden lg:flex">
-                <Link href="/me">
-                <a className="btn btn-ghost btn-sm rounded-btn">
-                    Me
-                </a>
-                </Link>
-                <Link href="/signup">
-                <a className="btn btn-ghost btn-sm rounded-btn">
-                    Sign up
-                </a>
-                </Link>
-                <Link href="/signin">
-                <a className="btn btn-ghost btn-sm rounded-btn">
-                    Sign in
-                </a>
-                </Link>
-                </div>
+                {
+                    user ?
+                    <div className="items-stretch hidden lg:flex">
+                        <Link href="/me">
+                        <a className="btn btn-ghost btn-sm rounded-btn">
+                            Me
+                        </a>
+                        </Link>
+                        <button
+                            className="btn btn-ghost btn-sm rounded-btn"
+                            onClick={logout}
+                        >
+                        Logout
+                        </button>
+                    </div>
+                    :
+                    <div className="items-stretch hidden lg:flex">
+                        <Link href="/signup">
+                        <a className="btn btn-ghost btn-sm rounded-btn">
+                            Sign up
+                        </a>
+                        </Link>
+                        <Link href="/signin">
+                        <a className="btn btn-ghost btn-sm rounded-btn">
+                            Sign in
+                        </a>
+                        </Link>
+                    </div>
+                }
             </div> 
             <div className="flex-none">
             <button onClick={toggleMenu} className="lg:hidden btn btn-ghost">
@@ -77,7 +102,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
         </div>
         </div>
 
-    <SideBar isOpen={isOpen} />
+    <SideBar isOpen={isOpen} logout={logout} user={user}/>
     </div>
     )
 }

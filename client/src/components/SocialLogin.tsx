@@ -60,12 +60,12 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({ provider, url }) => {
     return (
         <button 
             onClick={redirectTo}
-            className={`m-2 font-bold text-white border-0 w-80 btn focus:outline-none focus:shadow-outline 
+            className={`mb-4 p-3 font-bold text-white border-0 w-full btn focus:outline-none focus:shadow-outline 
                         ${provider === 'Facebook' ? 'bg-blue-800 hover:bg-blue-900 ' : ''}
                         ${provider === 'Google' ? 'bg-red-700 hover:bg-red-800 ' : ''}
             `}
         >
-            Login with {provider}
+            Continue with {provider}
         </button>
     )
 }

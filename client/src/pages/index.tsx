@@ -1,6 +1,5 @@
 import Head from 'next/head'
-import { SocialLogin } from '../components/SocialLogin'
-import { SERVER_URL } from '../utils/constants'
+
 import { Container } from '../components/Container'
 interface indexProps {
 
@@ -15,8 +14,7 @@ const Index: React.FC<indexProps> = ({}) => {
             <link rel="icon" href="/favicon.ico" />
             </Head>
             <Container style={{display: 'flex', justifyContent: 'center', margin: 'auto'}}>
-                <SocialLogin provider="Google" url={`${SERVER_URL}/auth/google`}/>
-                <SocialLogin provider="Facebook" url={`${SERVER_URL}/auth/facebook`}/>
+                <h1 className="text-6xl">Hello world</h1>
             </Container>
         </div>
     )
