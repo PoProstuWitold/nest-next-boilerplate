@@ -1,4 +1,5 @@
-# nest-next-boilerplate (WORK IN PROGRESS; PROJECT IS IN VERY EARLY PHASE)
+# nest-next-boilerplate 
+## (WORK IN PROGRESS; PROJECT IS IN VERY EARLY PHASE SO SOME FEATURES MAY NOT WORK AS INTENDED)
 
 NodeJS boilerplate for building fullstack applications built in TypeScript, TypeORM, NestJS and NextJS
 
@@ -47,7 +48,7 @@ DB_PASSWORD='admin'
 DB_HOST='localhost'
 DB_PORT=5432
 DB_DATABASE='postgres-nest'
-DB_SYNC=true
+DB_SYNC=true // NEVER USE IT IN PRODUCTION ENVIRONMENT OR YOU MAY LOOSE YOUR DATA
 
 
 # GOOGLE
