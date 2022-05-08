@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { RateLimit } from 'nestjs-rate-limiter'
 import { AuthService } from '../services/auth.service';
 import { GoogleOauthGuard } from '../guards/google-oauth.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -22,11 +21,6 @@ export class AuthController {
     @ApiCreatedResponse({
         description: 'Create an account with provided data if correct'
     })
-    @RateLimit({
-        points: 1,
-        duration: 120,
-        errorMessage: 'You have reached the limit. You have to wait 2 minutes before trying again.'
-    })
     @Post('local/register')
     async register(
         @Body() credentials: CreateAccountDto,
@@ -37,11 +31,6 @@ export class AuthController {
 
     @ApiOkResponse({
         description: 'Logs in user'
-    })
-    @RateLimit({
-        points: 5,
-        duration: 300,
-        errorMessage: 'You have reached the limit of login requests. You have to wait 5 minutes before trying again.'
     })
     @HttpCode(200)
     @Post('local/login')
@@ -85,7 +74,7 @@ export class AuthController {
     }
 
     @ApiOkResponse({
-        description: 'Basic URL to initiate Google Strategy (NOT WORKING IN SWAGGER)'
+        description: 'Basic URL to initiate Facebook Strategy (NOT WORKING IN SWAGGER)'
     })
     @Get('facebook')
     @UseGuards(FacebookOauthGuard)
@@ -94,7 +83,7 @@ export class AuthController {
     }
 
     @ApiOkResponse({
-        description: 'Redirect URL for Google Strategy (NOT WORKING IN SWAGGER)'
+        description: 'Redirect URL for Facebook Strategy (NOT WORKING IN SWAGGER)'
     })
     @Get('facebook/redirect')
     @UseGuards(FacebookOauthGuard)

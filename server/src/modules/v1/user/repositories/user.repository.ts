@@ -1,14 +1,11 @@
 import { HttpException, HttpStatus, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
-import { EntityRepository, Repository } from 'typeorm'
+import { CustomRepository } from '../../../../database/typeorm-ex.decorator'
+import { FindOperator, Repository } from 'typeorm'
 import { CreateAccountDto } from '../../../../common/dtos'
 import { User } from '../../../../common/entities'
 
-@EntityRepository(User)
+@CustomRepository(User)
 export class UserRepository extends Repository<User> {
-
-    constructor() {
-      super()
-    }
 
     async createUser(dto: CreateAccountDto): Promise<User> {
         const newUser: User = new User({
@@ -27,24 +24,24 @@ export class UserRepository extends Repository<User> {
         }
     }
 
-    async getUserByNick(displayName: string): Promise<User> {
+    async getUserByNick(displayName: string | FindOperator<string>): Promise<User> {
         try {
-            const profile: User = await this.findOneOrFail({ displayName })
+            const profile: User = await this.findOneOrFail({ where: { displayName } })
             return profile
         } catch (err) {
             throw new NotFoundException('User with provided nick not found')
         }
     }
 
-    async getUserByEmail(email: string): Promise<User> {
+    async getUserByEmail(email: string | FindOperator<string>): Promise<User> {
         try {
-            return await this.findOneOrFail({ email })
+            return await this.findOneOrFail({ where: { email } })
         } catch (err) {
             throw new NotFoundException('User with provided email not found')
         }
     }
 
-    async getUserById(id: number): Promise<User> {
+    async getUserById(id: string | FindOperator<string>): Promise<User> {
         const user = await this.findOne({ where: { id } })
 
         if(!user) {
@@ -54,7 +51,7 @@ export class UserRepository extends Repository<User> {
         return user
     }
 
-    async getUserByProviderId(providerId: number): Promise<User | null> {
+    async getUserByProviderId(providerId: string | FindOperator<string>): Promise<User | null> {
         const user = await this.findOne({ where: { providerId } })
 
         if(!user) {

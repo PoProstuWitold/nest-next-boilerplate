@@ -4,10 +4,12 @@ import { User } from '../../../common/entities';
 import { UserRepository } from './repositories/user.repository';
 import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
+import { TypeOrmExModule } from '../../../database/typeorm-ex.module';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, UserRepository])
+        TypeOrmModule.forFeature([User]),
+        TypeOrmExModule.forCustomRepository([User, UserRepository]),
     ],
     controllers: [UserController],
     providers: [UserService],

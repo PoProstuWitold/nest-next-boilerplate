@@ -47,7 +47,7 @@ const signUp: React.FC<signUpProps> = ({}) => {
             dispatch('LOCAL_REGISTER', res.data.user)
             router.back()
         } catch (err: any) {
-            setErrors(mapErrors(err.response.data))
+            setErrors(mapErrors(err.response.data.errors))
         }
     }
 

@@ -6,8 +6,8 @@ import { JwtAccessPayload } from '../dto/jwt-access.payload';
 import * as argon2 from 'argon2'
 import { LoginDto } from '../../../../common/dtos';
 import { ConfigService } from '@nestjs/config';
-import { UniqueViolation } from '../../../../common/exceptions/unique-violation.exception';
-import PostgresErrorCode from '../../../../common/utils/postgres-errors.enum';
+import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../../common/exceptions';
+import PostgresErrorCode from '../../../../common/enums/postgres-errors.enum';
 import Providers from '../types/providers.enum';
 @Injectable()
 export class AuthService {
@@ -93,25 +93,19 @@ export class AuthService {
         try {
             const user = await this.userService.getByEmail(email)
             if(!user) {
-                throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST)
+                throw new InvalidCredentials()
             }
 
             if(user.provider !== Providers.Local) {
-                throw new HttpException('This user was already registered with social provider', HttpStatus.BAD_REQUEST)
+                throw new SocialProvider()
             }
 
             const isMatch = await argon2.verify(user.password, password)
             if(!isMatch) {
-                throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST)
+                throw new InvalidCredentials()
             }
             return user
         } catch (err) {
-            if(err.response.includes('provider' && 'social' )) {
-                throw new HttpException('This user was already registered with social provider', HttpStatus.BAD_REQUEST)
-            }
-            // if(err.response.includes('Invalid' || 'credentials' )) {
-            //     throw new HttpException('Invalid credentialssss', HttpStatus.BAD_REQUEST)
-            // }
             throw err
         }
     }
@@ -123,7 +117,7 @@ export class AuthService {
         this.setTokens(req, accessToken)
 
         // req.res.redirect('/api/v1/auth/me')
-        req.res.redirect(`${process.env.ORIGIN}/login/success`)
+        req.res.redirect(`${process.env.ORIGIN}/me`)
 
         return {
             user,

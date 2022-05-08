@@ -38,11 +38,12 @@ const signIn: React.FC<signInProps> = ({}) => {
                 password
             })
             dispatch('LOCAL_LOGIN', res.data.user)
+            console.log(res)
             router.back()
         } catch (err: any) {
-            if(err.message.includes(400) || err.message.includes(401)) {
-                err.message.includes(400) ? setErrors(err.response.data) : setErrors({message: 'Field is required'})
-            }
+            console.log(errors)
+            setErrors(err.response.data)
+            console.log(errors)
         }
     }
 

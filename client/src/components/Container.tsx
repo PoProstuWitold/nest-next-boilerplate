@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react'
 
 interface ContainerProps {
+    children: React.ReactNode
     style?: CSSProperties | undefined
 }
 

@@ -3,6 +3,8 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { V1Module } from './v1/v1.module'
 import { MainController } from './app.controller'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
+import { APP_GUARD } from '@nestjs/core'
 
 @Module({
     imports: [
@@ -27,9 +29,19 @@ import { MainController } from './app.controller'
         ConfigModule.forRoot({
             isGlobal: true
         }),
+        ThrottlerModule.forRoot({
+            ttl: 60,
+            limit: 10,
+        }),
         V1Module
     ],
     controllers: [MainController],
-    providers: []
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard
+        }
+          
+    ]
 })
 export class AppModule {}
