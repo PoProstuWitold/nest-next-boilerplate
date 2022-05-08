@@ -70,7 +70,7 @@ describe('UserService', () => {
                 it('should throw an error', async () => {
                     expect(
                         await service.getByEmail('test2@email.com')
-                    ).toBeUndefined()
+                    ).toBeNull()
                 })
             })
         })
@@ -85,7 +85,7 @@ describe('UserService', () => {
                 it('should throw an error', async () => {
                     expect(
                         await service.getUserById(uuidv4())
-                    ).toBeUndefined()
+                    ).toBeNull()
                 })
             })
         })
