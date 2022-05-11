@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import Link from 'next/link'
-import { SideBar } from './SideBar'
 import { useAuthDispatch, useAuthState } from '../context/auth'
 import axios from 'axios'
-
+import Router from 'next/router'
+import { useTheme } from 'next-themes'
+import { Themes } from '../utils/constants'
 interface NavBarProps {
 
 }
@@ -11,37 +12,9 @@ interface NavBarProps {
 export const NavBar: React.FC<NavBarProps> = () => {
     const { user } = useAuthState()
     const node = useRef<any>()
-    const [isOpen, setIsOpen] = useState<boolean>(false)
     const dispatch = useAuthDispatch()
-
-    const handleClickOutside = (e: any) => {
-        console.log("clicking anywhere")
-        if (!node.current) {
-            return
-        }
-        if (node.current && node.current.contains(e.target)) {
-            return
-        }
-        // outside click
-        setIsOpen(false)
-    }
-
-    const toggleMenu = async () => {
-        setIsOpen(!isOpen)
-        console.log(isOpen)
-    }
-
-    useEffect(() => {
-        if (isOpen) {
-            document.addEventListener("mousedown", handleClickOutside)
-        } else {
-            document.removeEventListener("mousedown", handleClickOutside)
-        }
+    const { theme, setTheme } = useTheme()
     
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside)
-        }
-    }, [isOpen])
 
     const logout = async () => {
         try {
@@ -53,8 +26,8 @@ export const NavBar: React.FC<NavBarProps> = () => {
     }
 
     return (
-        <div ref={node}>
-        <div className="h-5 shadow-lg navbar bg-neutral text-neutral-content">
+        <div className="sticky top-0 z-50" ref={node}>
+        <div className="h-5 shadow-lg navbar bg-primary">
             <div className="flex-none px-2 mx-2">
                 <Link href="/">
                         <a className="text-lg font-bold">
@@ -92,17 +65,40 @@ export const NavBar: React.FC<NavBarProps> = () => {
                         </Link>
                     </div>
                 }
-            </div> 
+            </div>
             <div className="flex-none">
-            <button onClick={toggleMenu} className="lg:hidden btn btn-ghost">
+                <ul className="menu menu-horizontal">
+                    <li tabIndex={0}>
+                        <a>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                            <p>Theme</p>
+                        <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
+                        </a>
+                        <ul className="z-50 w-full p-2 border border-t-0 bg-base-100">
+                            {
+                                Themes.map((theme) => (
+                                    <li onClick={() => setTheme(theme.name.toLowerCase())}><a>{theme.name}</a></li>
+                                ))
+                            }
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div className="flex-none">
+            <label htmlFor="my-drawer-2" className="btn btn-ghost">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current">           
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>               
                 </svg>
-            </button>
+            </label>
+            <div>
+            
+            
+            </div>
         </div>
         </div>
-
-    <SideBar isOpen={isOpen} logout={logout} user={user}/>
+        
+            
     </div>
     )
 }

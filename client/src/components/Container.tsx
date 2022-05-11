@@ -7,8 +7,8 @@ interface ContainerProps {
 
 export const Container: React.FC<ContainerProps> = ({ children, style }) => {
     return (
-        <div className="container flex flex-wrap justify-center" style={style}>
-            {children}
-        </div>
+            <div className="flex flex-col items-center p-5 bg-base-100" style={style}>
+                {children}
+            </div>
     )
 }
