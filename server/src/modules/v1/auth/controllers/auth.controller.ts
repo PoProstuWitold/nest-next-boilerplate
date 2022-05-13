@@ -10,6 +10,7 @@ import { FacebookOauthGuard } from '../guards/facebook.-oauth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../../../../common/enums/role.enum';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('v1/auth')
 @Controller('auth')
@@ -34,7 +35,7 @@ export class AuthController {
     })
     @HttpCode(200)
     @Post('local/login')
-    @UseGuards(LocalAuthGuard)
+    // @UseGuards(LocalAuthGuard)
     async login(
         @Body() credentials: LoginDto,
         @Req() req: Request
@@ -97,8 +98,11 @@ export class AuthController {
     })
     @UseGuards(JwtAuthGuard)
     @Get('me')
+    @SkipThrottle(true)
     getProfile(@Req() req: Request) {
-        return req.user
+        return {
+            user: req.user
+        }
     }
 
     @ApiCookieAuth()

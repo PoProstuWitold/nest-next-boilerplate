@@ -10,7 +10,7 @@ interface InputGroupProps {
     setValue: (str: string) => void
 }
   
-const InputField: React.FC<InputGroupProps> = ({
+export const InputField: React.FC<InputGroupProps> = ({
     className,
     type,
     placeholder,
@@ -40,5 +40,3 @@ const InputField: React.FC<InputGroupProps> = ({
         </div>
     )
 }
-  
-export default InputField

@@ -1,16 +1,17 @@
 import Head from 'next/head'
-import { Container } from '../components/Container'
+import { Container } from '../../components/Container'
+import { AuthOption, withAuth } from '../../utils/withAuth'
 
-interface IndexProps {
+interface LoginProps {
 
 }
 
-const Index: React.FC<IndexProps> = ({}) => {
+const Login: React.FC<LoginProps> = ({}) => {
     return (
         <>
             <Head>
-                <title>Nest Next Boilerplate</title>
-                <meta name="description" content="Welcome to Witq" />
+                <title>Login</title>
+                <meta name="description" content="Login or create account" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Container>
@@ -29,4 +30,4 @@ const Index: React.FC<IndexProps> = ({}) => {
     )
 }
 
-export default Index
+export default withAuth(AuthOption.FORBIDDEN, Login)

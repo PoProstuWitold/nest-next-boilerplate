@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react'
+import { CSSProperties } from 'react'
 
 interface ContainerProps {
     children: React.ReactNode
@@ -7,8 +7,8 @@ interface ContainerProps {
 
 export const Container: React.FC<ContainerProps> = ({ children, style }) => {
     return (
-            <div className="flex flex-col items-center p-5 bg-base-100" style={style}>
-                {children}
-            </div>
+        <div className="min-h-screen px-4 my-8 md:container md:mx-auto" style={style}>
+            {children}
+        </div>
     )
 }

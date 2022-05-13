@@ -3,11 +3,15 @@ import type { AppProps } from 'next/app'
 import { SWRConfig } from 'swr'
 import { NavBar } from '../components/NavBar'
 import axios from 'axios'
-import { useRouter } from 'next/router'
-import { AuthProvider } from '../context/auth'
-import { useEffect, useState } from 'react'
+import { AuthProvider } from '../store/auth'
 import { ThemeProvider } from 'next-themes'
-import Footer from '../components/Footer'
+import { Footer } from '../components/Footer'
+import { Provider } from 'react-redux'
+import { store } from '../store/store'
+import { PersistGate } from 'redux-persist/lib/integration/react'
+import { getPersistor } from '@rematch/persist'
+
+const persistor = getPersistor()
 
 axios.defaults.baseURL = 'http://localhost:4000/api/v1'
 axios.defaults.withCredentials = true
@@ -22,9 +26,6 @@ const fetcher = async (url: string) => {
 }
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-    const { pathname } = useRouter()
-    const authRoutes = ['/login/success', '/login/error']
-    const authRoute = authRoutes.includes(pathname)
     
     return (
         <SWRConfig value={{
@@ -32,13 +33,15 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             dedupingInterval: 5000
         }}>
             <ThemeProvider>
-                <AuthProvider>
-                    <div>
-                        {!authRoute && <NavBar/>}
-                        <Component {...pageProps}/>
-                        <Footer/>
-                    </div>
-                </AuthProvider>
+                    <Provider store={store}>
+                        <PersistGate persistor={persistor}>
+                            <AuthProvider>
+                                <NavBar/>
+                                <Component {...pageProps}/>
+                                <Footer/>
+                            </AuthProvider>
+                        </PersistGate>
+                    </Provider>
             </ThemeProvider>
         </SWRConfig>
     )
