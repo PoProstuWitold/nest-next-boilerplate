@@ -4,11 +4,12 @@ import { Request } from 'express';
 import { UserService } from '../../../../modules/v1/user/services/user.service';
 import { JwtAccessPayload } from '../dto/jwt-access.payload';
 import * as argon2 from 'argon2'
-import { LoginDto } from '../../../../common/dtos';
+import { CreateAccountDto, LoginDto } from '../../../../common/dtos';
 import { ConfigService } from '@nestjs/config';
 import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../../common/exceptions';
 import PostgresErrorCode from '../../../../common/enums/postgres-errors.enum';
 import Providers from '../types/providers.enum';
+import { User } from 'common/entities';
 @Injectable()
 export class AuthService {
     constructor(
@@ -17,7 +18,7 @@ export class AuthService {
         private readonly configService: ConfigService
     ) {}
 
-    public async register(registrationData: any, req: Request) {
+    public async register(registrationData: CreateAccountDto, req: Request) {
         try {
             const user = await this.userService.create({
                 ...registrationData
@@ -42,7 +43,7 @@ export class AuthService {
         }
     }
 
-    private async createAccessToken(user: any) {
+    private async createAccessToken(user: User) {
         const payload: JwtAccessPayload = { displayName: user.displayName, id: user.id }
         const accessToken = this.jwtService.sign(payload)
         return accessToken
@@ -66,7 +67,7 @@ export class AuthService {
         }
     }
 
-    private async setTokens(req: Request, accessToken: any) {
+    private async setTokens(req: Request, accessToken: string) {
         req.res.cookie('access_token', 
             accessToken, {
             expires: new Date(this.configService.get('JWT_ACCESS_EXPIRATION_TIME') * 1000 + Date.now()), 

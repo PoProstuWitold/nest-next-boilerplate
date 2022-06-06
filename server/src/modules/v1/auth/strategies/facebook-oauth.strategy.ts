@@ -1,5 +1,5 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy, VerifyFunction } from 'passport-facebook';
+import { Profile, Strategy } from 'passport-facebook';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../../../../modules/v1/user/services/user.service';
@@ -21,8 +21,8 @@ export class FacebookOauthStrategy extends PassportStrategy(Strategy, 'facebook'
     }
 
     async validate(
-        accessToken: string, refreshToken: string, profile: Profile, done: any
-    ): Promise<any> {
+        accessToken: string, _refreshToken: string, profile: Profile
+    ) {
         try {
             const { id, name, emails } = profile
             
