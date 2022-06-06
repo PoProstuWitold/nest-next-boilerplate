@@ -57,14 +57,9 @@ export const NavBar: React.FC<NavBarProps> = () => {
                             </div>
                             :
                             <div className="items-stretch hidden lg:flex">
-                                <Link href="/signup">
+                                <Link href="/login">
                                     <a className="btn btn-ghost btn-sm rounded-btn">
-                                        Sign up
-                                    </a>
-                                </Link>
-                                <Link href="/signin">
-                                    <a className="btn btn-ghost btn-sm rounded-btn">
-                                        Sign in
+                                        Sign in/Sign up
                                     </a>
                                 </Link>
                             </div>

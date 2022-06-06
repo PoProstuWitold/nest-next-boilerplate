@@ -10,6 +10,7 @@ import { Provider } from 'react-redux'
 import { store } from '../store/store'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import { getPersistor } from '@rematch/persist'
+import { useRouter } from 'next/router'
 
 const persistor = getPersistor()
 
@@ -27,6 +28,8 @@ const fetcher = async (url: string) => {
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
     
+    const router = useRouter()
+
     return (
         <SWRConfig value={{
             fetcher,
@@ -36,9 +39,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                     <Provider store={store}>
                         <PersistGate persistor={persistor}>
                             <AuthProvider>
-                                <NavBar/>
+                                {router.pathname !== '/login' && <NavBar/>}
                                 <Component {...pageProps}/>
-                                <Footer/>
+                                {router.pathname !== '/login' && <Footer/>}                      
                             </AuthProvider>
                         </PersistGate>
                     </Provider>
