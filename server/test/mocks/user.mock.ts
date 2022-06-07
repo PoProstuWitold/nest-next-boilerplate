@@ -1,5 +1,5 @@
 import { User } from "../../src/common/entities";
-import Providers from "../../src/modules/v1/auth/types/providers.enum";
+import Providers from "../../src/common/enums/providers.enum";
 
 export const LocalUser: Partial<User> = {
     provider: Providers.Local,

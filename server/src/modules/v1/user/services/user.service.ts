@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAccountDto } from '../../../../common/dtos';
 import { User } from '../../../../common/entities';
 import { UserRepository } from '../repositories/user.repository';
-import Providers from '../../auth/types/providers.enum';
+import Providers from '../../../../common/enums/providers.enum';
 
 @Injectable()
 export class UserService {
@@ -40,7 +40,7 @@ export class UserService {
 
     public async continueWithProvider(req: any) {
         let user: User
-        // user = await this.userRepository.findOne({ where: { providerId: req.user.providerId } })
+
         const { providerId, email } = req.user
         user = await this.userRepository
             .createQueryBuilder()
@@ -54,7 +54,6 @@ export class UserService {
             }
         }
 
-        // console.log('oldUser', user)
         if(!user) {
             user = this.userRepository.create({
                 provider: req.user.provider,
@@ -65,7 +64,7 @@ export class UserService {
                 lastName: req.user.lastName,
                 displayName: req.user.displayName
             })
-            // console.log('newUser', user)
+
             await this.userRepository.save(user)
         }
 

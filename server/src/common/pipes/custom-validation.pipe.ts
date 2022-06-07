@@ -16,7 +16,7 @@ export class CustomValidationPipe implements PipeTransform<any> {
             return value;
         }
         const object = plainToClass(metatype, value);
-        console.dir(object);
+        
         const errors = await validate(object);
         if (errors.length > 0) {
             throw new HttpException({
@@ -33,7 +33,6 @@ export class CustomValidationPipe implements PipeTransform<any> {
         errors.forEach(el => {
         const prop = el.property;
         Object.entries(el.constraints).forEach(constraint => {
-            // console.log(errors)
             result[prop] = constraint[1];
         });
         });

@@ -1,15 +1,13 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy, VerifyFunction } from 'passport-facebook';
+import { Profile, Strategy } from 'passport-facebook';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from '../../../../modules/v1/user/services/user.service';
-import Providers from '../types/providers.enum';
+import Providers from '../../../../common/enums/providers.enum';
 
 @Injectable()
 export class FacebookOauthStrategy extends PassportStrategy(Strategy, 'facebook') {
     constructor(
         configService: ConfigService,
-        private readonly userService: UserService
     ) {
         super({
         // Put config in `.env`
@@ -21,8 +19,8 @@ export class FacebookOauthStrategy extends PassportStrategy(Strategy, 'facebook'
     }
 
     async validate(
-        accessToken: string, refreshToken: string, profile: Profile, done: any
-    ): Promise<any> {
+        accessToken: string, _refreshToken: string, profile: Profile
+    ) {
         try {
             const { id, name, emails } = profile
             
@@ -39,7 +37,7 @@ export class FacebookOauthStrategy extends PassportStrategy(Strategy, 'facebook'
             
             return user
         } catch (err) {
-            console.log(err)
+            console.error(err)
             throw new InternalServerErrorException()
         }
     }

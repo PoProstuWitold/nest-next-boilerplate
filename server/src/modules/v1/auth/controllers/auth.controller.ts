@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, SetMetadata, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { GoogleOauthGuard } from '../guards/google-oauth.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { CreateAccountDto, LoginDto } from '../../../../common/dtos';
 import { FacebookOauthGuard } from '../guards/facebook.-oauth.guard';
 import { RolesGuard } from '../guards/roles.guard';
@@ -35,7 +34,6 @@ export class AuthController {
     })
     @HttpCode(200)
     @Post('local/login')
-    // @UseGuards(LocalAuthGuard)
     async login(
         @Body() credentials: LoginDto,
         @Req() req: Request
