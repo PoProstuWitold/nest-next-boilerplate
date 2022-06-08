@@ -1,3 +1,5 @@
+import { BsGoogle, BsFacebook } from 'react-icons/bs'
+
 interface SocialLoginProps {
     provider: 'Google' | 'Facebook'
     url: string
@@ -10,7 +12,9 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({ provider, url, classNa
                        ${provider === 'Facebook' ? 'bg-blue-800 hover:bg-blue-900 ' : ''}
                         ${provider === 'Google' ? 'bg-red-700 hover:bg-red-800 ' : ''}
        `}>
-          {provider}
+        {provider === 'Google' ? <BsGoogle/> : null}
+        {provider === 'Facebook' ? <BsFacebook/> : null}
+        <p className="ml-2">{provider}</p>
         </a>
     )
 }

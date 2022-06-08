@@ -7,7 +7,6 @@ import { AuthService } from './services/auth.service';
 import { FacebookOauthStrategy } from './strategies/facebook-oauth.strategy';
 import { GoogleOauthStrategy } from './strategies/google-oauth.strategy';
 import { JwtAuthStrategy } from './strategies/jwt-auth.strategy';
-import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
     imports: [
@@ -28,8 +27,7 @@ import { LocalStrategy } from './strategies/local.strategy';
         AuthService,
         GoogleOauthStrategy,
         FacebookOauthStrategy,
-        JwtAuthStrategy,
-        LocalStrategy
+        JwtAuthStrategy
     ]
 })
 export class AuthModule {}

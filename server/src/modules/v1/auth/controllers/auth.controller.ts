@@ -68,7 +68,7 @@ export class AuthController {
     })
     @Get('google/redirect')
     @UseGuards(GoogleOauthGuard)
-    async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
+    async googleAuthRedirect(@Req() req: Request, @Res() _res: Response) {
         return this.authService.socialProviderLogin(req)
     }
 
@@ -86,7 +86,7 @@ export class AuthController {
     })
     @Get('facebook/redirect')
     @UseGuards(FacebookOauthGuard)
-    async facebookAuthRedirect(@Req() req: Request, @Res() res: Response) {
+    async facebookAuthRedirect(@Req() req: Request, @Res() _res: Response) {
         return this.authService.socialProviderLogin(req)
     }
 
@@ -109,7 +109,6 @@ export class AuthController {
     })
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
-    @UseGuards()
     @Get('admin')
     getAdminData() {
         return 'only admins should see this'

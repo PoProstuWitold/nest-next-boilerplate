@@ -14,7 +14,6 @@ export class UserService {
 
 
     public async create(data: CreateAccountDto) {
-        
         const user = this.userRepository.create({
                 provider: Providers.Local,
                 providerId: null,
@@ -24,17 +23,15 @@ export class UserService {
                 lastName: data.lastName,
                 displayName: data.displayName
         })
+
         await this.userRepository.save(user)
+        
         return user
     }
 
-    public async getUserById(id) {
-        const user = await this.userRepository.findOne({ where: { id } })
-        return user
-    }
 
-    public async getByEmail(email: string) {
-        const user = await this.userRepository.findOne({ where: { email } })
+    public async getUserByField(field: string, value: string | number) {
+        const user = await this.userRepository.findOne({ where: { [field]: value } })
         return user
     }
 
@@ -62,7 +59,8 @@ export class UserService {
                 password: req.user.password,
                 firstName: req.user.firstName,
                 lastName: req.user.lastName,
-                displayName: req.user.displayName
+                displayName: req.user.displayName,
+                image: req.user.image
             })
 
             await this.userRepository.save(user)

@@ -1,8 +1,7 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { UserService } from '../../../../modules/v1/user/services/user.service';
-import { JwtAccessPayload } from '../types/jwt-access.payload';
 import * as argon2 from 'argon2'
 import { CreateAccountDto, LoginDto } from '../../../../common/dtos';
 import { ConfigService } from '@nestjs/config';
@@ -24,8 +23,11 @@ export class AuthService {
             const user = await this.userService.create({
                 ...registrationData
             })
-            const accessToken = await this.createAccessToken(user)
-            this.setTokens(req, accessToken)
+
+            const [accessToken] = await this.generateTokens(user)
+
+            await this.setTokens(req, { accessToken })
+
             return {
                 user,
                 accessToken
@@ -44,20 +46,14 @@ export class AuthService {
         }
     }
 
-    private async createAccessToken(user: User) {
-        const payload: JwtAccessPayload = { displayName: user.displayName, id: user.id }
-        const accessToken = this.jwtService.sign(payload)
-        return accessToken
-    }
-
     public async login(credentials: LoginDto, req: Request) {
         try {
             const { email, password } = credentials
 
             const user = await this.getAuthenticatedUser(email, password)
-            const accessToken = await this.createAccessToken(user)
+            const [accessToken] = await this.generateTokens(user)
 
-            await this.setTokens(req, accessToken)
+            await this.setTokens(req, { accessToken })
 
             return {
                 user,
@@ -68,32 +64,49 @@ export class AuthService {
         }
     }
 
-    private async setTokens(req: Request, accessToken: string) {
+    public async logout(req: Request) {
+        req.res.clearCookie('access_token')
+        req.res.clearCookie('refresh_token')
+    }
+
+    private async generateTokens(user: User) {
+        const accessToken = await this.jwtService.signAsync({ 
+            displayName: user.displayName,
+            id: user.id
+        }, {
+            issuer: 'PoProstuWitold',
+            expiresIn: '30m'
+        })
+
+        const refreshToken = await this.jwtService.signAsync({}, {
+            issuer: 'PoProstuWitold',
+            expiresIn: '30d',
+        })
+
+        return [
+            accessToken, refreshToken
+        ]
+    }
+
+    private async setTokens(req: Request, { accessToken, refreshToken }: { accessToken: string, refreshToken?: string}) {
         req.res.cookie('access_token', 
             accessToken, {
             expires: new Date(this.configService.get('JWT_ACCESS_EXPIRATION_TIME') * 1000 + Date.now()), 
             httpOnly: true, 
             sameSite: 'lax'
         })
-    }
 
-
-    public async logout(req: Request) {
-        req.res.clearCookie('access_token')
-    }
-
-    public async validateUser(payload: JwtAccessPayload) {
-        const user = await this.userService.getUserById(payload.id);
-
-        if (!user) {
-            throw new HttpException('Invalid tokens', HttpStatus.UNAUTHORIZED);
-        }
-        return user;
+        req.res.cookie('refresh_token', 
+            refreshToken, {
+            expires: new Date(this.configService.get('JWT_ACCESS_EXPIRATION_TIME') * 1000 + Date.now()),
+            httpOnly: true,
+            sameSite: true,
+        })
     }
 
     public async getAuthenticatedUser(email: string, password: string) {
         try {
-            const user = await this.userService.getByEmail(email)
+            const user = await this.userService.getUserByField('email', email)
             if(!user) {
                 throw new InvalidCredentials()
             }
@@ -106,6 +119,7 @@ export class AuthService {
             if(!isMatch) {
                 throw new InvalidCredentials()
             }
+
             return user
         } catch (err) {
             throw err
@@ -115,8 +129,8 @@ export class AuthService {
 
     public async socialProviderLogin(req: Request) {
         const user = await this.userService.continueWithProvider(req)
-        const accessToken = await this.createAccessToken(user)
-        this.setTokens(req, accessToken)
+        const [accessToken] = await this.generateTokens(user)
+        await this.setTokens(req, { accessToken })
 
         // req.res.redirect('/api/v1/auth/me')
         req.res.redirect(`${process.env.ORIGIN}/me`)

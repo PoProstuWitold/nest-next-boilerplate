@@ -10,7 +10,6 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
         configService: ConfigService
     ) {
         super({
-        // Put config in `.env`
             clientID: configService.get<string>('OAUTH_GOOGLE_ID'),
             clientSecret: configService.get<string>('OAUTH_GOOGLE_SECRET'),
             callbackURL: configService.get<string>('OAUTH_GOOGLE_REDIRECT_URL'),
@@ -19,20 +18,19 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
     }
 
     async validate(
-        accessToken: string, _refreshToken: string, profile: Profile
+        _accessToken: string, _refreshToken: string, profile: Profile
     ) {
         try {
-            const { id, name, emails } = profile
-
             const user = {
                 provider: Providers.Google,
-                providerId: id,
-                email: emails[0].value,
+                providerId: profile.id,
+                email: profile.emails[0].value,
                 password: 'provided',
-                firstName: name.givenName,
-                lastName: name.familyName,
+                firstName: profile.name.givenName,
+                lastName: profile.name.familyName,
                 displayName: profile.displayName,
-                accessToken
+                image: profile.photos[0].value,
+                verified: profile.emails[0].verified
             }
             
             return user

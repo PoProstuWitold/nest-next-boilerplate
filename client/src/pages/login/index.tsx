@@ -12,7 +12,7 @@ import {AiFillEyeInvisible, AiFillEye} from 'react-icons/ai'
 import { FiArrowLeft } from 'react-icons/fi'
 import { SERVER_URL } from '../../utils/constants'
 import Link from 'next/link'
-
+import { ErrorField } from '../../components/ErrorField'
 interface LoginProps {
 
 }
@@ -107,6 +107,7 @@ const Login: React.FC<LoginProps> = ({}) => {
 
 
     const changeForm = (formType: 'login' | 'register') => {
+        setAPIErrors({})
         setFormType(formType)
     }
 
@@ -117,12 +118,12 @@ const Login: React.FC<LoginProps> = ({}) => {
                 <meta name="description" content="Login or create account" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="flex w-full m-auto mt-0 lg:w-4/12 md:w-10/12 md:mt-28 bg-base-200 rounded-xl" >
+            <div className="flex w-full m-auto mt-0 shadow-xl lg:w-4/12 md:w-10/12 md:mt-28 bg-base-200 rounded-xl" >
                     <div className="mx-auto w-96">
                     <p className="m-10 mx-auto text-lg font-bold text-center">PoProstuWitold</p>
-                    <div className="flex flex-row items-center justify-center w-full mx-auto mb-10">
-                        <button onClick={() => changeForm('login')} className={`w-64 p-4 mr-4 text-center rounded-lg ${FormType === 'login' ? 'bg-primary' : ''}`}>Sign in</button>
-                        <button onClick={() => changeForm('register')} className={`w-64 p-4 mr-4 text-center rounded-lg ${FormType === 'register' ? 'bg-primary' : ''}`}>Sign up</button>
+                    <div className="box-border flex flex-wrap">
+                        <button onClick={() => changeForm('login')} className={`flex-1 w-64 p-4 mr-4 text-center rounded-lg ${FormType === 'login' ? 'bg-primary' : ''}`}>Sign in</button>
+                        <button onClick={() => changeForm('register')} className={`flex-1 w-64 p-4 text-center rounded-lg ${FormType === 'register' ? 'bg-primary' : ''}`}>Sign up</button>
                     </div>
                     {FormType && FormType === 'login' ?
                         <Formik
@@ -140,8 +141,8 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             </label>
                                             <Field placeholder="Enter your email" type="email" name="email" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             <label className="label">
-                                                {errors.email && touched.email ? <span className="italic label-text-alt">{errors.email}</span> : null}
-                                                {ApiErrors.email && touched.email ? <span className="italic label-text-alt">{ApiErrors.email}</span> : null}
+                                                {errors.email && touched.email ? <ErrorField error={errors.email}/>  : null}
+                                                {ApiErrors.email && touched.email ? <ErrorField error={ApiErrors.email}/>: null}
                                             </label>
                                             
                                         </div>
@@ -162,12 +163,18 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             <Field placeholder="Enter your password" type={(open === false)? 'password' :'text'} name="password" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             
                                             <label className="label">
-                                                {errors.password ? <span className="italic label-text-alt">{errors.password}</span> : null}
-                                                {ApiErrors.password ? <span className="italic label-text-alt">{ApiErrors.password}</span> : null}
+                                                {errors.password ? <ErrorField error={errors.password}/> : null}
+                                                {ApiErrors.password ? <ErrorField error={ApiErrors.password}/> : null}
                                             </label>
                                         </div>
                                     </div>
-                                    
+                                    <div className="flex justify-between mb-5">
+                                        <div className="form-control">
+                                            <label className="cursor-pointer label">
+                                                <p>Forgot password?</p>
+                                            </label>
+                                        </div>
+                                    </div>
                                     <button type="submit" disabled={isSubmitting} className="w-full btn">
                                         Submit
                                     </button>
@@ -191,8 +198,8 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             </label>
                                             <Field placeholder="Enter your email" type="email" name="email" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             <label className="label">
-                                                {errors.email && touched.email ? <span className="italic label-text-alt">{errors.email}</span> : null}
-                                                {ApiErrors.email && touched.email ? <span className="italic label-text-alt">{ApiErrors.email}</span> : null}
+                                                {errors.email && touched.email ? <ErrorField error={errors.email}/> : null}
+                                                {ApiErrors.email && touched.email ? <ErrorField error={ApiErrors.email}/> : null}
                                             </label>
                                             
                                         </div>
@@ -213,8 +220,8 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             <Field placeholder="Enter your password" type={(open === false)? 'password' :'text'} name="password" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             
                                             <label className="label">
-                                                {errors.password ? <span className="italic label-text-alt">{errors.password}</span> : null}
-                                                {ApiErrors.password ? <span className="italic label-text-alt">{ApiErrors.password}</span> : null}
+                                                {errors.password ? <ErrorField error={errors.password}/> : null}
+                                                {ApiErrors.password ? <ErrorField error={ApiErrors.password}/> : null}
                                             </label>
                                         </div>
                                     </div>
@@ -226,8 +233,8 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             </label>
                                             <Field placeholder="Enter your first name" type="text" name="firstName" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             <label className="label">
-                                                {errors.firstName && touched.firstName ? <span className="italic label-text-alt">{errors.firstName}</span> : null}
-                                                {ApiErrors.firstName && touched.firstName ? <span className="italic label-text-alt">{ApiErrors.firstName}</span> : null}
+                                                {errors.firstName && touched.firstName ? <ErrorField error={errors.firstName}/> : null}
+                                                {ApiErrors.firstName && touched.firstName ? <ErrorField error={ApiErrors.firstName}/> : null}
                                             </label>
                                             
                                         </div>
@@ -240,8 +247,8 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             </label>
                                             <Field placeholder="Enter your last name" type="text" name="lastName" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             <label className="label">
-                                                {errors.lastName && touched.lastName ? <span className="italic label-text-alt">{errors.lastName}</span> : null}
-                                                {ApiErrors.lastName && touched.lastName ? <span className="italic label-text-alt">{ApiErrors.lastName}</span> : null}
+                                                {errors.lastName && touched.lastName ? <ErrorField error={errors.lastName}/> : null}
+                                                {ApiErrors.lastName && touched.lastName ? <ErrorField error={ApiErrors.lastName}/> : null}
                                             </label>
                                             
                                         </div>
@@ -254,8 +261,8 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             </label>
                                             <Field placeholder="Enter your nick name" type="text" name="displayName" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             <label className="label">
-                                                {errors.displayName && touched.displayName ? <span className="italic label-text-alt">{errors.displayName}</span> : null}
-                                                {ApiErrors.displayName && touched.displayName ? <span className="italic label-text-alt">{ApiErrors.displayName}</span> : null}
+                                                {errors.displayName && touched.displayName ? <ErrorField error={errors.displayName}/> : null}
+                                                {ApiErrors.displayName && touched.displayName ? <ErrorField error={ApiErrors.displayName}/> : null}
                                             </label>
                                             
                                         </div>
@@ -277,7 +284,7 @@ const Login: React.FC<LoginProps> = ({}) => {
             </div>    
             <div className="flex w-full m-auto mt-8 lg:w-4/12 md:w-10/12">
                 <Link href="/">
-                    <a className="m-auto mb-10 text-xl btn btn-ghost btn-sm rounded-btn lg:m-0 btn-primary btn-outline">
+                    <a className="m-auto mb-10 text-xl shadow-xl btn btn-ghost btn-sm rounded-btn lg:m-0 btn-primary btn-outline">
                         <FiArrowLeft/> Back to main site
                     </a>
                 </Link>
