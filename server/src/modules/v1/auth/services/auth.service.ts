@@ -9,6 +9,10 @@ import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../..
 import PostgresErrorCode from '../../../../common/enums/postgres-errors.enum';
 import Providers from '../../../../common/enums/providers.enum';
 import { User } from '../../../../common/entities';
+import { MailerService } from '@nestjs-modules/mailer';
+import { Redis, InjectRedis } from '@nestjs-modules/ioredis'
+import { nanoid } from 'nanoid'
+import { AccountStatus } from 'common/enums/status.enum';
 
 export interface AuthRequest extends Request {
     user: IUser
@@ -23,7 +27,9 @@ export class AuthService {
     constructor(
         private readonly jwtService: JwtService,
         private readonly userService: UserService,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
+        private readonly mailerService: MailerService,
+        @InjectRedis() private readonly redis: Redis
     ) {}
 
     public async register(registrationData: CreateAccountDto, req: Request) {
@@ -31,6 +37,8 @@ export class AuthService {
             const user = await this.userService.create({
                 ...registrationData
             })
+
+            await this.sendConfirmationToken(user)
 
             const [accessToken] = await this.generateTokens(user)
 
@@ -155,6 +163,52 @@ export class AuthService {
             }
         } catch (err) {
             req.res.redirect(`${process.env.ORIGIN}/login/error?message=${err.response.message}`)
+        }
+    }
+
+    private async sendConfirmationToken(user: User) {
+        const token = nanoid()
+
+            await this.redis.set(`confirm-account:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
+
+            await this.mailerService.sendMail({
+                to: user.email,
+                subject: 'Confirm your email',
+                template: 'confirm-email',
+                context: {
+                    token
+                }
+            })
+    }
+
+    public async confirmAccount(user: any, token: string) {
+        const accountId = await this.redis.get(`confirm-account:${token}`)
+
+        if(!accountId) {
+            if(user.accountStatus === 'verified') {
+                return {
+                    success: true,
+                    message: "Account already verified"
+                }
+            }
+
+            if(user.accountStatus !== 'verified') {
+                return {
+                    success: false,
+                    message: "Confirmation token expired"
+                }
+            }
+        }
+
+        if(user.id === accountId) {
+            await this.userService.update(user.id, {
+                accountStatus: AccountStatus.VERIFIED
+            })
+            await this.redis.del(`confirm-account:${token}`)
+        }
+        return {
+            success: true,
+            message: "Account verified successfully"
         }
     }
 }

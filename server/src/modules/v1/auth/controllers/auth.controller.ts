@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthRequest, AuthService } from '../services/auth.service';
@@ -11,6 +11,8 @@ import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../../../../common/enums/role.enum';
 import { SkipThrottle } from '@nestjs/throttler';
 import Providers from '../../../../common/enums/providers.enum';
+import { CurrentUser } from '../decorators/user.decorator';
+import { User } from 'common/entities';
 
 @ApiTags('v1/auth')
 @Controller({
@@ -116,6 +118,18 @@ export class AuthController {
     @Get('admin')
     getAdminData() {
         return 'only admins should see this'
+    }
+
+    @ApiOkResponse({
+        description: 'Confirm account'
+    })
+    @UseGuards(JwtAuthGuard)
+    @Get('account/confirm')
+    confirmAccount(
+        @CurrentUser() user: User,
+        @Query('token') token: string
+    ) {
+        return this.authService.confirmAccount(user, token)
     }
 
 }

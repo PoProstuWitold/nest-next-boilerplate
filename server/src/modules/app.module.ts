@@ -5,6 +5,8 @@ import { V1Module } from './v1/v1.module'
 import { MainController } from './app.controller'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { APP_GUARD } from '@nestjs/core'
+import { MailModule } from './mailer/mailer.module'
+import { RedisModule } from '@nestjs-modules/ioredis'
 
 @Module({
     imports: [
@@ -33,7 +35,13 @@ import { APP_GUARD } from '@nestjs/core'
             ttl: 60,
             limit: 10,
         }),
-        V1Module
+        RedisModule.forRoot({
+            config: {
+                url: 'redis://localhost:6379'
+            }
+        }),
+        V1Module,
+        MailModule
     ],
     controllers: [MainController],
     providers: [

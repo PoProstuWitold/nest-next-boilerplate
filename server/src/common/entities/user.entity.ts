@@ -4,6 +4,7 @@ import { AbstractEntity } from './'
 import * as argon2 from 'argon2'
 import Providers from '../enums/providers.enum'
 import { Role } from '../../common/enums/role.enum'
+import { AccountStatus } from 'common/enums/status.enum'
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -79,6 +80,15 @@ export class User extends AbstractEntity<User> {
         enum: Role
     })
     public role: Role
+
+    @Column({
+        name: 'account_status',
+        nullable: false,
+        default: AccountStatus.PENDING,
+        type: 'enum',
+        enum: AccountStatus
+    })
+    public accountStatus: AccountStatus
 
     @BeforeInsert()
     async hashPassword() {

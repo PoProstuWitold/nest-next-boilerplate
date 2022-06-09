@@ -4,6 +4,7 @@ import { CreateAccountDto } from '../../../../common/dtos';
 import { User } from '../../../../common/entities';
 import { UserRepository } from '../repositories/user.repository';
 import Providers from '../../../../common/enums/providers.enum';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class UserService {
@@ -27,6 +28,15 @@ export class UserService {
         await this.userRepository.save(user)
         
         return user
+    }
+
+    public async update(userId: string, values: QueryDeepPartialEntity<User>) {
+        this.userRepository
+            .createQueryBuilder()
+            .update(User)
+            .set(values)
+            .where("id = :id", { id: userId })
+            .execute()
     }
 
 
