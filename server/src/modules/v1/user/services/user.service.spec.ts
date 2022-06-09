@@ -62,14 +62,14 @@ describe('UserService', () => {
         describe('email', () => {
             describe('and the email is found in the database', () => {
                 it('should return the user data', async () => {
-                    const user = await service.getByEmail('test@email.com')
+                    const user = await service.getUserByField('email', 'test@email.com')
                     expect(user.email).toBe(LocalUser.email)
                 })
             })
             describe('and the email is not found in the database', () => {
                 it('should throw an error', async () => {
                     expect(
-                        await service.getByEmail('test2@email.com')
+                        await service.getUserByField('email', 'test2@email.com')
                     ).toBeNull()
                 })
             })
@@ -77,14 +77,14 @@ describe('UserService', () => {
         describe('id', () => {
             describe('and the id is found in the database', () => {
                 it('should return the user data', async () => {
-                    const user = await service.getUserById(userId)
+                    const user = await service.getUserByField('id', userId)
                     expect(user.id).toBe(userId)
                 })
             })
             describe('and the id is not found in the database', () => {
                 it('should throw an error', async () => {
                     expect(
-                        await service.getUserById(uuidv4())
+                        await service.getUserByField('id', uuidv4())
                     ).toBeNull()
                 })
             })

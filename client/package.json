@@ -9,22 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^1.6.1",
+    "@headlessui/react": "^1.6.4",
     "@rematch/core": "^2.2.0",
     "@rematch/loading": "^2.1.2",
     "@rematch/persist": "^2.1.2",
     "@tailwindcss/typography": "^0.5.2",
     "axios": "^0.27.2",
-    "daisyui": "^2.14.3",
+    "daisyui": "^2.15.2",
     "formik": "^2.2.9",
     "next": "12.1.6",
     "next-themes": "^0.2.0",
     "rc-drawer": "^4.4.3",
     "react": "18.1.0",
-    "react-aria": "^3.15.0",
+    "react-aria": "^3.16.0",
     "react-dom": "18.1.0",
     "react-icons": "^4.4.0",
-    "react-redux": "^8.0.1",
+    "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "swr": "^1.3.0",
     "theme-change": "^2.0.2",
@@ -32,13 +32,13 @@
   },
   "devDependencies": {
     "@types/classnames": "^2.3.1",
-    "@types/node": "^17.0.31",
-    "@types/react": "^18.0.9",
+    "@types/node": "^17.0.41",
+    "@types/react": "^18.0.12",
     "autoprefixer": "^10.4.7",
-    "eslint": "8.15.0",
+    "eslint": "8.17.0",
     "eslint-config-next": "12.1.6",
-    "postcss": "^8.4.13",
+    "postcss": "^8.4.14",
     "tailwindcss": "^3.0.24",
-    "typescript": "4.6.4"
+    "typescript": "4.7.3"
   }
 }

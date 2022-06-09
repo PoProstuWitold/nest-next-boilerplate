@@ -1,4 +1,4 @@
-import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { UserService } from '../../../../modules/v1/user/services/user.service';
@@ -9,6 +9,14 @@ import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../..
 import PostgresErrorCode from '../../../../common/enums/postgres-errors.enum';
 import Providers from '../../../../common/enums/providers.enum';
 import { User } from '../../../../common/entities';
+
+export interface AuthRequest extends Request {
+    user: IUser
+}
+
+interface IUser extends User {
+    verified?: boolean;
+}
 
 @Injectable()
 export class AuthService {
@@ -127,17 +135,26 @@ export class AuthService {
     }
 
 
-    public async socialProviderLogin(req: Request) {
-        const user = await this.userService.continueWithProvider(req)
-        const [accessToken] = await this.generateTokens(user)
-        await this.setTokens(req, { accessToken })
-
-        // req.res.redirect('/api/v1/auth/me')
-        req.res.redirect(`${process.env.ORIGIN}/me`)
-
-        return {
-            user,
-            accessToken
+    public async socialProviderLogin(req: AuthRequest, provider: Providers) {
+        try {
+            if(provider === Providers.Google) {
+                if(!req.user.verified) {
+                    throw new BadRequestException('This Google account is not verified')
+                }
+            }
+            const user = await this.userService.continueWithProvider(req)
+            const [accessToken] = await this.generateTokens(user)
+            await this.setTokens(req, { accessToken })
+    
+            // req.res.redirect('/api/v1/auth/me')
+            req.res.redirect(`${process.env.ORIGIN}/me`)
+    
+            return {
+                user,
+                accessToken
+            }
+        } catch (err) {
+            req.res.redirect(`${process.env.ORIGIN}/login/error?message=${err.response.message}`)
         }
     }
 }

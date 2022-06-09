@@ -3,7 +3,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
-import { classToPlain } from 'class-transformer'
+import { instanceToPlain } from 'class-transformer'
   
 export abstract class AbstractEntity<T> {
 
@@ -27,6 +27,6 @@ export abstract class AbstractEntity<T> {
     public updatedAt: Date
 
     toJSON() {
-        return classToPlain(this)
+        return instanceToPlain(this)
     }
 }

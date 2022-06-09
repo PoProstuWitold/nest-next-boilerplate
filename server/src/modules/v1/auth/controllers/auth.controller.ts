@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { AuthService } from '../services/auth.service';
+import { AuthRequest, AuthService } from '../services/auth.service';
 import { GoogleOauthGuard } from '../guards/google-oauth.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CreateAccountDto, LoginDto } from '../../../../common/dtos';
@@ -10,9 +10,13 @@ import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../../../../common/enums/role.enum';
 import { SkipThrottle } from '@nestjs/throttler';
+import Providers from '../../../../common/enums/providers.enum';
 
 @ApiTags('v1/auth')
-@Controller('auth')
+@Controller({
+    path: 'auth',
+    version: '1'
+})
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
@@ -68,8 +72,8 @@ export class AuthController {
     })
     @Get('google/redirect')
     @UseGuards(GoogleOauthGuard)
-    async googleAuthRedirect(@Req() req: Request, @Res() _res: Response) {
-        return this.authService.socialProviderLogin(req)
+    async googleAuthRedirect(@Req() req: AuthRequest, @Res() _res: Response) {
+        return this.authService.socialProviderLogin(req, Providers.Google)
     }
 
     @ApiOkResponse({
@@ -86,8 +90,8 @@ export class AuthController {
     })
     @Get('facebook/redirect')
     @UseGuards(FacebookOauthGuard)
-    async facebookAuthRedirect(@Req() req: Request, @Res() _res: Response) {
-        return this.authService.socialProviderLogin(req)
+    async facebookAuthRedirect(@Req() req: AuthRequest, @Res() _res: Response) {
+        return this.authService.socialProviderLogin(req, Providers.Facebook)
     }
 
     @ApiCookieAuth()
