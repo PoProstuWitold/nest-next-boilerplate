@@ -1,18 +1,21 @@
-import { Body, Controller, Delete, Get, HttpCode, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Patch, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthRequest, AuthService } from '../services/auth.service';
 import { GoogleOauthGuard } from '../guards/google-oauth.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { CreateAccountDto, LoginDto } from '../../../../common/dtos';
+import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../../common/dtos';
 import { FacebookOauthGuard } from '../guards/facebook.-oauth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../../../../common/enums/role.enum';
-import { SkipThrottle } from '@nestjs/throttler';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import Providers from '../../../../common/enums/providers.enum';
 import { CurrentUser } from '../decorators/user.decorator';
 import { User } from '../../../../common/entities';
+import { Verified as Status } from '../decorators/verified.decorator';
+import { AccountStatus } from 'common/enums/status.enum';
+import { VerifiedGuard } from '../guards/verified.guard';
 
 @ApiTags('v1/auth')
 @Controller({
@@ -123,13 +126,44 @@ export class AuthController {
     @ApiOkResponse({
         description: 'Confirm account'
     })
-    @UseGuards(JwtAuthGuard)
+    @Status(AccountStatus.PENDING)
+    @UseGuards(JwtAuthGuard, VerifiedGuard)
     @Get('account/confirm')
     confirmAccount(
         @CurrentUser() user: User,
         @Query('token') token: string
     ) {
         return this.authService.confirmAccount(user, token)
+    }
+
+    @ApiOkResponse({
+        description: 'Resend confirmation token'
+    })
+    @Status(AccountStatus.PENDING)
+    @UseGuards(JwtAuthGuard, VerifiedGuard)
+    @Get('account/confirm-resend')
+    resendConfirmToken(
+        @CurrentUser() user: User
+    ) {
+        return this.authService.resendConfirmationToken(user)
+    }
+
+
+    @Patch('password/reset')
+    resetPassword(
+        @Body('email') email: string
+    ) {
+        return this.authService.resetPassword(email)
+    }
+
+    @Patch('password/change')
+    @Status(AccountStatus.VERIFIED)
+    @UseGuards(JwtAuthGuard, VerifiedGuard)
+    changePassword(
+        @CurrentUser() user: User,
+        @Body() passwordValues: PasswordValuesDto
+    ) {
+        return this.authService.changePassword(user, passwordValues)
     }
 
 }

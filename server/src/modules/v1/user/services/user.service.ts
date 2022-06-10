@@ -5,6 +5,7 @@ import { User } from '../../../../common/entities';
 import { UserRepository } from '../repositories/user.repository';
 import Providers from '../../../../common/enums/providers.enum';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { AccountStatus } from 'common/enums/status.enum';
 
 @Injectable()
 export class UserService {
@@ -70,7 +71,8 @@ export class UserService {
                 firstName: req.user.firstName,
                 lastName: req.user.lastName,
                 displayName: req.user.displayName,
-                image: req.user.image
+                image: req.user.image,
+                accountStatus: AccountStatus.VERIFIED
             })
 
             await this.userRepository.save(user)

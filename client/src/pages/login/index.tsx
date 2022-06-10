@@ -169,11 +169,13 @@ const Login: React.FC<LoginProps> = ({}) => {
                                         </div>
                                     </div>
                                     <div className="flex justify-between mb-5">
-                                        <div className="form-control">
-                                            <label className="cursor-pointer label">
-                                                <p>Forgot password?</p>
-                                            </label>
-                                        </div>
+                                        <Link href="/account/password/reset">
+                                            <div className="form-control">
+                                                <label className="cursor-pointer hover:underline">
+                                                    <p>Forgot password?</p>
+                                                </label>
+                                            </div>
+                                        </Link>
                                     </div>
                                     <button type="submit" disabled={isSubmitting} className="w-full btn">
                                         Submit
@@ -268,7 +270,7 @@ const Login: React.FC<LoginProps> = ({}) => {
                                         </div>
                                     </div>
                                     
-                                    <button type="submit" disabled={isSubmitting} className="w-full btn">
+                                    <button type="submit" disabled={isSubmitting} className={`w-full btn ${isSubmitting ? 'btn loading' : ''}`}>
                                         Submit
                                     </button>
                                 </Form>

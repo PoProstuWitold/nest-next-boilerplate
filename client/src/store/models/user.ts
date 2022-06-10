@@ -78,13 +78,23 @@ export const user = createModel<RootModel>()({
             dispatch.user.SET_USER(data.user)
         },
         async logoutAsync() {
-            await axios.delete('/auth/logout')
-            dispatch.user.LOGOUT()
+            try {
+                await axios.delete('/auth/logout')
+                dispatch.user.LOGOUT()
+            } catch (err) {
+                if(err instanceof AxiosError) {
+                    dispatch.user.LOGOUT()
+                }
+            }
         },
         async getUserProfileAsync() {
-            let { data } = await axios.get('/auth/me')
-            console.log(data)
-            dispatch.user.SET_USER(data.user)
+            try {
+                let { data } = await axios.get('/auth/me')
+                console.log(data)
+                dispatch.user.SET_USER(data.user)
+            } catch (err) {
+                dispatch.user.LOGOUT()
+            }
         }
     })
 })

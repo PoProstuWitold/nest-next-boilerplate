@@ -16,7 +16,7 @@ const LoginError: React.FC<LoginErrorProps> = ({}) => {
     return (
         <>
             <Head>
-                <title>Nest Next Boilerplate</title>
+                <title>Login Error</title>
                 <meta name="description" content="Welcome to Witq" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>

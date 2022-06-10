@@ -1,10 +1,10 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Container } from '../../components/Container'
-import { RootState } from '../../store/store'
+import { Dispatch } from '../../store/store'
 import { AuthOption, withAuth } from '../../utils/withAuth'
 
 interface ConfirmProps {
@@ -12,35 +12,43 @@ interface ConfirmProps {
 }
 
 const Confirm: React.FC<ConfirmProps> = ({}) => {
-    let userState = useSelector((state: RootState) => state.user)
+    const dispatch = useDispatch<Dispatch>()
     const [ApiResponse, setApiResponse] = useState<any>('')
-    const { user, authenticated } = userState
     
     const router = useRouter()
     const { token } = router.query
 
     const confirmAccount = async () => {
-        console.log('gowno')
-        const res = await axios.get('/auth/account/confirm', {
-            params: {
-                token: token
+        try {
+            const res = await axios.get('/auth/account/confirm', {
+                params: {
+                    token: token
+                }
+            })
+    
+            if(res.data.success) {
+                dispatch.user.getUserProfileAsync()
             }
-        })
-        console.log(res.data)
-        setApiResponse(res.data)
-        console.log('gowdaads', ApiResponse)
+    
+            setApiResponse(res.data)
+        } catch (err) {
+            if(err instanceof AxiosError) {
+                setApiResponse(err.response!.data)
+                console.log(err.response!.data)
+            }
+        }
     }
 
     const resendConfirmationToken = async () => {
-        console.log('gowno')
-        const res = await axios.get('/auth/account/confirm', {
-            params: {
-                token: token
+        try {
+            const res = await axios.get('/auth/account/confirm-resend')
+            setApiResponse(res.data)
+        } catch (err) {
+            if(err instanceof AxiosError) {
+                setApiResponse(err.response!.data)
+                console.log(err.response!.data)
             }
-        })
-        console.log(res.data)
-        setApiResponse(res.data)
-        console.log('gowdaads', ApiResponse)
+        }
     }
 
     return (

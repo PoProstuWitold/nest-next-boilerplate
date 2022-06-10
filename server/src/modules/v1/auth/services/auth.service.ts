@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { UserService } from '../../../../modules/v1/user/services/user.service';
 import * as argon2 from 'argon2'
-import { CreateAccountDto, LoginDto } from '../../../../common/dtos';
+import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../../common/dtos';
 import { ConfigService } from '@nestjs/config';
 import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../../common/exceptions';
 import PostgresErrorCode from '../../../../common/enums/postgres-errors.enum';
@@ -181,22 +181,35 @@ export class AuthService {
             })
     }
 
-    public async confirmAccount(user: any, token: string) {
+    private async sendResetToken(user: User) {
+        const token = nanoid()
+
+            await this.redisService.getClient().set(`reset-password:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
+
+            await this.mailerService.sendMail({
+                to: user.email,
+                subject: 'Reset your password',
+                template: 'reset-password',
+                context: {
+                    token
+                }
+            })
+    }
+
+    public async confirmAccount(user: User, token: string) {
         const accountId = await this.redisService.getClient().get(`confirm-account:${token}`)
 
         if(!accountId) {
-            if(user.accountStatus === 'verified') {
+            if(user.accountStatus === AccountStatus.VERIFIED) {
                 return {
                     success: true,
                     message: "Account already verified"
                 }
             }
-
-            if(user.accountStatus !== 'verified') {
-                return {
-                    success: false,
-                    message: "Confirmation token expired"
-                }
+            
+            return {
+                success: false,
+                message: "Confirmation token expired"
             }
         }
 
@@ -210,6 +223,40 @@ export class AuthService {
         return {
             success: true,
             message: "Account verified successfully"
+        }
+    }
+
+    public async resendConfirmationToken(user: any) {
+        this.sendConfirmationToken(user)
+
+        return {
+            success: true,
+            message: "Confirmation token resend. Check your email"
+        }
+    }
+
+    public async resetPassword(email: string) {
+        const user = await this.userService.getUserByField('email', email)
+        // if(user && user.provider === Providers.Local) {
+        //     this.sendResetToken(user)
+        // }
+        console.log(user)
+        console.log(email);
+    }
+
+    public async changePassword(user: User, passportValues: PasswordValuesDto) {
+        if(user.provider !== Providers.Local) {
+            throw new BadRequestException(`You can't change password while using social provider`)
+        }
+
+        const authUser = await this.getAuthenticatedUser(user.email, passportValues.oldPassword)
+
+        if(authUser) {
+            this.userService.update(user.id, { password: await argon2.hash(passportValues.newPassword)})
+            return {
+                success: true,
+                message: "Password changed"
+            }
         }
     }
 }

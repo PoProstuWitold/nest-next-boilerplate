@@ -28,7 +28,9 @@ const fetcher = async (url: string) => {
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
     
-    const router = useRouter()
+    const { pathname } = useRouter()
+    const authRoutes = ['/login', '/account/password/reset']
+    const authRoute = authRoutes.includes(pathname)
 
     return (
         <SWRConfig value={{
@@ -39,9 +41,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                     <Provider store={store}>
                         <PersistGate persistor={persistor}>
                             <AuthProvider>
-                                {router.pathname !== '/login' && <NavBar/>}
+                                {!authRoute && <NavBar/>}
                                 <Component {...pageProps}/>
-                                {router.pathname !== '/login' && <Footer/>}                      
+                                {!authRoute && <Footer/>}                      
                             </AuthProvider>
                         </PersistGate>
                     </Provider>
