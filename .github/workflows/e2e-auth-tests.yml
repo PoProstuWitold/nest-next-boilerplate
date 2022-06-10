@@ -31,6 +31,10 @@ jobs:
           POSTGRES_DB: postgres-tests
         ports:
           - 5431:5432
+      redis-tests:
+        image: redis:alpine
+        ports:
+          - 6379:6379
     steps:
     - uses: actions/checkout@v1
       name: Postgres setup
