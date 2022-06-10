@@ -17,7 +17,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
             defaults: {
                 from: '"PoProstuWitold" <no-reply@poprostuwitold.com>', // outgoing email ID
             },
-            preview: true,
             template: {
                 dir: path.join(__dirname, 'templates/pages'),
                 adapter: new HandlebarsAdapter(),

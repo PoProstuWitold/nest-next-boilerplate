@@ -10,6 +10,10 @@ import { MainController } from '../src/modules/app.controller';
 import { UserRepository } from '../src/modules/v1/user/repositories/user.repository';
 import { User } from '../src/common/entities';
 import { JwtAuthGuard } from '../src/modules/v1/auth/guards/jwt-auth.guard';
+import { MailModule } from '../src/modules/mailer/mailer.module';
+import { getRedisToken, RedisModule, RedisService } from '@liaoliaots/nestjs-redis';
+import Redis from 'ioredis';
+import { RedisClient } from 'ioredis/built/connectors/SentinelConnector/types';
 
 const mockLocalUser = {
     email: LocalUser.email,
@@ -18,19 +22,27 @@ const mockLocalUser = {
     lastName: LocalUser.lastName,
     displayName: LocalUser.displayName
 }
-describe('AppController (e2e)', () => {
+describe('AuthController (e2e)', () => {
     let moduleFixture: TestingModule
     let app: INestApplication
     let repository: UserRepository
+    let client: Redis
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         moduleFixture = await Test.createTestingModule({
             imports: [
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
-                V1Module
+                V1Module,
+                MailModule,
+                RedisModule.forRoot({
+                    config: {
+                        host: 'localhost',
+                        port: 6379,
+                    }
+                })
             ],
             controllers: [MainController]
         })
@@ -40,11 +52,18 @@ describe('AppController (e2e)', () => {
 
         app = moduleFixture.createNestApplication()
         repository = moduleFixture.get<UserRepository>(getRepositoryToken(User))
-        await repository.clear()
         await app.init()
     })
 
+    beforeEach( async () => {
+        await repository.clear()
+    })
+
     afterEach( async () => {
+        await repository.clear()
+    })
+
+    afterAll( async () => {
         await repository.clear()
         await app.close()
     })

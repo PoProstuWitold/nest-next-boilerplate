@@ -1,25 +1,36 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/modules/app.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { createTestConfiguration } from './test-utils';
 import { User } from '../src/common/entities';
 import { V1Module } from '../src/modules/v1/v1.module';
 import { MainController } from '../src/modules/app.controller';
+import { MailModule } from '../src/modules/mailer/mailer.module';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import Redis from 'ioredis';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication
     let moduleFixture: TestingModule
-    beforeEach(async () => {
+    let client: Redis
+
+    beforeAll(async () => {
         moduleFixture = await Test.createTestingModule({
             imports: [
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
-                V1Module
+                V1Module,
+                MailModule,
+                RedisModule.forRoot({
+                    config: {
+                        host: 'localhost',
+                        port: 6379,
+                    }
+                })
             ],
             controllers: [MainController]
         }).compile()
@@ -28,7 +39,7 @@ describe('AppController (e2e)', () => {
         await app.init()
     })
 
-    afterEach( async () => {
+    afterAll( async () => {
         await app.close()
     })
 

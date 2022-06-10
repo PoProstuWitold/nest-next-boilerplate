@@ -4,7 +4,7 @@ import { AbstractEntity } from './'
 import * as argon2 from 'argon2'
 import Providers from '../enums/providers.enum'
 import { Role } from '../../common/enums/role.enum'
-import { AccountStatus } from 'common/enums/status.enum'
+import { AccountStatus } from '../../common/enums/status.enum'
 
 @Entity()
 export class User extends AbstractEntity<User> {

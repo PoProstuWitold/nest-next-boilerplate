@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { UserService } from '../../../../modules/v1/user/services/user.service';
@@ -10,9 +10,9 @@ import PostgresErrorCode from '../../../../common/enums/postgres-errors.enum';
 import Providers from '../../../../common/enums/providers.enum';
 import { User } from '../../../../common/entities';
 import { MailerService } from '@nestjs-modules/mailer';
-import { Redis, InjectRedis } from '@nestjs-modules/ioredis'
 import { nanoid } from 'nanoid'
-import { AccountStatus } from 'common/enums/status.enum';
+import { AccountStatus } from '../../../../common/enums/status.enum';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 
 export interface AuthRequest extends Request {
     user: IUser
@@ -29,7 +29,7 @@ export class AuthService {
         private readonly userService: UserService,
         private readonly configService: ConfigService,
         private readonly mailerService: MailerService,
-        @InjectRedis() private readonly redis: Redis
+        private readonly redisService: RedisService
     ) {}
 
     public async register(registrationData: CreateAccountDto, req: Request) {
@@ -169,7 +169,7 @@ export class AuthService {
     private async sendConfirmationToken(user: User) {
         const token = nanoid()
 
-            await this.redis.set(`confirm-account:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
+            await this.redisService.getClient().set(`confirm-account:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
 
             await this.mailerService.sendMail({
                 to: user.email,
@@ -182,7 +182,7 @@ export class AuthService {
     }
 
     public async confirmAccount(user: any, token: string) {
-        const accountId = await this.redis.get(`confirm-account:${token}`)
+        const accountId = await this.redisService.getClient().get(`confirm-account:${token}`)
 
         if(!accountId) {
             if(user.accountStatus === 'verified') {
@@ -204,7 +204,8 @@ export class AuthService {
             await this.userService.update(user.id, {
                 accountStatus: AccountStatus.VERIFIED
             })
-            await this.redis.del(`confirm-account:${token}`)
+
+            await this.redisService.getClient().del(`confirm-account:${token}`)
         }
         return {
             success: true,

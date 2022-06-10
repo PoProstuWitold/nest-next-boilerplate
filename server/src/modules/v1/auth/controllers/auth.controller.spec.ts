@@ -8,6 +8,8 @@ import { User } from '../../../../common/entities'
 import { JwtModule } from '@nestjs/jwt'
 import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
 import { UserRepository } from '../../../../modules/v1/user/repositories/user.repository'
+import { MailModule } from '../../../../modules/mailer/mailer.module'
+import { RedisService } from '@liaoliaots/nestjs-redis'
 
 describe('AuthController', () => {
     let module: TestingModule
@@ -24,11 +26,19 @@ describe('AuthController', () => {
                 UserModule,
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 TypeOrmModule.forFeature([User]),
-                JwtModule.registerAsync(createJwtConfiguration())
+                JwtModule.registerAsync(createJwtConfiguration()),
+                MailModule
             ],
             controllers: [AuthController],
             providers: [
-                AuthService
+                AuthService,
+                {
+                    provide: RedisService,
+                    useValue: {
+                      get: jest.fn(),
+                      getClient: jest.fn().mockReturnValue({}),
+                    }
+                }
             ]
         }).compile()
         controller = module.get<AuthController>(AuthController)

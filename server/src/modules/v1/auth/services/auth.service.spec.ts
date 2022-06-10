@@ -8,6 +8,8 @@ import { LocalUser } from '../../../../../test/mocks/user.mock'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule } from '@nestjs/config'
 import { UserModule } from '../../../../modules/v1/user/user.module'
+import { MailModule } from '../../../../modules/mailer/mailer.module'
+import { RedisService } from '@liaoliaots/nestjs-redis'
 
 
 describe('AuthService', () => {
@@ -24,10 +26,18 @@ describe('AuthService', () => {
                 UserModule,
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 TypeOrmModule.forFeature([User]),
-                JwtModule.registerAsync(createJwtConfiguration())
+                JwtModule.registerAsync(createJwtConfiguration()),
+                MailModule
             ],
             providers: [
-                AuthService
+                AuthService,
+                {
+                    provide: RedisService,
+                    useValue: {
+                      get: jest.fn(),
+                      getClient: jest.fn().mockReturnValue({}),
+                    }
+                }
             ],
         }).compile()
 

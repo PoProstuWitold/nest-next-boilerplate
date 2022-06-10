@@ -12,7 +12,7 @@ import { Role } from '../../../../common/enums/role.enum';
 import { SkipThrottle } from '@nestjs/throttler';
 import Providers from '../../../../common/enums/providers.enum';
 import { CurrentUser } from '../decorators/user.decorator';
-import { User } from 'common/entities';
+import { User } from '../../../../common/entities';
 
 @ApiTags('v1/auth')
 @Controller({
