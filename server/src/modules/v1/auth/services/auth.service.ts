@@ -240,23 +240,61 @@ export class AuthService {
         // if(user && user.provider === Providers.Local) {
         //     this.sendResetToken(user)
         // }
-        console.log(user)
-        console.log(email);
+        // console.log(user)
+        // console.log(email)
+
+        if(user) {
+            // if(user.provider !== Providers.Local) {
+            //     throw new BadRequestException(`You can't reset password while using social provider`)
+            // }
+            this.sendResetToken(user)
+        }
+
+        return {
+            success: true,
+            message: "If the account exists and it isn't registered with social provider, an email with a password reset link has been sent to",
+            email
+        }
     }
 
-    public async changePassword(user: User, passportValues: PasswordValuesDto) {
+    public async changePassword(user: User, password: PasswordValuesDto) {
         if(user.provider !== Providers.Local) {
             throw new BadRequestException(`You can't change password while using social provider`)
         }
 
-        const authUser = await this.getAuthenticatedUser(user.email, passportValues.oldPassword)
+        const authUser = await this.getAuthenticatedUser(user.email, password.oldPassword)
+
+        if(password.newPassword === password.oldPassword) {
+            throw new BadRequestException(`New password cannot be same as old`)
+        }
 
         if(authUser) {
-            this.userService.update(user.id, { password: await argon2.hash(passportValues.newPassword)})
+            this.userService.update(user.id, { password: await argon2.hash(password.newPassword)})
             return {
                 success: true,
                 message: "Password changed"
             }
+        }
+    }
+
+    public async setNewPassword(newPassword: string, token: string) {
+        const accountId = await this.redisService.getClient().get(`reset-password:${token}`)
+
+        const user = await this.userService.getUserByField('id', accountId)
+
+        if(!accountId) {
+            throw new BadRequestException('Reset password token expired')
+        }
+
+            await this.userService.update(user.id, {
+                password: await argon2.hash(newPassword)
+            })
+
+            await this.redisService.getClient().del(`reset-password:${token}`)
+
+        return {
+            success: true,
+            message: "Password reseted"
         }
     }
 }

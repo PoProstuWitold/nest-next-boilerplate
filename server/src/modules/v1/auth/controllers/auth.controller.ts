@@ -166,4 +166,12 @@ export class AuthController {
         return this.authService.changePassword(user, passwordValues)
     }
 
+    @Patch('password/new')
+    setNewPassword(
+        @Body('newPassword') newPassword: string,
+        @Query('token') token: string
+    ) {
+        return this.authService.setNewPassword(newPassword, token)
+    }
+
 }

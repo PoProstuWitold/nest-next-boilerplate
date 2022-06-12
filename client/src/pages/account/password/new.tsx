@@ -7,43 +7,53 @@ import { ErrorField } from '../../../components/ErrorField'
 import { AuthOption, withAuth } from '../../../utils/withAuth'
 import axios, { AxiosError } from 'axios'
 import { mapErrors } from '../../../utils/mapErrors'
+import { useRouter } from 'next/router'
 
-interface ResetProps {
+interface NewProps {
 
 }
 
 type PasswordValues = {
-    oldPassword: string;
     newPassword: string;
-    confirmPassword: string;
 }
 
 
-const Reset: React.FC<ResetProps> = ({}) => {
+const New: React.FC<NewProps> = ({}) => {
 
-    const [open, setOpen] = useState<boolean>(false)
+    const router = useRouter()
+    const { token } = router.query
+
     const [ApiResponse, setAPIResponse] = useState<any>({})
-
+    const [open, setOpen] = useState<boolean>(false)
 
     const toggle = () =>{
         setOpen(!open)
     }
 
-    const passwordValues: PasswordValues = { oldPassword: '', newPassword: '', confirmPassword: ''}
+    const passwordValues: PasswordValues = { newPassword: ''}
     const passwordSchema = Yup.object().shape({
-        oldPassword: Yup.string().required('Password cannot be empty or whitespace').min(6, 'Password must be between 6 and 100 characters long').max(100, 'Password must be between 6 and 100 characters long'),
         newPassword: Yup.string().required('Password cannot be empty or whitespace').min(6, 'Password must be between 6 and 100 characters long').max(100, 'Password must be between 6 and 100 characters long')
-        .notOneOf([Yup.ref('oldPassword')], 'New password cannot be same as old password'),
-        confirmPassword: Yup.string()
-        .oneOf([Yup.ref('newPassword')], 'Password must match')
-        .required('Password confirm is required'),
+        .notOneOf([Yup.ref('oldPassword')], 'New password cannot be same as old password')
     })
-    const submitChangeForm = async (values: PasswordValues, helpers: FormikHelpers<PasswordValues>) => {
+    const submitNewPassword = async (values: PasswordValues, helpers: FormikHelpers<PasswordValues>) => {
         try {
-            const res = await axios.patch('/auth/password/change', {
-                oldPassword: values.oldPassword,
+            const res = await axios.patch('/auth/password/new', {
                 newPassword: values.newPassword
+            }, {
+                params: {
+                    token
+                }
             })
+            // const res = await axios({
+            //     method: 'PATCH',
+            //     url: '/auth/password/new',
+            //     data: {
+            //         newPassword: values.newPassword
+            //     },
+            //     params: {
+            //         token: token
+            //     }
+            // })
             helpers.resetForm()
             setAPIResponse(res.data)
             console.log(res.data)
@@ -70,30 +80,12 @@ const Reset: React.FC<ResetProps> = ({}) => {
                     {ApiResponse.password ? <p className="p-4 m-10 mx-auto font-bold text-center border text-md text-error rounded-xl border-error">Invalid password</p> : null}
                         <Formik
                             initialValues={passwordValues} 
-                            onSubmit={submitChangeForm}
+                            onSubmit={submitNewPassword}
                             validationSchema={passwordSchema}
                         >
                             {({ isSubmitting, errors, touched }: FormikState<PasswordValues>) => (
                                 <Form>
                                     <div>
-                                        <div className="form-control">
-                                            <label className="relative label">
-                                                <span className="font-semibold label-text">Old Password</span>
-                                                <div className='absolute text-2xl top-12 right-5'>
-                                                    {
-                                                        (open === false) ? <AiFillEye onClick={toggle}/> :
-                                                        <AiFillEyeInvisible onClick={toggle}/>
-    
-                                                    }
-                                                </div>
-                                            </label>
-                                            <Field placeholder="Enter old password" type={(open === false)? 'password' :'text'} name="oldPassword" className={`w-full p-3 transition duration-200 rounded input`}/>
-                                            
-                                            <label className="label">
-                                                {errors.oldPassword ? <ErrorField error={errors.oldPassword}/> : null}
-                                                {/* {ApiResponse.password ? <ErrorField error={ApiResponse.password}/> : null} */}
-                                            </label>
-                                        </div>
                                         <div className="form-control">
                                             <label className="relative label">
                                                 <span className="font-semibold label-text">New Password</span>
@@ -112,27 +104,9 @@ const Reset: React.FC<ResetProps> = ({}) => {
                                                 {/* {ApiResponse.password ? <ErrorField error={ApiResponse.password}/> : null} */}
                                             </label>
                                         </div>
-                                        <div className="form-control">
-                                            <label className="relative label">
-                                                <span className="font-semibold label-text">Confirm New Password</span>
-                                                <div className='absolute text-2xl top-12 right-5'>
-                                                    {
-                                                        (open === false) ? <AiFillEye onClick={toggle}/> :
-                                                        <AiFillEyeInvisible onClick={toggle}/>
-    
-                                                    }
-                                                </div>
-                                            </label>
-                                            <Field placeholder="Confirm your password" type={(open === false)? 'password' :'text'} name="confirmPassword" className={`w-full p-3 transition duration-200 rounded input`}/>
-                                            
-                                            <label className="label">
-                                                {errors.confirmPassword ? <ErrorField error={errors.confirmPassword}/> : null}
-                                                {/* {ApiResponse.password ? <ErrorField error={ApiResponse.password}/> : null} */}
-                                            </label>
-                                        </div>
                                     </div>
                                     <button type="submit" disabled={isSubmitting} className="w-full mb-5 btn">
-                                        Change Password
+                                        Set new password
                                     </button>
                                 </Form>
                             )}
@@ -144,4 +118,4 @@ const Reset: React.FC<ResetProps> = ({}) => {
     )
 }
 
-export default withAuth(AuthOption.REQUIRED, Reset)
+export default withAuth(AuthOption.FORBIDDEN, New)

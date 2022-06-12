@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { FiArrowLeft } from 'react-icons/fi'
 import { ErrorField } from '../../../components/ErrorField'
 import { AuthOption, withAuth } from '../../../utils/withAuth'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 interface ResetProps {
 
@@ -18,8 +18,8 @@ type EmailValue = {
 
 const Reset: React.FC<ResetProps> = ({}) => {
 
-    const [open, setOpen] = useState<boolean>(false)
-    const [ApiErrors, setAPIErrors] = useState<any>({})
+    const [ApiResponse, setAPIResponse] = useState<any>()
+    const [email, setEmail] = useState<string>('')
 
     const emailValue: EmailValue = { email: '' }
     const emailSchema = Yup.object().shape({
@@ -30,9 +30,12 @@ const Reset: React.FC<ResetProps> = ({}) => {
             const res = await axios.patch('/auth/password/reset', {
                 email: values.email
             })
-            console.log(res.data)
+            setAPIResponse(res.data)
+            setEmail(values.email)
         } catch (err) {
-            
+            if(err instanceof AxiosError) {
+                setAPIResponse(err!.response!.data)
+            }
         }
     }
 
@@ -46,6 +49,14 @@ const Reset: React.FC<ResetProps> = ({}) => {
             <div className="flex w-full m-auto mt-0 shadow-xl lg:w-4/12 md:w-10/12 md:mt-28 bg-base-200 rounded-xl" >
                     <div className="mx-auto w-96">
                     <p className="m-10 mx-auto text-lg font-bold text-center">PoProstuWitold</p>
+                        {ApiResponse
+                        ? 
+                        <>
+                            <p className="m-10 mx-auto text-center text-md">Password reset</p>
+                            <p className="m-10 mx-auto text-center text-md">{ApiResponse.message}</p>
+                            <p className="m-10 mx-auto font-bold text-center text-md">{ApiResponse.email}</p>
+                        </> 
+                        :
                         <Formik
                             initialValues={emailValue} 
                             onSubmit={submitResetForm}
@@ -70,14 +81,23 @@ const Reset: React.FC<ResetProps> = ({}) => {
                                 </Form>
                             )}
                         </Formik>
+                        }
                     </div>
             </div>    
             <div className="flex w-full m-auto mt-8 lg:w-4/12 md:w-10/12">
-                <Link href="/login">
-                    <a className="m-auto mb-10 text-xl shadow-xl btn btn-ghost btn-sm rounded-btn lg:m-0 btn-primary btn-outline">
-                        <FiArrowLeft/> Back to login
-                    </a>
-                </Link>
+                {ApiResponse !== {} ?
+                    <Link href="/">
+                        <a className="m-auto mb-10 text-xl shadow-xl btn btn-ghost btn-sm rounded-btn lg:m-0 btn-primary btn-outline">
+                            <FiArrowLeft/> Back to main site
+                        </a>
+                    </Link>
+                :
+                    <Link href="/login">
+                        <a className="m-auto mb-10 text-xl shadow-xl btn btn-ghost btn-sm rounded-btn lg:m-0 btn-primary btn-outline">
+                            <FiArrowLeft/> Back to login
+                        </a>
+                    </Link>
+                }
             </div>
         </>
     )
