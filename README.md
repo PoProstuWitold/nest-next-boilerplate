@@ -74,7 +74,7 @@ yarn
 ## FEATURES
 - Local login & register
 - Social login & register
-- Password confirmation
+- Account confirmation
 - Password recover
 - Profile update
 
