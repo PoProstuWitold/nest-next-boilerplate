@@ -30,12 +30,11 @@ Create ``.env`` file in server root directory and fill with following:
 
 ```code
 # APP
-APP_ENV='dev'
+NODE_ENV='development'
 APP_URL='http://localhost'
 APP_PORT=4000
-ORIGIN='http://localhost:3001'
-SWAGGER=true
-API_PREFIX='/api/v1/'
+ORIGIN='http://localhost:3000'
+API_PREFIX='/api'
 
 # JWT AUTH
 JWT_ACCESS_SECRET_KEY='uAsBw6WxqD'
@@ -72,6 +71,12 @@ npm install
 yarn
 ```
 
+## FEATURES
+- Local login & register
+- Social login & register
+- Password confirmation
+- Password recover
+- Profile update
 
 ## TO DO
 - [x] Local login
