@@ -1,18 +1,15 @@
 import { Formik, Form, Field, FormikState, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { SocialLogin } from '../components/SocialLogin'
-import { Dispatch, RootState } from '../store/store'
-import { mapErrors } from '../utils/mapErrors'
-import { AuthOption, withAuth } from '../utils/withAuth'
-import {AiFillEyeInvisible, AiFillEye, AiTwotoneEdit} from 'react-icons/ai'
-import { FiArrowLeft } from 'react-icons/fi'
-import { SERVER_URL } from '../utils/constants'
-import Link from 'next/link'
-import { ErrorField } from '../components/ErrorField'
 import axios, { AxiosError } from 'axios'
+import { AiTwotoneEdit } from 'react-icons/ai'
+import Link from 'next/link'
+
+import { Dispatch, RootState } from '../store/store'
+import { AuthOption, withAuth } from '../utils/withAuth'
+import { ErrorField } from '../components/ErrorField'
+
 interface EditProfileProps {
 
 }
@@ -29,7 +26,6 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
     const [ApiErrors, setAPIErrors] = useState<any>({})
     const [ApiResponse, setApiResponse] = useState<any>('')
     const dispatch = useDispatch<Dispatch>()
-    const router = useRouter()
     
     let userState = useSelector((state: RootState) => state.user)
     const { user, authenticated } = userState
@@ -43,9 +39,9 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
 
     if(user) {
         updateValues = {
-            firstName: user!.firstName,
-            lastName: user!.lastName,
-            displayName: user!.displayName
+            firstName: user.firstName,
+            lastName: user.lastName,
+            displayName: user.displayName
         }
     }
 
@@ -85,8 +81,8 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
                     <div className="mx-auto w-96">
                     <p className="m-10 mx-auto text-lg font-bold text-center">PoProstuWitold</p>
                     {ApiResponse.success ? <p className="p-4 m-10 mx-auto font-bold text-center border text-md text-success rounded-xl border-success">{ApiResponse.message}</p> : (ApiResponse.message ? <p className="p-4 m-10 mx-auto font-bold text-center border rounded-xl border-error text-md text-error">{ApiResponse.message}</p> : null)}
-                        {authenticated && user !== null ? 
-                        <Formik
+                    {authenticated && user !== null ? 
+                    <Formik
                         initialValues={updateValues} 
                         onSubmit={submitUpdateForm}
                         validationSchema={updateSchema}
@@ -132,6 +128,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
                                         
                                     </div>
                                 </div>
+                                {user.provider === 'local' ?
                                 <div>
                                     <div className="flex flex-row items-stretch">
                                         <Link href="/account/password/change">
@@ -141,6 +138,8 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
                                         </Link>
                                     </div>
                                 </div>
+                                : null
+                                }
                                 {user?.accountStatus !== 'verified' ?
                                     <div>
                                         <div className="flex flex-row items-stretch">

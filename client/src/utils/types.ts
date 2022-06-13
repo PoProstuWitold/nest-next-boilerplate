@@ -1,17 +1,17 @@
-enum AccountStatus {
+export enum AccountStatus {
     PENDING = 'pending',
     VERIFIED = 'verified',
     BANNED = 'banned',
 }
 
-enum Role {
+export enum Role {
     USER = 'user',
     PREMIUM = 'premium',
     MODERATOR = 'moderator',
     ADMIN = 'admin',
 }
 
-enum Providers {
+export enum Providers {
     Google = 'google',
     Facebook = 'facebook',
     Local = 'local'

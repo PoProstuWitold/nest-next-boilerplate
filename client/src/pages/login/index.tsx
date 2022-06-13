@@ -4,15 +4,16 @@ import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { SocialLogin } from '../../components/SocialLogin'
-import { Dispatch } from '../../store/store'
-import { mapErrors } from '../../utils/mapErrors'
-import { AuthOption, withAuth } from '../../utils/withAuth'
+import Link from 'next/link'
 import {AiFillEyeInvisible, AiFillEye} from 'react-icons/ai'
 import { FiArrowLeft } from 'react-icons/fi'
+
+import { SocialLogin } from '../../components/SocialLogin'
+import { Dispatch } from '../../store/store'
+import { AuthOption, withAuth } from '../../utils/withAuth'
 import { SERVER_URL } from '../../utils/constants'
-import Link from 'next/link'
 import { ErrorField } from '../../components/ErrorField'
+
 interface LoginProps {
 
 }
@@ -58,7 +59,7 @@ const Login: React.FC<LoginProps> = ({}) => {
             const res = await dispatch.user.localLoginAsync(values)
             console.log(res)
             if(res.errors) {
-                setAPIErrors(mapErrors(res.errors))
+                setAPIErrors(res.errors)
                 console.log('ApiErrors', ApiErrors)
             }
             console.log('ApiErrors', ApiErrors)
@@ -93,7 +94,7 @@ const Login: React.FC<LoginProps> = ({}) => {
         try {
             const res = await dispatch.user.localRegisterAsync(values)
             if(res.errors) {
-                setAPIErrors(mapErrors(res.errors))
+                setAPIErrors(res.errors)
                 console.log(ApiErrors)
             }
 
@@ -143,8 +144,7 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             <label className="label">
                                                 {errors.email && touched.email ? <ErrorField error={errors.email}/>  : null}
                                                 {ApiErrors.email && touched.email ? <ErrorField error={ApiErrors.email}/>: null}
-                                            </label>
-                                            
+                                            </label>    
                                         </div>
                                     </div>
                                     <div>
@@ -156,7 +156,6 @@ const Login: React.FC<LoginProps> = ({}) => {
                                                     {
                                                         (open === false) ? <AiFillEye onClick={toggle}/> :
                                                         <AiFillEyeInvisible onClick={toggle}/>
-    
                                                     }
                                                 </div>
                                             </label>
@@ -202,8 +201,7 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             <label className="label">
                                                 {errors.email && touched.email ? <ErrorField error={errors.email}/> : null}
                                                 {ApiErrors.email && touched.email ? <ErrorField error={ApiErrors.email}/> : null}
-                                            </label>
-                                            
+                                            </label>                                           
                                         </div>
                                     </div>
                                     <div>
@@ -215,12 +213,10 @@ const Login: React.FC<LoginProps> = ({}) => {
                                                     {
                                                         (open === false) ? <AiFillEye onClick={toggle}/> :
                                                         <AiFillEyeInvisible onClick={toggle}/>
-    
                                                     }
                                                 </div>
                                             </label>
-                                            <Field placeholder="Enter your password" type={(open === false)? 'password' :'text'} name="password" className={`w-full p-3 transition duration-200 rounded input`}/>
-                                            
+                                            <Field placeholder="Enter your password" type={(open === false)? 'password' :'text'} name="password" className={`w-full p-3 transition duration-200 rounded input`}/>                                           
                                             <label className="label">
                                                 {errors.password ? <ErrorField error={errors.password}/> : null}
                                                 {ApiErrors.password ? <ErrorField error={ApiErrors.password}/> : null}
@@ -237,8 +233,7 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             <label className="label">
                                                 {errors.firstName && touched.firstName ? <ErrorField error={errors.firstName}/> : null}
                                                 {ApiErrors.firstName && touched.firstName ? <ErrorField error={ApiErrors.firstName}/> : null}
-                                            </label>
-                                            
+                                            </label>                                            
                                         </div>
                                     </div>
                                     <div>
@@ -251,8 +246,7 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             <label className="label">
                                                 {errors.lastName && touched.lastName ? <ErrorField error={errors.lastName}/> : null}
                                                 {ApiErrors.lastName && touched.lastName ? <ErrorField error={ApiErrors.lastName}/> : null}
-                                            </label>
-                                            
+                                            </label>                                            
                                         </div>
                                     </div>
                                     <div>
@@ -264,12 +258,10 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             <Field placeholder="Enter your nick name" type="text" name="displayName" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             <label className="label">
                                                 {errors.displayName && touched.displayName ? <ErrorField error={errors.displayName}/> : null}
-                                                {ApiErrors.displayName && touched.displayName ? <ErrorField error={ApiErrors.displayName}/> : null}
-                                            </label>
-                                            
+                                                {ApiErrors.nickName && touched.displayName ? <ErrorField error={ApiErrors.nickName}/> : null}
+                                            </label>                                            
                                         </div>
-                                    </div>
-                                    
+                                    </div>                                    
                                     <button type="submit" disabled={isSubmitting} className={`w-full btn ${isSubmitting ? 'btn loading' : ''}`}>
                                         Submit
                                     </button>

@@ -3,10 +3,10 @@ import Head from 'next/head'
 import * as Yup from 'yup'
 import { useState } from 'react'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
+import axios, { AxiosError } from 'axios'
+
 import { ErrorField } from '../../../components/ErrorField'
 import { AuthOption, withAuth } from '../../../utils/withAuth'
-import axios, { AxiosError } from 'axios'
-import { mapErrors } from '../../../utils/mapErrors'
 
 interface ResetProps {
 
@@ -50,7 +50,7 @@ const Reset: React.FC<ResetProps> = ({}) => {
         } catch (err) {
             console.log(err)
             if(err instanceof AxiosError) {
-                err!.response!.data.errors ? setAPIResponse(mapErrors(err!.response!.data.errors)) : setAPIResponse(err!.response!.data)
+                setAPIResponse(err!.response!.data)
             }
         }
     }
@@ -58,7 +58,7 @@ const Reset: React.FC<ResetProps> = ({}) => {
     return (
         <>
             <Head>
-                <title>Password change</title>
+                <title>Change password</title>
                 <meta name="description" content="Profile page" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -73,7 +73,7 @@ const Reset: React.FC<ResetProps> = ({}) => {
                             onSubmit={submitChangeForm}
                             validationSchema={passwordSchema}
                         >
-                            {({ isSubmitting, errors, touched }: FormikState<PasswordValues>) => (
+                            {({ isSubmitting, errors }: FormikState<PasswordValues>) => (
                                 <Form>
                                     <div>
                                         <div className="form-control">
@@ -83,15 +83,12 @@ const Reset: React.FC<ResetProps> = ({}) => {
                                                     {
                                                         (open === false) ? <AiFillEye onClick={toggle}/> :
                                                         <AiFillEyeInvisible onClick={toggle}/>
-    
                                                     }
                                                 </div>
                                             </label>
-                                            <Field placeholder="Enter old password" type={(open === false)? 'password' :'text'} name="oldPassword" className={`w-full p-3 transition duration-200 rounded input`}/>
-                                            
+                                            <Field placeholder="Enter old password" type={(open === false)? 'password' :'text'} name="oldPassword" className={`w-full p-3 transition duration-200 rounded input`}/>                                            
                                             <label className="label">
                                                 {errors.oldPassword ? <ErrorField error={errors.oldPassword}/> : null}
-                                                {/* {ApiResponse.password ? <ErrorField error={ApiResponse.password}/> : null} */}
                                             </label>
                                         </div>
                                         <div className="form-control">
@@ -101,15 +98,12 @@ const Reset: React.FC<ResetProps> = ({}) => {
                                                     {
                                                         (open === false) ? <AiFillEye onClick={toggle}/> :
                                                         <AiFillEyeInvisible onClick={toggle}/>
-    
                                                     }
                                                 </div>
                                             </label>
-                                            <Field placeholder="Enter new password" type={(open === false)? 'password' :'text'} name="newPassword" className={`w-full p-3 transition duration-200 rounded input`}/>
-                                            
+                                            <Field placeholder="Enter new password" type={(open === false)? 'password' :'text'} name="newPassword" className={`w-full p-3 transition duration-200 rounded input`}/>                                           
                                             <label className="label">
                                                 {errors.newPassword ? <ErrorField error={errors.newPassword}/> : null}
-                                                {/* {ApiResponse.password ? <ErrorField error={ApiResponse.password}/> : null} */}
                                             </label>
                                         </div>
                                         <div className="form-control">
@@ -119,15 +113,12 @@ const Reset: React.FC<ResetProps> = ({}) => {
                                                     {
                                                         (open === false) ? <AiFillEye onClick={toggle}/> :
                                                         <AiFillEyeInvisible onClick={toggle}/>
-    
                                                     }
                                                 </div>
                                             </label>
                                             <Field placeholder="Confirm your password" type={(open === false)? 'password' :'text'} name="confirmPassword" className={`w-full p-3 transition duration-200 rounded input`}/>
-                                            
                                             <label className="label">
                                                 {errors.confirmPassword ? <ErrorField error={errors.confirmPassword}/> : null}
-                                                {/* {ApiResponse.password ? <ErrorField error={ApiResponse.password}/> : null} */}
                                             </label>
                                         </div>
                                     </div>

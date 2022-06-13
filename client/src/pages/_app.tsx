@@ -1,16 +1,20 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { SWRConfig } from 'swr'
-import { NavBar } from '../components/NavBar'
 import axios from 'axios'
-import { AuthProvider } from '../store/auth'
-import { ThemeProvider } from 'next-themes'
-import { Footer } from '../components/Footer'
-import { Provider } from 'react-redux'
-import { store } from '../store/store'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import { getPersistor } from '@rematch/persist'
 import { useRouter } from 'next/router'
+import { ThemeProvider } from 'next-themes'
+import { Provider } from 'react-redux'
+
+import { AuthProvider } from '../store/auth'
+import { Footer } from '../components/Footer'
+import { store } from '../store/store'
+import { NavBar } from '../components/NavBar'
+
+
+
 
 const persistor = getPersistor()
 
@@ -52,4 +56,4 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     )
 }
   
-export default  MyApp
+export default MyApp

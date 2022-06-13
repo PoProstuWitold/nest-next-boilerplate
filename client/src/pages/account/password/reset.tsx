@@ -4,6 +4,7 @@ import Link from 'next/link'
 import * as Yup from 'yup'
 import { useState } from 'react'
 import { FiArrowLeft } from 'react-icons/fi'
+
 import { ErrorField } from '../../../components/ErrorField'
 import { AuthOption, withAuth } from '../../../utils/withAuth'
 import axios, { AxiosError } from 'axios'
@@ -42,7 +43,7 @@ const Reset: React.FC<ResetProps> = ({}) => {
     return (
         <>
             <Head>
-                <title>Password reset</title>
+                <title>Recover password</title>
                 <meta name="description" content="Profile page" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -62,7 +63,7 @@ const Reset: React.FC<ResetProps> = ({}) => {
                             onSubmit={submitResetForm}
                             validationSchema={emailSchema}
                         >
-                            {({ isSubmitting, errors, touched }: FormikState<EmailValue>) => (
+                            {({ isSubmitting, errors }: FormikState<EmailValue>) => (
                                 <Form>
                                     <div>
                                         <div className="form-control">

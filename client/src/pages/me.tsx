@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { AiTwotoneEdit } from 'react-icons/ai'
 import { BsInfoLg } from 'react-icons/bs'
 import { useSelector } from 'react-redux'
+
 import { Container } from '../components/Container'
 import EditProfileForm from '../components/EditProfileForm'
 import { RootState } from '../store/store'

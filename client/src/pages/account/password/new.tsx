@@ -3,11 +3,11 @@ import Head from 'next/head'
 import * as Yup from 'yup'
 import { useState } from 'react'
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
+import axios, { AxiosError } from 'axios'
+import { useRouter } from 'next/router'
+
 import { ErrorField } from '../../../components/ErrorField'
 import { AuthOption, withAuth } from '../../../utils/withAuth'
-import axios, { AxiosError } from 'axios'
-import { mapErrors } from '../../../utils/mapErrors'
-import { useRouter } from 'next/router'
 
 interface NewProps {
 
@@ -44,23 +44,13 @@ const New: React.FC<NewProps> = ({}) => {
                     token
                 }
             })
-            // const res = await axios({
-            //     method: 'PATCH',
-            //     url: '/auth/password/new',
-            //     data: {
-            //         newPassword: values.newPassword
-            //     },
-            //     params: {
-            //         token: token
-            //     }
-            // })
             helpers.resetForm()
             setAPIResponse(res.data)
             console.log(res.data)
         } catch (err) {
             console.log(err)
             if(err instanceof AxiosError) {
-                err!.response!.data.errors ? setAPIResponse(mapErrors(err!.response!.data.errors)) : setAPIResponse(err!.response!.data)
+                setAPIResponse(err!.response!.data)
             }
         }
     }
@@ -68,7 +58,7 @@ const New: React.FC<NewProps> = ({}) => {
     return (
         <>
             <Head>
-                <title>Password change</title>
+                <title>New password</title>
                 <meta name="description" content="Profile page" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -83,7 +73,7 @@ const New: React.FC<NewProps> = ({}) => {
                             onSubmit={submitNewPassword}
                             validationSchema={passwordSchema}
                         >
-                            {({ isSubmitting, errors, touched }: FormikState<PasswordValues>) => (
+                            {({ isSubmitting, errors }: FormikState<PasswordValues>) => (
                                 <Form>
                                     <div>
                                         <div className="form-control">
@@ -93,12 +83,10 @@ const New: React.FC<NewProps> = ({}) => {
                                                     {
                                                         (open === false) ? <AiFillEye onClick={toggle}/> :
                                                         <AiFillEyeInvisible onClick={toggle}/>
-    
                                                     }
                                                 </div>
                                             </label>
                                             <Field placeholder="Enter new password" type={(open === false)? 'password' :'text'} name="newPassword" className={`w-full p-3 transition duration-200 rounded input`}/>
-                                            
                                             <label className="label">
                                                 {errors.newPassword ? <ErrorField error={errors.newPassword}/> : null}
                                                 {/* {ApiResponse.password ? <ErrorField error={ApiResponse.password}/> : null} */}

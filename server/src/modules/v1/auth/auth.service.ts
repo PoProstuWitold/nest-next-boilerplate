@@ -207,7 +207,7 @@ export class AuthService {
         const accountId = await this.redisService.getClient().get(`confirm-account:${token}`)
 
         if(!accountId) {
-            if(user.accountStatus === AccountStatus.VERIFIED) {
+            if(accountId === user.id && user.accountStatus === AccountStatus.VERIFIED) {
                 return {
                     success: true,
                     message: "Account already verified"
@@ -246,9 +246,6 @@ export class AuthService {
         const user = await this.userService.getUserByField('email', email)
 
         if(user) {
-            // if(user.provider !== Providers.Local) {
-            //     throw new BadRequestException(`You can't reset password while using social provider`)
-            // }
             if(user.provider === Providers.Local) {
                 this.sendResetToken(user)
             }

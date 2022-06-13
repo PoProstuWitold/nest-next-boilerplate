@@ -1,4 +1,5 @@
 import Head from 'next/head'
+
 import { Container } from '../components/Container'
 
 interface IndexProps {
@@ -10,7 +11,7 @@ const Index: React.FC<IndexProps> = ({}) => {
         <>
             <Head>
                 <title>Nest Next Boilerplate</title>
-                <meta name="description" content="Welcome to Witq" />
+                <meta name="description" content="Welcome to Witq"/>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Container>

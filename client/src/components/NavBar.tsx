@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
-import { authRoutes, Themes } from '../utils/constants'
 import { useDispatch, useSelector } from 'react-redux'
-import { Dispatch, RootState } from '../store/store'
 import { useRouter } from 'next/router'
 import { AiOutlineMenu } from 'react-icons/ai'
+
+import { authRoutes, Themes } from '../utils/constants'
+import { Dispatch, RootState } from '../store/store'
 
 interface NavBarProps {
 

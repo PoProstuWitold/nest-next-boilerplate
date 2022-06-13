@@ -1,5 +1,6 @@
 import { createModel } from '@rematch/core'
 import axios, { AxiosError } from 'axios'
+
 import { RootModel } from '.'
 import { User } from '../../utils/types'
 
