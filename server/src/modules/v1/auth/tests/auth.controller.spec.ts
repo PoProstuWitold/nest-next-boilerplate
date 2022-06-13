@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { AuthController } from './auth.controller'
-import { AuthService } from '../services/auth.service'
 import { ConfigModule } from '@nestjs/config'
-import { UserModule } from '../../../../modules/v1/user/user.module'
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm'
-import { User } from '../../../../common/entities'
 import { JwtModule } from '@nestjs/jwt'
-import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
-import { UserRepository } from '../../../../modules/v1/user/repositories/user.repository'
-import { MailModule } from '../../../../modules/mailer/mailer.module'
 import { RedisService } from '@liaoliaots/nestjs-redis'
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm'
+
+import { AuthController } from '../auth.controller'
+import { AuthService } from '../auth.service'
+import { UserModule } from '../../user/user.module'
+import { User } from '../../../../common/entities'
+import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
+import { UserRepository } from '../../user/repositories/user.repository'
+import { MailModule } from '../../../mailer/mailer.module'
 
 describe('AuthController', () => {
     let module: TestingModule

@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm'
+import { JwtModule } from '@nestjs/jwt'
+import { ConfigModule } from '@nestjs/config'
+import { RedisService } from '@liaoliaots/nestjs-redis'
+
 import { User } from '../../../../common/entities'
 import { UserRepository } from '../../../../modules/v1/user/repositories/user.repository'
 import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
-import { AuthService } from './auth.service'
+import { AuthService } from '../auth.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'
-import { JwtModule } from '@nestjs/jwt'
-import { ConfigModule } from '@nestjs/config'
 import { UserModule } from '../../../../modules/v1/user/user.module'
 import { MailModule } from '../../../../modules/mailer/mailer.module'
-import { RedisService } from '@liaoliaots/nestjs-redis'
 
 
 describe('AuthService', () => {

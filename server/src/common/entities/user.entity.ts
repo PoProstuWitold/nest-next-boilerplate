@@ -1,10 +1,10 @@
 import { Exclude } from 'class-transformer'
 import { BeforeInsert, Column, Entity, Index } from 'typeorm'
-import { AbstractEntity } from './'
 import * as argon2 from 'argon2'
-import Providers from '../enums/providers.enum'
-import { Role } from '../../common/enums/role.enum'
-import { AccountStatus } from '../../common/enums/status.enum'
+
+
+import { AbstractEntity } from './'
+import { Providers, AccountStatus, Role } from '../enums'
 
 @Entity()
 export class User extends AbstractEntity<User> {

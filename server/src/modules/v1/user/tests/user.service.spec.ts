@@ -1,12 +1,13 @@
 import { ConfigModule } from '@nestjs/config'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm'
+import { v4 as uuidv4 } from 'uuid'
+
 import { User } from '../../../../common/entities'
 import { createTestConfiguration } from '../../../../../test/test-utils'
 import { UserRepository } from '../repositories/user.repository'
-import { UserService } from './user.service'
+import { UserService } from '../user.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'
-import { v4 as uuidv4 } from 'uuid'
 
 describe('UserService', () => {
     let module: TestingModule

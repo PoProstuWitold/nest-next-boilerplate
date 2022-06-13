@@ -9,7 +9,7 @@ import { V1Module } from '../src/modules/v1/v1.module';
 import { MainController } from '../src/modules/app.controller';
 import { UserRepository } from '../src/modules/v1/user/repositories/user.repository';
 import { User } from '../src/common/entities';
-import { JwtAuthGuard } from '../src/modules/v1/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
 import { MailModule } from '../src/modules/mailer/mailer.module';
 import { getRedisToken, RedisModule, RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';

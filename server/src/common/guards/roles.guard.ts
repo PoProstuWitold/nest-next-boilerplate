@@ -3,8 +3,8 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 
 import { ROLES_KEY } from '../decorators/roles.decorator'
-import { Role } from '../../../../common/enums/role.enum'
-import { User } from '../../../../common/entities'
+import { Role } from '../enums/role.enum'
+import { User } from '../entities'
 
 @Injectable()
 export class RolesGuard implements CanActivate {

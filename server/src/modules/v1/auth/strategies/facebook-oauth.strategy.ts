@@ -2,7 +2,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-facebook';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Providers from '../../../../common/enums/providers.enum';
+
+import { Providers } from '../../../../common/enums';
 
 @Injectable()
 export class FacebookOauthStrategy extends PassportStrategy(Strategy, 'facebook') {

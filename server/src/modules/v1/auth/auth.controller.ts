@@ -1,21 +1,14 @@
 import { Body, Controller, Delete, Get, HttpCode, Patch, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { AuthRequest, AuthService } from '../services/auth.service';
-import { GoogleOauthGuard } from '../guards/google-oauth.guard';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../../common/dtos';
-import { FacebookOauthGuard } from '../guards/facebook.-oauth.guard';
-import { RolesGuard } from '../guards/roles.guard';
-import { Roles } from '../decorators/roles.decorator';
-import { Role } from '../../../../common/enums/role.enum';
-import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import Providers from '../../../../common/enums/providers.enum';
-import { CurrentUser } from '../decorators/user.decorator';
-import { User } from '../../../../common/entities';
-import { Verified as Status } from '../decorators/verified.decorator';
-import { AccountStatus } from 'common/enums/status.enum';
-import { VerifiedGuard } from '../guards/verified.guard';
+import { SkipThrottle } from '@nestjs/throttler';
+
+import { AuthRequest, AuthService } from './auth.service';
+import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../common/dtos';
+import { RolesGuard, VerifiedGuard, FacebookOauthGuard, GoogleOauthGuard, JwtAuthGuard } from '../../../common/guards';
+import { Roles, CurrentUser, Verified as Status } from '../../../common/decorators';
+import { Providers, Role, AccountStatus } from '../../../common/enums';
+import { User } from '../../../common/entities';
 
 @ApiTags('v1/auth')
 @Controller({
@@ -148,7 +141,9 @@ export class AuthController {
         return this.authService.resendConfirmationToken(user)
     }
 
-
+    @ApiOkResponse({
+        description: 'Reset your password'
+    })
     @Patch('password/reset')
     resetPassword(
         @Body('email') email: string
@@ -156,6 +151,9 @@ export class AuthController {
         return this.authService.resetPassword(email)
     }
 
+    @ApiOkResponse({
+        description: 'Change your password'
+    })
     @Patch('password/change')
     @Status(AccountStatus.VERIFIED)
     @UseGuards(JwtAuthGuard, VerifiedGuard)
@@ -165,7 +163,9 @@ export class AuthController {
     ) {
         return this.authService.changePassword(user, passwordValues)
     }
-
+    @ApiOkResponse({
+        description: 'Set new password'
+    })
     @Patch('password/new')
     setNewPassword(
         @Body('newPassword') newPassword: string,

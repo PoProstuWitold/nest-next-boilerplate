@@ -1,18 +1,18 @@
-import { BadRequestException, HttpException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UserService } from '../../../../modules/v1/user/services/user.service';
 import * as argon2 from 'argon2'
-import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../../common/dtos';
 import { ConfigService } from '@nestjs/config';
-import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../../common/exceptions';
-import PostgresErrorCode from '../../../../common/enums/postgres-errors.enum';
-import Providers from '../../../../common/enums/providers.enum';
-import { User } from '../../../../common/entities';
+import { RedisService } from '@liaoliaots/nestjs-redis';
+import { createHash } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { nanoid } from 'nanoid'
-import { AccountStatus } from '../../../../common/enums/status.enum';
-import { RedisService } from '@liaoliaots/nestjs-redis';
+
+import { UserService } from '../user/user.service';
+import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../common/dtos';
+import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../common/exceptions';
+import { PostgresErrorCode, Providers, AccountStatus } from '../../../common/enums';
+import { User } from '../../../common/entities';
 
 export interface AuthRequest extends Request {
     user: IUser
@@ -35,6 +35,8 @@ export class AuthService {
     public async register(registrationData: CreateAccountDto, req: Request) {
         try {
             const user = await this.userService.create({
+                image: this.generateGravatarUrl(registrationData.email),
+                provider: Providers.Local,
                 ...registrationData
             })
 
@@ -118,6 +120,11 @@ export class AuthService {
             httpOnly: true,
             sameSite: true,
         })
+    }
+
+    private generateGravatarUrl(email: string) {
+        const hash = createHash('md5').update(email).digest('hex');
+        return `https://www.gravatar.com/avatar/${hash}`;
     }
 
     public async getAuthenticatedUser(email: string, password: string) {
@@ -237,17 +244,14 @@ export class AuthService {
 
     public async resetPassword(email: string) {
         const user = await this.userService.getUserByField('email', email)
-        // if(user && user.provider === Providers.Local) {
-        //     this.sendResetToken(user)
-        // }
-        // console.log(user)
-        // console.log(email)
 
         if(user) {
             // if(user.provider !== Providers.Local) {
             //     throw new BadRequestException(`You can't reset password while using social provider`)
             // }
-            this.sendResetToken(user)
+            if(user.provider === Providers.Local) {
+                this.sendResetToken(user)
+            }
         }
 
         return {

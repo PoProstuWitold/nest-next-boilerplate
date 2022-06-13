@@ -1,11 +1,12 @@
 import { ConfigModule } from '@nestjs/config'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm'
+
 import { User } from '../../../../common/entities'
 import { createTestConfiguration } from '../../../../../test/test-utils'
 import { UserRepository } from '../repositories/user.repository'
-import { UserService } from '../services/user.service'
-import { UserController } from './user.controller'
+import { UserService } from '../user.service'
+import { UserController } from '../user.controller'
 
 describe('UserController', () => {
     let module: TestingModule

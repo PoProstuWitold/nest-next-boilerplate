@@ -1,16 +1,17 @@
 import { config } from 'dotenv'
 config()
 import { NestFactory, Reflector } from '@nestjs/core'
-import { ClassSerializerInterceptor, ValidationPipe, VersioningType } from '@nestjs/common'
+import { ClassSerializerInterceptor, VersioningType } from '@nestjs/common'
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express'
 import { useContainer } from 'class-validator'
-import { AppModule } from './modules/app.module'
-import { setupSwagger } from './common/swagger'
 import * as express from 'express'
 import { ConfigService } from '@nestjs/config'
 import helmet from 'helmet'
 import * as cookieParser from 'cookie-parser'
 import * as compression from 'compression'
+
+import { AppModule } from './modules/app.module'
+import { setupSwagger } from './common/swagger'
 import { CustomValidationPipe } from './common/pipes/custom-validation.pipe'
 
 export async function bootstrap(): Promise<NestExpressApplication> {

@@ -1,9 +1,10 @@
-import { BadRequestException, CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { User } from '../../../../common/entities'
 import { Observable } from 'rxjs'
-import { AccountStatus } from '../../../../common/enums/status.enum'
-import { ACCOUNT_KEY } from '../decorators/verified.decorator'
+
+import { User } from '../entities'
+import { AccountStatus } from '../enums'
+import { ACCOUNT_KEY } from '../decorators'
 
 @Injectable()
 export class VerifiedGuard implements CanActivate {

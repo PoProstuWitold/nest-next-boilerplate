@@ -1,11 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateAccountDto } from '../../../../common/dtos';
-import { User } from '../../../../common/entities';
-import { UserRepository } from '../repositories/user.repository';
-import Providers from '../../../../common/enums/providers.enum';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { AccountStatus } from 'common/enums/status.enum';
+
+import { User } from '../../../common/entities';
+import { UserRepository } from './repositories/user.repository';
+import { AccountStatus } from '../../../common/enums';
 
 @Injectable()
 export class UserService {
@@ -15,16 +14,8 @@ export class UserService {
     ) {}
 
 
-    public async create(data: CreateAccountDto) {
-        const user = this.userRepository.create({
-                provider: Providers.Local,
-                providerId: null,
-                email: data.email,
-                password: data.password,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                displayName: data.displayName
-        })
+    public async create(data: Partial<User>) {
+        const user = this.userRepository.create(data)
 
         await this.userRepository.save(user)
         

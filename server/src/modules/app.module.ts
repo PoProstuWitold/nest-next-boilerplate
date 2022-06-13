@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { V1Module } from './v1/v1.module'
-import { MainController } from './app.controller'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { APP_GUARD } from '@nestjs/core'
-import { MailModule } from './mailer/mailer.module'
 import { RedisModule } from '@liaoliaots/nestjs-redis'
+
+import { V1Module } from './v1/v1.module'
+import { MainController } from './app.controller'
+import { MailModule } from './mailer/mailer.module'
 
 @Module({
     imports: [
