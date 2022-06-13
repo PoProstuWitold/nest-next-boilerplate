@@ -73,7 +73,7 @@ yarn
 
 ## FEATURES
 - Local login & register
-- Social login & register
+- Social login & register using Google and Facebook
 - Account confirmation
 - Password recover
 - Profile update
