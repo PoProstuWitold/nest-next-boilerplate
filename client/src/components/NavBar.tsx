@@ -4,6 +4,7 @@ import { authRoutes, Themes } from '../utils/constants'
 import { useDispatch, useSelector } from 'react-redux'
 import { Dispatch, RootState } from '../store/store'
 import { useRouter } from 'next/router'
+import { AiOutlineMenu } from 'react-icons/ai'
 
 interface NavBarProps {
 
@@ -85,11 +86,39 @@ export const NavBar: React.FC<NavBarProps> = () => {
                         </ul>
                     </div>
                     <div className="flex-none">
-                        <label htmlFor="my-drawer-2" className="btn btn-ghost">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current">           
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>               
-                            </svg>
-                        </label>
+                        <div className="dropdown dropdown-end">
+                        <label tabIndex={0} className="text-2xl btn btn-ghost"><AiOutlineMenu/></label>
+                        <ul tabIndex={0} className="p-2 shadow dropdown-content menu bg-base-100 rounded-box w-52">
+                        {
+                            user && authenticated ?
+                            <>
+                                <li>
+                                    <Link href="/me">
+                                        <a className="btn btn-ghost btn-sm rounded-btn">
+                                            Me
+                                        </a>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <button
+                                        className="btn btn-ghost btn-sm rounded-btn"
+                                        onClick={logout}
+                                    >
+                                        Logout
+                                    </button>
+                                </li>
+                            </>
+                            :
+                            <div className="items-stretch hidden lg:flex">
+                                <Link href="/login">
+                                    <a className="btn btn-ghost btn-sm rounded-btn">
+                                        Sign in/Sign up
+                                    </a>
+                                </Link>
+                            </div>
+                        }
+                        </ul>
+                        </div>
                     </div>
                 </div>
             </div>
