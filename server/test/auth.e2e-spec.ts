@@ -2,18 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+
 import { createTestConfiguration } from './test-utils';
 import { LocalUser } from './mocks/user.mock'
-import { ConfigModule } from '@nestjs/config';
 import { V1Module } from '../src/modules/v1/v1.module';
 import { MainController } from '../src/modules/app.controller';
 import { UserRepository } from '../src/modules/v1/user/repositories/user.repository';
 import { User } from '../src/common/entities';
 import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
 import { MailModule } from '../src/modules/mailer/mailer.module';
-import { getRedisToken, RedisModule, RedisService } from '@liaoliaots/nestjs-redis';
-import Redis from 'ioredis';
-import { RedisClient } from 'ioredis/built/connectors/SentinelConnector/types';
 
 const mockLocalUser = {
     email: LocalUser.email,
@@ -26,7 +25,6 @@ describe('AuthController (e2e)', () => {
     let moduleFixture: TestingModule
     let app: INestApplication
     let repository: UserRepository
-    let client: Redis
 
     beforeAll(async () => {
         moduleFixture = await Test.createTestingModule({

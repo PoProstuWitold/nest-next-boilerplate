@@ -1,36 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, NotContains, Length, Matches, IsEmail } from 'class-validator'
+import { IsNotEmpty, Length, Matches } from 'class-validator'
 
-export class CreateAccountDto {
-
-    @ApiProperty({
-        required: true,
-        example: 'demo@demo.com',
-    })
-    @IsNotEmpty({
-        message: 'Email cannot be empty or whitespace'
-    })
-    @IsEmail({
-        message: 'Email should be email'
-    })
-    email: string
-
-
-    @ApiProperty({
-        required: true,
-        example: 'demo123',
-    })
-    @IsNotEmpty({
-        message: 'Password cannot be empty or whitespace'
-    })
-    @NotContains(' ', {
-        message: 'Password cannot be empty or whitespace'
-    })
-    @Length(6, 100, {
-        message: 'Password must be between 6 and 100 characters long'
-    })
-    password: string
-
+export class UpdateUserDto {
 
     @ApiProperty({
         required: true,

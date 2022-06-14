@@ -24,7 +24,7 @@ type UpdateValues = {
 const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
 
     const [ApiErrors, setAPIErrors] = useState<any>({})
-    const [ApiResponse, setApiResponse] = useState<any>('')
+    const [ApiResponse, setAPIResponse] = useState<any>('')
     const dispatch = useDispatch<Dispatch>()
     
     let userState = useSelector((state: RootState) => state.user)
@@ -51,13 +51,20 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
         displayName: Yup.string().required('Display name cannot be empty or whitespace').min(3, 'Display name must be between 3 and 30 characters long').max(50, 'Display name must be between 3 and 30 characters long')
     })
     const submitUpdateForm = async (values: UpdateValues, helpers: FormikHelpers<UpdateValues>) => {
-        console.log(values)
-        setTimeout(() => helpers.setSubmitting(false), 2000)
         try {
-            await dispatch.user.getUserProfileAsync()
-            helpers.resetForm()
-        } catch (err: any) {
-            console.log('ERROR', err)
+            const res = await axios.patch('/user/update', values)
+            setAPIResponse(res.data)
+            dispatch.user.getUserProfileAsync()
+            setTimeout(() => {
+                helpers.resetForm()
+                setAPIResponse('')
+                setAPIErrors({})
+            }, 2000)
+        } catch (err) {
+            if(err instanceof AxiosError) {
+                setAPIResponse(err!.response!.data)
+                setAPIErrors(err!.response!.data.errors)
+            }
         }
     }
 
@@ -65,11 +72,11 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
     const resendConfirmationToken = async () => {
         try {
             const res = await axios.get('/auth/account/confirm-resend')
-            setApiResponse(res.data)
+            setAPIResponse(res.data)
             console.log(res)
         } catch (err) {
             if(err instanceof AxiosError) {
-                setApiResponse(err.response!.data)
+                setAPIResponse(err.response!.data)
                 console.log(err.response!.data)
             }
         }

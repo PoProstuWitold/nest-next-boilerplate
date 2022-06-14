@@ -7,6 +7,8 @@ import axios, { AxiosError } from 'axios'
 
 import { ErrorField } from '../../../components/ErrorField'
 import { AuthOption, withAuth } from '../../../utils/withAuth'
+import { useDispatch } from 'react-redux'
+import { Dispatch } from '../../../store/store'
 
 interface ResetProps {
 
@@ -21,6 +23,7 @@ type PasswordValues = {
 
 const Reset: React.FC<ResetProps> = ({}) => {
 
+    const dispatch = useDispatch<Dispatch>()
     const [open, setOpen] = useState<boolean>(false)
     const [ApiResponse, setAPIResponse] = useState<any>({})
 
@@ -47,6 +50,7 @@ const Reset: React.FC<ResetProps> = ({}) => {
             helpers.resetForm()
             setAPIResponse(res.data)
             console.log(res.data)
+            dispatch.user.getUserProfileAsync()
         } catch (err) {
             console.log(err)
             if(err instanceof AxiosError) {

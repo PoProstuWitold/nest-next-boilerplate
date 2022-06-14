@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { User } from '../../../common/entities';
 import { UserRepository } from './repositories/user.repository';
-import { AccountStatus } from '../../../common/enums';
+import { AccountStatus, PostgresErrorCode } from '../../../common/enums';
+import { UniqueViolation } from '../../../common/exceptions';
 
 @Injectable()
 export class UserService {
@@ -29,6 +30,33 @@ export class UserService {
             .set(values)
             .where("id = :id", { id: userId })
             .execute()
+    }
+
+    public async updateProfile(userId: string, values: QueryDeepPartialEntity<User>) {
+        try {
+            await this.userRepository
+            .createQueryBuilder()
+            .update(User)
+            .set(values)
+            .where("id = :id", { id: userId })
+            .execute()
+
+            return {
+                success: true,
+                message: 'Profile updated'
+            }
+        } catch (err) {
+            if(err.code == PostgresErrorCode.UniqueViolation) {
+                if(err.detail.includes('email')) {
+                    throw new UniqueViolation('email')
+                }
+
+                if(err.detail.includes('nick_name' || 'nick' || 'nickName')) {
+                    throw new UniqueViolation('displayName')
+                }
+            }
+            throw new InternalServerErrorException()
+        }
     }
 
 

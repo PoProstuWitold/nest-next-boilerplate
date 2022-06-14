@@ -258,7 +258,7 @@ const Login: React.FC<LoginProps> = ({}) => {
                                             <Field placeholder="Enter your nick name" type="text" name="displayName" className={`w-full p-3 transition duration-200 rounded input`}/>
                                             <label className="label">
                                                 {errors.displayName && touched.displayName ? <ErrorField error={errors.displayName}/> : null}
-                                                {ApiErrors.nickName && touched.displayName ? <ErrorField error={ApiErrors.nickName}/> : null}
+                                                {ApiErrors.displayName && touched.displayName ? <ErrorField error={ApiErrors.displayName}/> : null}
                                             </label>                                            
                                         </div>
                                     </div>                                    

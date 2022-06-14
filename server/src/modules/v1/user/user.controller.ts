@@ -1,10 +1,11 @@
-import { Controller, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Patch, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
-import { Verified as Status } from '../../../common/decorators';
+import { CurrentUser, Verified as Status } from '../../../common/decorators';
 import { AccountStatus } from '../../../common/enums';
 import { JwtAuthGuard, VerifiedGuard } from '../../../common/guards';
+import { UpdateUserDto } from '../../../common/dtos';
 
 
 @ApiTags('v1/user')
@@ -20,7 +21,9 @@ export class UserController {
     @UseGuards(JwtAuthGuard, VerifiedGuard)
     @Patch('update')
     updateProfile(
+        @CurrentUser('id') id: string,
+        @Body() updateData: UpdateUserDto
     ) {
-        // return this.userService.update({})
+        return this.userService.updateProfile(id, updateData)
     }
 }
