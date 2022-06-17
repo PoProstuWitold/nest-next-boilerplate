@@ -1,10 +1,10 @@
 # nest-next-boilerplate
 
-NodeJS boilerplate for building fullstack applications built in TypeScript, TypeORM, NestJS and NextJS
+NodeJS boilerplate for building fullstack applications in TypeScript, TypeORM, NestJS and NextJS
 
 ## Usage
 
-Run Docker containers and use the package manager (**yarn** or **npm**) to install dependencies in server and client directories.
+Run Docker containers and use the package manager (**yarn** or **npm**) to install dependencies in server, workers and client directories.
 
 ### 1. Docker
 ```bash
@@ -22,7 +22,7 @@ yarn
 ```
 
 ####  2.1
-Create ``.env`` file in server root directory and fill with following:
+Create **``.env``** file in **``server``** root directory and fill with following:
 
 ```code
 # APP
@@ -70,7 +70,7 @@ yarn
 ```
 
 ####  2.3
-Create ``.env`` file in workers > queues root directory and fill with following:
+Create **``.env``** file in **``workers > queues``** root directory and fill with following:
 
 ```code
 # MAIL
@@ -102,6 +102,8 @@ yarn
 - [x] Facebook login
 - [x] Client app routing
 - [x] Write tests for API
+- [x] Password recover & change features
+- [x] Queues
 
 
 ## License
