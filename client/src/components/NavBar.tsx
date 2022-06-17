@@ -42,7 +42,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
                         </Link>
                     </div> 
                     <div className="flex-1 px-2 mx-2">
-                        {
+                        {/* {
                             user && authenticated ?
                             <div className="items-stretch hidden lg:flex">
                                 <Link href="/me">
@@ -65,7 +65,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
                                     </a>
                                 </Link>
                             </div>
-                        }
+                        } */}
                     </div>
                     <div className="flex-none">
                         <ul className="menu menu-horizontal">

@@ -50,16 +50,25 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
         lastName: Yup.string().required('Last name cannot be empty or whitespace').min(3, 'Last name must be between 3 and 50 characters long').max(50, 'Last name must be between 3 and 50 characters long'),
         displayName: Yup.string().required('Display name cannot be empty or whitespace').min(3, 'Display name must be between 3 and 30 characters long').max(50, 'Display name must be between 3 and 30 characters long')
     })
+    
     const submitUpdateForm = async (values: UpdateValues, helpers: FormikHelpers<UpdateValues>) => {
         try {
             const res = await axios.patch('/user/update', values)
             setAPIResponse(res.data)
             dispatch.user.getUserProfileAsync()
-            setTimeout(() => {
-                helpers.resetForm()
+            let userState = useSelector((state: RootState) => state.user)
+            const { user } = userState
+            
+            if(user) {
                 setAPIResponse('')
                 setAPIErrors({})
-            }, 2000)
+                helpers.setValues({
+                    displayName: user.displayName,
+                    firstName: user.firstName,
+                    lastName: user.lastName
+                })
+            }
+            
         } catch (err) {
             if(err instanceof AxiosError) {
                 setAPIResponse(err!.response!.data)
