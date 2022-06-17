@@ -5,8 +5,9 @@ import * as argon2 from 'argon2'
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { createHash } from 'crypto';
-import { MailerService } from '@nestjs-modules/mailer';
 import { nanoid } from 'nanoid'
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull'
 
 import { UserService } from '../user/user.service';
 import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../common/dtos';
@@ -28,8 +29,8 @@ export class AuthService {
         private readonly jwtService: JwtService,
         private readonly userService: UserService,
         private readonly configService: ConfigService,
-        private readonly mailerService: MailerService,
-        private readonly redisService: RedisService
+        private readonly redisService: RedisService,
+        @InjectQueue('mail-queue') private mailQueue: Queue
     ) {}
 
     public async register(registrationData: CreateAccountDto, req: Request) {
@@ -176,31 +177,17 @@ export class AuthService {
     private async sendConfirmationToken(user: User) {
         const token = nanoid()
 
-            await this.redisService.getClient().set(`confirm-account:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
+        await this.redisService.getClient().set(`confirm-account:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
 
-            await this.mailerService.sendMail({
-                to: user.email,
-                subject: 'Confirm your email',
-                template: 'confirm-email',
-                context: {
-                    token
-                }
-            })
+        await this.mailQueue.add('confirm', { user, token })
     }
 
     private async sendResetToken(user: User) {
         const token = nanoid()
 
-            await this.redisService.getClient().set(`reset-password:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
+        await this.redisService.getClient().set(`reset-password:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
 
-            await this.mailerService.sendMail({
-                to: user.email,
-                subject: 'Reset your password',
-                template: 'reset-password',
-                context: {
-                    token
-                }
-            })
+        await this.mailQueue.add('reset', { user, token })
     }
 
     public async confirmAccount(user: User, token: string) {

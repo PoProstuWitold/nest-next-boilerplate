@@ -10,7 +10,7 @@ import { UserModule } from '../../user/user.module'
 import { User } from '../../../../common/entities'
 import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
 import { UserRepository } from '../../user/repositories/user.repository'
-import { MailModule } from '../../../mailer/mailer.module'
+import { BullModule } from '@nestjs/bull'
 
 describe('AuthController', () => {
     let module: TestingModule
@@ -28,7 +28,13 @@ describe('AuthController', () => {
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 TypeOrmModule.forFeature([User]),
                 JwtModule.registerAsync(createJwtConfiguration()),
-                MailModule
+                BullModule.registerQueue({
+                    name: 'mail-queue',
+                    redis: {
+                        host: 'localhost',
+                        port: 6379
+                    }
+                })
             ],
             controllers: [AuthController],
             providers: [

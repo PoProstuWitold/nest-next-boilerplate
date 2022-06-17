@@ -9,7 +9,6 @@ import { createTestConfiguration } from './test-utils';
 import { User } from '../src/common/entities';
 import { V1Module } from '../src/modules/v1/v1.module';
 import { MainController } from '../src/modules/app.controller';
-import { MailModule } from '../src/modules/mailer/mailer.module';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication
@@ -23,7 +22,6 @@ describe('AppController (e2e)', () => {
                 }),
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 V1Module,
-                MailModule,
                 RedisModule.forRoot({
                     config: {
                         host: 'localhost',

@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -19,6 +20,13 @@ import { FacebookOauthStrategy, GoogleOauthStrategy, JwtAuthStrategy } from './s
                         expiresIn: configService.get('JWT_ACCESS_EXPIRATION_TIME')
                     }
             })
+        }),
+        BullModule.registerQueue({
+            name: 'mail-queue',
+            redis: {
+                host: 'localhost',
+                port: 6379
+            }
         })
     ],
     controllers: [AuthController],

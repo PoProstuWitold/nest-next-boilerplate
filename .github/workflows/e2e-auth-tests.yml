@@ -19,8 +19,6 @@ jobs:
       OAUTH_FACEBOOK_SECRET: secret
       JWT_ACCESS_SECRET_KEY: secret
       JWT_ACCESS_EXPIRATION_TIME: 360000
-      SMTP_USER: 28f07a68b561a9
-      SMPT_PASSWORD: f9972d2a4d43ba
     defaults:
       run:
         working-directory: ./server

@@ -10,7 +10,7 @@ import { createJwtConfiguration, createTestConfiguration } from '../../../../../
 import { AuthService } from '../auth.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'
 import { UserModule } from '../../../../modules/v1/user/user.module'
-import { MailModule } from '../../../../modules/mailer/mailer.module'
+import { BullModule } from '@nestjs/bull'
 
 
 describe('AuthService', () => {
@@ -28,7 +28,13 @@ describe('AuthService', () => {
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 TypeOrmModule.forFeature([User]),
                 JwtModule.registerAsync(createJwtConfiguration()),
-                MailModule
+                BullModule.registerQueue({
+                    name: 'mail-queue',
+                    redis: {
+                        host: 'localhost',
+                        port: 6379
+                    }
+                })
             ],
             providers: [
                 AuthService,

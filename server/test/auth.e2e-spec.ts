@@ -12,7 +12,6 @@ import { MainController } from '../src/modules/app.controller';
 import { UserRepository } from '../src/modules/v1/user/repositories/user.repository';
 import { User } from '../src/common/entities';
 import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
-import { MailModule } from '../src/modules/mailer/mailer.module';
 
 const mockLocalUser = {
     email: LocalUser.email,
@@ -34,7 +33,6 @@ describe('AuthController (e2e)', () => {
                 }),
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 V1Module,
-                MailModule,
                 RedisModule.forRoot({
                     config: {
                         host: 'localhost',

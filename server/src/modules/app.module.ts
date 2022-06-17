@@ -7,7 +7,6 @@ import { RedisModule } from '@liaoliaots/nestjs-redis'
 
 import { V1Module } from './v1/v1.module'
 import { MainController } from './app.controller'
-import { MailModule } from './mailer/mailer.module'
 
 @Module({
     imports: [
@@ -42,8 +41,7 @@ import { MailModule } from './mailer/mailer.module'
                 port: 6379,
             }
         }),
-        V1Module,
-        MailModule
+        V1Module
     ],
     controllers: [MainController],
     providers: [

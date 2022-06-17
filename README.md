@@ -1,5 +1,4 @@
-# nest-next-boilerplate 
-## (WORK IN PROGRESS; PROJECT IS IN VERY EARLY PHASE SO SOME FEATURES MAY NOT WORK AS INTENDED)
+# nest-next-boilerplate
 
 NodeJS boilerplate for building fullstack applications built in TypeScript, TypeORM, NestJS and NextJS
 
@@ -8,9 +7,6 @@ NodeJS boilerplate for building fullstack applications built in TypeScript, Type
 Run Docker containers and use the package manager (**yarn** or **npm**) to install dependencies in server and client directories.
 
 ### 1. Docker
-```bash
-cd server 
-```
 ```bash
 docker-compose up 
 ```
@@ -49,10 +45,6 @@ DB_PORT=5432
 DB_DATABASE='postgres-nest'
 DB_SYNC=true // NEVER USE IT IN PRODUCTION ENVIRONMENT OR YOU MAY LOOSE YOUR DATA
 
-# MAIL
-SMTP_USER=[YOUR_SMTP_USER]
-SMPT_PASSWORD=[YOUR_SMTP_PASSWORD]
-
 # GOOGLE
 OAUTH_GOOGLE_ID=[YOUR_GOOGLE_OAUTH_ID]
 OAUTH_GOOGLE_SECRET=[YOUR_GOOGLE_SECRET]
@@ -63,6 +55,29 @@ OAUTH_FACEBOOK_ID=[YOUR_FACEBOOK_ID]
 OAUTH_FACEBOOK_SECRET=[YOUR_FACEBOOK_SECRET]
 OAUTH_FACEBOOK_REDIRECT_URL='/api/v1/auth/facebook/redirect'
 ``` 
+
+#### 2.2 Worker
+```bash
+cd workers 
+```
+```bash
+cd queues 
+```
+```bash
+npm install 
+# OR 
+yarn
+```
+
+####  2.3
+Create ``.env`` file in workers > queues root directory and fill with following:
+
+```code
+# MAIL
+SMTP_USER=[YOUR_SMTP_USER]
+SMPT_PASSWORD=[YOUR_SMTP_PASSWORD]
+``` 
+
 
 ### 3. Client setup
 ```bash
