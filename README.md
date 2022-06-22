@@ -130,6 +130,7 @@ yarn
 ## FEATURES
 - Local login & register
 - Social login & register using Google and Facebook
+- Jwt access token & refresh token
 - Account confirmation
 - Password recover
 - Profile update
@@ -142,7 +143,7 @@ yarn
 - [x] Write tests for API
 - [x] Password recover & change features
 - [x] Queues
-
+- [x] Refresh tokens
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import * as argon2 from 'argon2'
@@ -43,9 +43,9 @@ export class AuthService {
 
             await this.sendConfirmationToken(user)
 
-            const [accessToken] = await this.generateTokens(user)
+            const [accessToken, refreshToken] = await this.generateTokens(user)
 
-            await this.setTokens(req, { accessToken })
+            await this.setTokens(req, { accessToken, refreshToken })
 
             return {
                 user,
@@ -70,9 +70,9 @@ export class AuthService {
             const { email, password } = credentials
 
             const user = await this.getAuthenticatedUser(email, password)
-            const [accessToken] = await this.generateTokens(user)
+            const [accessToken, refreshToken] = await this.generateTokens(user)
 
-            await this.setTokens(req, { accessToken })
+            await this.setTokens(req, { accessToken, refreshToken })
 
             return {
                 user,
@@ -84,6 +84,8 @@ export class AuthService {
     }
 
     public async logout(req: Request) {
+        const refreshTokenCookie = req.cookies['refresh_token']
+        await this.redisService.getClient().del(`refresh-token:${refreshTokenCookie}`)
         req.res.clearCookie('access_token')
         req.res.clearCookie('refresh_token')
     }
@@ -94,13 +96,20 @@ export class AuthService {
             id: user.id
         }, {
             issuer: 'PoProstuWitold',
-            expiresIn: '30m'
+            secret: this.configService.get('JWT_ACCESS_SECRET_KEY'),
+            expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION_TIME')
         })
 
-        const refreshToken = await this.jwtService.signAsync({}, {
+        const refreshToken = await this.jwtService.signAsync({
+            displayName: user.displayName,
+            id: user.id
+        }, {
             issuer: 'PoProstuWitold',
-            expiresIn: '30d',
+            secret: this.configService.get('JWT_REFRESH_SECRET_KEY'),
+            expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION_TIME'),
         })
+
+        await this.redisService.getClient().set(`refresh-token:${refreshToken}`, user.id, 'EX', 1000 * 60 * 60 * 24 * 30)
 
         return [
             accessToken, refreshToken
@@ -110,17 +119,19 @@ export class AuthService {
     private async setTokens(req: Request, { accessToken, refreshToken }: { accessToken: string, refreshToken?: string}) {
         req.res.cookie('access_token', 
             accessToken, {
-            expires: new Date(this.configService.get('JWT_ACCESS_EXPIRATION_TIME') * 1000 + Date.now()), 
+            maxAge: 1000 * 60 * 60 * 1, 
             httpOnly: true, 
             sameSite: 'lax'
         })
 
-        req.res.cookie('refresh_token', 
-            refreshToken, {
-            expires: new Date(this.configService.get('JWT_ACCESS_EXPIRATION_TIME') * 1000 + Date.now()),
-            httpOnly: true,
-            sameSite: true,
-        })
+        if(refreshToken) {
+            req.res.cookie('refresh_token', 
+                refreshToken, {
+                maxAge: 1000 * 60 * 60 * 24 * 30,
+                httpOnly: true,
+                sameSite: true,
+            })
+        }
     }
 
     private generateGravatarUrl(email: string) {
@@ -159,8 +170,8 @@ export class AuthService {
                 }
             }
             const user = await this.userService.continueWithProvider(req)
-            const [accessToken] = await this.generateTokens(user)
-            await this.setTokens(req, { accessToken })
+            const [accessToken, refreshToken] = await this.generateTokens(user)
+            await this.setTokens(req, { accessToken, refreshToken })
     
             // req.res.redirect('/api/v1/auth/me')
             req.res.redirect(`${process.env.ORIGIN}/me`)
@@ -284,5 +295,40 @@ export class AuthService {
             success: true,
             message: "Password reseted"
         }
+    }
+
+    public async refreshTokens(req: Request) {
+        const refreshTokenCookie = req.cookies['refresh_token']
+
+        if(!refreshTokenCookie) {
+            throw new UnauthorizedException('Invalid cookie')
+        }
+
+        const verifiedJWt = await this.jwtService.verifyAsync(refreshTokenCookie, {
+            secret: this.configService.get('JWT_REFRESH_SECRET_KEY')
+        })
+
+        if(!verifiedJWt) {
+            throw new UnauthorizedException('Invalid refresh token')
+        }
+
+        const refreshTokenRedis = await this.redisService.getClient().get(`refresh-token:${refreshTokenCookie}`)
+
+        if(!refreshTokenRedis) {
+            throw new UnauthorizedException('Refresh token not found')
+        }
+
+        const accessToken = await this.jwtService.signAsync({ 
+            displayName: verifiedJWt.displayName,
+            id: verifiedJWt.id
+        }, {
+            issuer: 'PoProstuWitold',
+            secret: this.configService.get('JWT_ACCESS_SECRET_KEY'),
+            expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION_TIME')
+        })
+
+        await this.setTokens(req, { accessToken })
+        const user = await this.userService.getUserByField('id', verifiedJWt.id)
+        return user
     }
 }
