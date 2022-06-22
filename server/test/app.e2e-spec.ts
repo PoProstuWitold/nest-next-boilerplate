@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 
 import { createTestConfiguration } from './test-utils';
 import { User } from '../src/common/entities';
@@ -22,10 +22,14 @@ describe('AppController (e2e)', () => {
                 }),
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 V1Module,
-                RedisModule.forRoot({
-                    config: {
-                        host: 'localhost',
-                        port: 6379,
+                RedisModule.forRootAsync({
+                    useFactory: async (): Promise<RedisModuleOptions> => {
+                        return {
+                            config: {
+                                host: 'localhost',
+                                port: 6379,
+                            }
+                        }
                     }
                 })
             ],

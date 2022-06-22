@@ -3,23 +3,17 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
+import { getQueueToken } from '@nestjs/bull';
 
-import { createTestConfiguration } from './test-utils';
-import { LocalUser } from './mocks/user.mock'
+import { createTestConfiguration, mailQueue } from './test-utils';
+import { mockLocalUser } from './mocks/user.mock'
 import { V1Module } from '../src/modules/v1/v1.module';
 import { MainController } from '../src/modules/app.controller';
 import { UserRepository } from '../src/modules/v1/user/repositories/user.repository';
 import { User } from '../src/common/entities';
 import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
 
-const mockLocalUser = {
-    email: LocalUser.email,
-    password: LocalUser.password,
-    firstName: LocalUser.firstName,
-    lastName: LocalUser.lastName,
-    displayName: LocalUser.displayName
-}
 describe('AuthController (e2e)', () => {
     let moduleFixture: TestingModule
     let app: INestApplication
@@ -33,10 +27,14 @@ describe('AuthController (e2e)', () => {
                 }),
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 V1Module,
-                RedisModule.forRoot({
-                    config: {
-                        host: 'localhost',
-                        port: 6379,
+                RedisModule.forRootAsync({
+                    useFactory: async (): Promise<RedisModuleOptions> => {
+                        return {
+                            config: {
+                                host: 'localhost',
+                                port: 6379,
+                            }
+                        }
                     }
                 })
             ],
@@ -44,6 +42,8 @@ describe('AuthController (e2e)', () => {
         })
         .overrideGuard(JwtAuthGuard)
         .useValue({ canActivate: () => true })
+        .overrideProvider(getQueueToken('mail-queue'))
+        .useValue(mailQueue)
         .compile()
 
         app = moduleFixture.createNestApplication()

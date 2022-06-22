@@ -4,6 +4,8 @@ import { EntitySchema } from 'typeorm'
 
 type Entity = Function | string | EntitySchema<any>
 
+export const mailQueue: any = { add: jest.fn() }
+
 export const createTestConfiguration = (
   entities: Entity[],
 ) => ({
@@ -20,9 +22,7 @@ export const createTestConfiguration = (
             password: 'tests',
             database: 'postgres-tests',
             entities,
-            synchronize: true,
-            // tests fail at first launch because relation "user" does not exist
-            // dropSchema: true
+            synchronize: true
         } as TypeOrmModuleOptions
     }
 })

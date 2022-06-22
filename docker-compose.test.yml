@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  postgres-tests:
+    container_name: postgres-tests
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: tests
+      POSTGRES_PASSWORD: tests
+      POSTGRES_DB: postgres-tests
+    ports:
+      - 5431:5432
+    restart: unless-stopped
+
+  redis-tests:
+    container_name: redis-test
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    command: ["redis-server", "--appendonly", "yes"]
+    restart: unless-stopped

@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { RedisService } from '@liaoliaots/nestjs-redis'
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm'
+import { BullModule, BullModuleOptions } from '@nestjs/bull'
 
 import { AuthController } from '../auth.controller'
 import { AuthService } from '../auth.service'
@@ -10,7 +11,6 @@ import { UserModule } from '../../user/user.module'
 import { User } from '../../../../common/entities'
 import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
 import { UserRepository } from '../../user/repositories/user.repository'
-import { BullModule } from '@nestjs/bull'
 
 describe('AuthController', () => {
     let module: TestingModule
@@ -28,12 +28,16 @@ describe('AuthController', () => {
                 TypeOrmModule.forRootAsync(createTestConfiguration([User])),
                 TypeOrmModule.forFeature([User]),
                 JwtModule.registerAsync(createJwtConfiguration()),
-                BullModule.registerQueue({
+                BullModule.registerQueueAsync({
                     name: 'mail-queue',
-                    redis: {
-                        host: 'localhost',
-                        port: 6379
-                    }
+                    imports: [ConfigModule],
+                    inject: [ConfigService],
+                    useFactory: async (configService: ConfigService): Promise<BullModuleOptions> => ({
+                        redis: {
+                            host: configService.get('REDIS_HOST') || 'localhost',
+                            port: configService.get('REDIS_PORT') || 6379
+                        }
+                    })
                 })
             ],
             controllers: [AuthController],

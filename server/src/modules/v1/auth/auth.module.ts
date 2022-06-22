@@ -1,4 +1,4 @@
-import { BullModule } from '@nestjs/bull';
+import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -21,12 +21,16 @@ import { FacebookOauthStrategy, GoogleOauthStrategy, JwtAuthStrategy } from './s
                     }
             })
         }),
-        BullModule.registerQueue({
+        BullModule.registerQueueAsync({
             name: 'mail-queue',
-            redis: {
-                host: 'localhost',
-                port: 6379
-            }
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: async (configService: ConfigService): Promise<BullModuleOptions> => ({
+                redis: {
+                    host: configService.get('REDIS_HOST') || 'localhost',
+                    port: configService.get('REDIS_PORT') || 6379
+                }
+            })
         })
     ],
     controllers: [AuthController],

@@ -1,6 +1,7 @@
 import { User } from "../../src/common/entities";
 import { Providers } from "../../src/common/enums";
 
+
 export const LocalUser: Partial<User> = {
     provider: Providers.Local,
     providerId: null,
@@ -40,6 +41,15 @@ export const NewUser: Partial<User> = {
     displayName: 'Adaś',
     password: 'hamslomamslo'
 }
+
+export const mockLocalUser = {
+    email: LocalUser.email,
+    password: LocalUser.password,
+    firstName: LocalUser.firstName,
+    lastName: LocalUser.lastName,
+    displayName: LocalUser.displayName
+}
+
 export const testUsers: Array<Partial<User>> = [
     LocalUser,
     FacebookUser,

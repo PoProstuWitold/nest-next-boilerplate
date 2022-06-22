@@ -3,7 +3,7 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { APP_GUARD } from '@nestjs/core'
-import { RedisModule } from '@liaoliaots/nestjs-redis'
+import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis'
 
 import { V1Module } from './v1/v1.module'
 import { MainController } from './app.controller'
@@ -35,10 +35,16 @@ import { MainController } from './app.controller'
             ttl: 60,
             limit: 10,
         }),
-        RedisModule.forRoot({
-            config: {
-                host: 'localhost',
-                port: 6379,
+        RedisModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: async (configService: ConfigService): Promise<RedisModuleOptions> => {
+                return {
+                    config: {
+                        host: configService.get('REDIS_HOST') || 'localhost',
+                        port: configService.get('REDIS_PORT') || 6379,
+                    }
+                }
             }
         }),
         V1Module

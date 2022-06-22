@@ -1,7 +1,59 @@
 version: '3.8'
 
 services:
-  postgres:
+  client: 
+    container_name: client
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    volumes:
+      - ./client:/poprostuwitold/client
+      - /poprostuwitold/client/node_modules/
+    depends_on: 
+      - server
+    ports:
+      - 3000:3000
+    links:
+      - server
+    networks:
+      - main-network
+    restart: unless-stopped
+  server:
+    container_name: server
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+      target: development
+    env_file: ./server/.env
+    volumes:
+      - ./server:/poprostuwitold/server
+      - /poprostuwitold/server/node_modules/
+    command: npm run start:debug
+    depends_on: 
+      - postgres-main
+      - redis-main
+    ports:
+      - 4000:4000
+    networks:
+      - main-network
+    restart: unless-stopped
+  queue-worker:
+    container_name: queue-worker
+    build:
+      dockerfile: Dockerfile
+      context: ./workers/queues
+      target: development
+    env_file: ./workers/queues/.env
+    volumes:
+      - ./workers/queues:/poprostuwitold/workers/queues
+      - /poprostuwitold/workers/queues/node_modules/
+    command: npm run start:debug
+    depends_on: 
+      - server
+    networks:
+      - main-network
+    restart: unless-stopped
+  postgres-main:
     container_name: postgres-nest
     image: postgres:latest
     environment:
@@ -15,9 +67,10 @@ services:
       - 5432:5432
     networks:
       - postgres-network
+      - main-network
     restart: unless-stopped
   
-  pgadmin:
+  pgadmin-main:
     container_name: pgadmin-nest
     image: dpage/pgadmin4:latest
     environment:
@@ -28,12 +81,12 @@ services:
     ports:
       - 8080:80
     depends_on:
-      - postgres
+      - postgres-main
     networks:
       - postgres-network
     restart: unless-stopped
 
-  redis:
+  redis-main:
     container_name: redis-nest
     image: redis:latest
     ports:
@@ -41,46 +94,32 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis-volume:/data/redis
+    networks:
+      - redis-network
+      - main-network
     restart: unless-stopped
 
   redis-commander:
     container_name: redis-commander-nest
     image: rediscommander/redis-commander:latest
     environment:
-      - REDIS_HOSTS=local:redis:6379
+      - REDIS_HOSTS=local:redis-main:6379
       - HTTP_USER=root
       - HTTP_PASSWORD=qwerty
     ports:
       - 8081:8081
     depends_on:
-      - redis
-    restart: unless-stopped
-
-  postgres-tests:
-    container_name: postgres-tests
-    image: postgres:alpine
-    environment:
-      POSTGRES_USER: tests
-      POSTGRES_PASSWORD: tests
-      POSTGRES_DB: postgres-tests
-    ports:
-      - 5431:5432
-    restart: unless-stopped
+      - redis-main
     networks:
-      - postgres-tests-network
-
-  redis-tests:
-    container_name: redis-test
-    image: redis:alpine
-    ports:
-      - 6378:6379
-    command: ["redis-server", "--appendonly", "yes"]
+      - redis-network
     restart: unless-stopped
 
 networks:
   postgres-network:
     driver: bridge
-  postgres-tests-network:
+  main-network:
+    driver: bridge
+  redis-network:
     driver: bridge
 
 volumes:
