@@ -18,7 +18,9 @@ jobs:
       OAUTH_FACEBOOK_ID: secret
       OAUTH_FACEBOOK_SECRET: secret
       JWT_ACCESS_SECRET_KEY: secret
-      JWT_ACCESS_EXPIRATION_TIME: 360000
+      JWT_ACCESS_EXPIRATION_TIME: 5m
+      JWT_REFRESH_SECRET_KEY: secret
+      JWT_REFRESH_EXPIRATION_TIME: 30d
     defaults:
       run:
         working-directory: ./server
