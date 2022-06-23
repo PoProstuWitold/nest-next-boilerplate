@@ -84,8 +84,10 @@ export class AuthService {
     }
 
     public async logout(req: Request) {
-        const refreshTokenCookie = req.cookies['refresh_token']
-        await this.redisService.getClient().del(`refresh-token:${refreshTokenCookie}`)
+        if(req.cookies && req.cookies['refresh_token']) {
+                const refreshTokenCookie = req.cookies['refresh_token']
+                await this.redisService.getClient().del(`refresh-token:${refreshTokenCookie}`)
+        }
         req.res.clearCookie('access_token')
         req.res.clearCookie('refresh_token')
     }

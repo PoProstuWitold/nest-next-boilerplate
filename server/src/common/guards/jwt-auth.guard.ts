@@ -11,6 +11,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
     handleRequest(err, user, info, context) {
         if(info) {
+            if(info.message === 'jwt expired' && context.getRequest().cookies['refresh_token'] ) {
+                return this.authService.refreshTokens(context.getRequest())
+            }
             if(info.message === 'No auth token' && context.getRequest().cookies['refresh_token'] && !context.getRequest().cookies['access_token']) {
                 return this.authService.refreshTokens(context.getRequest())
             }

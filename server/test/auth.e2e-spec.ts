@@ -126,6 +126,9 @@ describe('AuthController (e2e)', () => {
                 expect(response2.get('Set-Cookie')[0]).toEqual(
                     'access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
                 )
+                expect(response2.get('Set-Cookie')[1]).toEqual(
+                    'refresh_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+                )
         })
     })
 

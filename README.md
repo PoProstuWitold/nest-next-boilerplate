@@ -16,7 +16,9 @@ API_PREFIX='/api'
 
 # JWT AUTH
 JWT_ACCESS_SECRET_KEY='uAsBw6WxqD'
-JWT_ACCESS_EXPIRATION_TIME=36000000
+JWT_ACCESS_EXPIRATION_TIME='5m
+JWT_REFRESH_SECRET_KEY='dwafagadfasdaw'
+JWT_REFRESH_EXPIRATION_TIME='30d'
 
 # DATABASE
 # change if you running in a different way than the one written in docker compose file
