@@ -86,13 +86,19 @@ export class AuthService {
     public async logout(req: Request) {
         if(req.cookies && req.cookies['refresh_token']) {
                 const refreshTokenCookie = req.cookies['refresh_token']
-                await this.redisService.getClient().del(`refresh-token:${refreshTokenCookie}`)
+                const verifiedRefresh = await this.jwtService.verifyAsync(refreshTokenCookie, {
+                    secret: this.configService.get('JWT_REFRESH_SECRET_KEY')
+                })
+                await this.redisService.getClient().del(`refresh-token:${verifiedRefresh.id}:${verifiedRefresh.jti}`)
         }
         req.res.clearCookie('access_token')
         req.res.clearCookie('refresh_token')
     }
 
     private async generateTokens(user: User) {
+
+        const jwtid = nanoid()
+
         const accessToken = await this.jwtService.signAsync({ 
             displayName: user.displayName,
             id: user.id
@@ -106,12 +112,13 @@ export class AuthService {
             displayName: user.displayName,
             id: user.id
         }, {
+            jwtid,
             issuer: 'PoProstuWitold',
             secret: this.configService.get('JWT_REFRESH_SECRET_KEY'),
             expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION_TIME'),
         })
 
-        await this.redisService.getClient().set(`refresh-token:${refreshToken}`, user.id, 'EX', 1000 * 60 * 60 * 24 * 30)
+        await this.redisService.getClient().set(`refresh-token:${user.id}:${jwtid}`, user.id, 'EX', 60 * 60 * 24 * 30)
 
         return [
             accessToken, refreshToken
@@ -190,7 +197,7 @@ export class AuthService {
     private async sendConfirmationToken(user: User) {
         const token = nanoid()
 
-        await this.redisService.getClient().set(`confirm-account:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
+        await this.redisService.getClient().set(`confirm-account:${token}`, user.id, 'EX', 60 * 60 * 1) // 1 hour until expires
 
         await this.mailQueue.add('confirm', { user, token })
     }
@@ -198,7 +205,7 @@ export class AuthService {
     private async sendResetToken(user: User) {
         const token = nanoid()
 
-        await this.redisService.getClient().set(`reset-password:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
+        await this.redisService.getClient().set(`reset-password:${token}`, user.id, 'EX', 60 * 60 * 1) // 1 hour until expires
 
         await this.mailQueue.add('reset', { user, token })
     }
@@ -314,7 +321,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid refresh token')
         }
 
-        const refreshTokenRedis = await this.redisService.getClient().get(`refresh-token:${refreshTokenCookie}`)
+        const refreshTokenRedis = await this.redisService.getClient().get(`refresh-token:${verifiedJWt.id}:${verifiedJWt.jti}`)
 
         if(!refreshTokenRedis) {
             throw new UnauthorizedException('Refresh token not found')
