@@ -11,6 +11,7 @@ import { UserModule } from '../../user/user.module'
 import { User } from '../../../../common/entities'
 import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
 import { UserRepository } from '../../user/repositories/user.repository'
+import { WsEmitterClientOptions, WsEmitterModule } from '../../../../modules/v1/chat/ws-emitter.module'
 
 describe('AuthController', () => {
     let module: TestingModule
@@ -38,6 +39,18 @@ describe('AuthController', () => {
                             port: configService.get('REDIS_PORT') || 6379
                         }
                     })
+                }),
+                WsEmitterModule.registerAsync({
+                    imports: [ConfigModule],
+                    inject: [ConfigService],
+                    useFactory: async (configService: ConfigService): Promise<WsEmitterClientOptions> => {
+                        return {
+                            config: {
+                                host: configService.get('REDIS_HOST') || 'localhost',
+                                port: configService.get('REDIS_PORT') || 6379,
+                            }
+                        }
+                    }
                 })
             ],
             controllers: [AuthController],

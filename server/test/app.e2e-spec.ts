@@ -9,6 +9,7 @@ import { createTestConfiguration } from './test-utils';
 import { User } from '../src/common/entities';
 import { V1Module } from '../src/modules/v1/v1.module';
 import { MainController } from '../src/modules/app.controller';
+import { WsEmitterClientOptions, WsEmitterModule } from '../src/modules/v1/chat/ws-emitter.module';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication
@@ -24,6 +25,16 @@ describe('AppController (e2e)', () => {
                 V1Module,
                 RedisModule.forRootAsync({
                     useFactory: async (): Promise<RedisModuleOptions> => {
+                        return {
+                            config: {
+                                host: 'localhost',
+                                port: 6379,
+                            }
+                        }
+                    }
+                }),
+                WsEmitterModule.registerAsync({
+                    useFactory: async (): Promise<WsEmitterClientOptions> => {
                         return {
                             config: {
                                 host: 'localhost',

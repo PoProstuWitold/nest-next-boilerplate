@@ -13,6 +13,7 @@ import { MainController } from '../src/modules/app.controller';
 import { UserRepository } from '../src/modules/v1/user/repositories/user.repository';
 import { User } from '../src/common/entities';
 import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
+import { WsEmitterClientOptions, WsEmitterModule } from '../src/modules/v1/chat/ws-emitter.module';
 
 describe('AuthController (e2e)', () => {
     let moduleFixture: TestingModule
@@ -29,6 +30,16 @@ describe('AuthController (e2e)', () => {
                 V1Module,
                 RedisModule.forRootAsync({
                     useFactory: async (): Promise<RedisModuleOptions> => {
+                        return {
+                            config: {
+                                host: 'localhost',
+                                port: 6379,
+                            }
+                        }
+                    }
+                }),
+                WsEmitterModule.registerAsync({
+                    useFactory: async (): Promise<WsEmitterClientOptions> => {
                         return {
                             config: {
                                 host: 'localhost',
