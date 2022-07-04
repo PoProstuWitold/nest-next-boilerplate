@@ -100,9 +100,7 @@ export class AuthController {
     @Get('me')
     @SkipThrottle(true)
     getProfile(@Req() req: Request) {
-        return {
-            user: req.user
-        }
+        return this.authService.getProfile(req)
     }
 
     @ApiCookieAuth()

@@ -13,6 +13,7 @@ import * as compression from 'compression'
 import { AppModule } from './modules/app.module'
 import { setupSwagger } from './common/swagger'
 import { CustomValidationPipe } from './common/pipes/custom-validation.pipe'
+import { RedisIoAdapter } from './modules/v1/chat/chat.adapter'
 
 export async function bootstrap(): Promise<NestExpressApplication> {
     const app = await NestFactory.create<NestExpressApplication>(
@@ -42,6 +43,11 @@ export async function bootstrap(): Promise<NestExpressApplication> {
 
     app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector))
 
+    const redisIoAdapter = new RedisIoAdapter(app)
+    await redisIoAdapter.connectToRedis()
+
+    app.useWebSocketAdapter(redisIoAdapter)
+    
     if(configService.get('NODE_ENV') === 'development') {
         setupSwagger(app)
     }

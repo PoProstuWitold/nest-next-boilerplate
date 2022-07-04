@@ -7,13 +7,12 @@ import { getPersistor } from '@rematch/persist'
 import { useRouter } from 'next/router'
 import { ThemeProvider } from 'next-themes'
 import { Provider } from 'react-redux'
+import { IoProvider } from 'socket.io-react-hook'
 
 import { AuthProvider } from '../store/auth'
 import { Footer } from '../components/Footer'
 import { store } from '../store/store'
 import { NavBar } from '../components/NavBar'
-
-
 
 
 const persistor = getPersistor()
@@ -45,9 +44,11 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                     <Provider store={store}>
                         <PersistGate persistor={persistor}>
                             <AuthProvider>
-                                {!authRoute && <NavBar/>}
-                                <Component {...pageProps}/>
-                                {!authRoute && <Footer/>}                      
+                                <IoProvider>
+                                    {!authRoute && <NavBar/>}
+                                    <Component {...pageProps}/>
+                                    {!authRoute && <Footer/>}   
+                                </IoProvider>                   
                             </AuthProvider>
                         </PersistGate>
                     </Provider>

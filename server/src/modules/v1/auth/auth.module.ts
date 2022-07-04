@@ -39,6 +39,9 @@ import { FacebookOauthStrategy, GoogleOauthStrategy, JwtAuthStrategy } from './s
         GoogleOauthStrategy,
         FacebookOauthStrategy,
         JwtAuthStrategy
+    ],
+    exports: [
+        AuthService
     ]
 })
 export class AuthModule {}

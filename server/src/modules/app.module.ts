@@ -7,6 +7,7 @@ import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis'
 
 import { V1Module } from './v1/v1.module'
 import { MainController } from './app.controller'
+import { WsEmitterClientOptions, WsEmitterModule } from './v1/chat/ws-emitter.module'
 
 @Module({
     imports: [
@@ -39,6 +40,18 @@ import { MainController } from './app.controller'
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: async (configService: ConfigService): Promise<RedisModuleOptions> => {
+                return {
+                    config: {
+                        host: configService.get('REDIS_HOST') || 'localhost',
+                        port: configService.get('REDIS_PORT') || 6379,
+                    }
+                }
+            }
+        }),
+        WsEmitterModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: async (configService: ConfigService): Promise<WsEmitterClientOptions> => {
                 return {
                     config: {
                         host: configService.get('REDIS_HOST') || 'localhost',
