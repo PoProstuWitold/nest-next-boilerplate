@@ -19,30 +19,15 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({}) => {
 
     const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
-    
+    const [isConnected, setIsConnected] = useState(false)
+    const [lastPong, setLastPong] = useState('')
+    console.log(socket)
     let userState = useSelector((state: RootState) => state.user)
     const { user } = userState
     
-
-    const [isConnected, setIsConnected] = useState(socket.connected)
-    const [lastPong, setLastPong] = useState('')
-
-    const sendPing = async () => {
-        await axios.get('/auth/me')
-    }
-
-    if(!user) {
-        return (
-            <div>
-                <p>Connected: { '' + isConnected }</p>
-                <p>Last pong: { lastPong || '-' }</p>
-                <button onClick={ sendPing }>Send ping</button>
-            </div>
-        )
-    }
-
     useEffect(() => {
         if(socket) {
+            setIsConnected(socket.connected)
             socket.on('connect', () => {
                 console.log(socket)
                 setIsConnected(true)
@@ -65,6 +50,19 @@ const Chat: React.FC<ChatProps> = ({}) => {
         }
     }, [socket])
 
+    const sendPing = async () => {
+        await axios.get('/auth/me')
+    }
+
+    if(!user) {
+        return (
+            <div className="min-h-screen mx-10 mt-10">
+                <p>Connected: { '' + isConnected }</p>
+                <p>Last pong: { lastPong || '-' }</p>
+                <button onClick={ sendPing }>Send ping</button>
+            </div>
+        )
+    }
 
 
     return (
@@ -74,7 +72,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
                 <meta name="description" content="Welcome to Witq"/>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Container>
+            <div className="min-h-screen mx-10 mt-10">
                 <div>
                     <p>Connected: { '' + isConnected }</p>
                     <p>Last pong: { lastPong || '-' }</p>
@@ -119,7 +117,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
                         </div>
                     </div>
                 </div>
-            </Container>
+            </div>
         </>
     )
 }

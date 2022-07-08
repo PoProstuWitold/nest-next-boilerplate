@@ -4,7 +4,7 @@ import { createAdapter } from '@socket.io/redis-adapter';
 import Redis from 'ioredis';
 
 
-export const pubClient = new Redis({ host: 'redis-main', port: 6379})
+const pubClient = new Redis({ host: 'redis-main', port: 6379})
 const subClient = pubClient.duplicate()
 
 export class RedisIoAdapter extends IoAdapter {

@@ -110,6 +110,13 @@ export const NavBar: React.FC<NavBarProps> = () => {
                                         Logout
                                     </button>
                                 </li>
+                                <li>
+                                    <Link href="/chat">
+                                        <a className="btn btn-ghost btn-sm rounded-btn">
+                                            Chats
+                                        </a>
+                                    </Link>
+                                </li>
                             </>
                             :
                             <div className="items-stretch hidden lg:flex">
