@@ -20,7 +20,9 @@ export class RoomService {
 
     public async createRoom(dto: Partial<Room>, owner: User) {
         try {
-            this.roomRepository.createRoom(dto, owner)
+            console.log(owner.id)
+            const room = await this.roomRepository.createRoom(dto, owner)
+            return room
         } catch (err) {
             if(err.code == PostgresErrorCode.UniqueViolation) {
                 if(err.detail.includes('name')) {
@@ -37,7 +39,7 @@ export class RoomService {
             // ],
             loadRelationIds: true,
             where: {
-                visible: true
+                isPublic: true
             }
         })
     }
@@ -107,8 +109,6 @@ export class RoomService {
                 .delete()
                 .where("id = :id", { id })
                 .execute()
-
-                console.log(room)
 
             return {
                 success: !!room.affected,

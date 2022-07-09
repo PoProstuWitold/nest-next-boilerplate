@@ -14,6 +14,9 @@ import { UserRepository } from '../src/modules/v1/user/repositories/user.reposit
 import { User } from '../src/common/entities';
 import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
 import { WsEmitterClientOptions, WsEmitterModule } from '../src/modules/v1/chat/ws-emitter.module';
+import { Room } from '../src/modules/v1/room/room.entity';
+import { Message } from '../src/modules/v1/message/message.entity';
+import { ConnectedUser, JoinedRoom } from '../src/modules/v1/chat/entites';
 
 describe('AuthController (e2e)', () => {
     let moduleFixture: TestingModule
@@ -26,7 +29,7 @@ describe('AuthController (e2e)', () => {
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
-                TypeOrmModule.forRootAsync(createTestConfiguration([User])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, ConnectedUser, JoinedRoom])),
                 V1Module,
                 RedisModule.forRootAsync({
                     useFactory: async (): Promise<RedisModuleOptions> => {
@@ -63,15 +66,15 @@ describe('AuthController (e2e)', () => {
     })
 
     beforeEach( async () => {
-        await repository.clear()
+        await repository.query(`DELETE FROM "user"`)
     })
 
     afterEach( async () => {
-        await repository.clear()
+        await repository.query(`DELETE FROM "user"`)
     })
 
     afterAll( async () => {
-        await repository.clear()
+        await repository.query(`DELETE FROM "user"`)
         await app.close()
     })
 

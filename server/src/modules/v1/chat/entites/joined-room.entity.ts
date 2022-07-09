@@ -8,11 +8,11 @@ export class JoinedRoom extends AbstractEntity<User> {
     @Column()
     public socketId: string
 
-    @ManyToOne(() => User, user => user.joinedRooms)
+    @ManyToOne(() => User, user => user.joinedRooms, { onDelete: 'CASCADE' })
     @JoinColumn()
     public user: User;
 
-    @ManyToOne(() => Room, room => room.joinedUsers)
+    @ManyToOne(() => Room, room => room.joinedUsers, { onDelete: 'CASCADE' })
     @JoinColumn()
     public room: Room
 }

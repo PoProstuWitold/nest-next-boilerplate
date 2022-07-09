@@ -4,8 +4,6 @@ import { FindOperator } from 'typeorm';
 
 import { User } from '../../../common/entities';
 import { RoomService } from '../room/room.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { Message } from './message.entity';
 import { MessageRepository } from './message.repository';
 
 @Injectable()

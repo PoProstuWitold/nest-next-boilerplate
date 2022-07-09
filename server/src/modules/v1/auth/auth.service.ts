@@ -8,13 +8,13 @@ import { createHash } from 'crypto';
 import { nanoid } from 'nanoid'
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull'
+import { Emitter } from '@socket.io/redis-emitter';
 
 import { UserService } from '../user/user.service';
 import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../common/dtos';
 import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../common/exceptions';
 import { PostgresErrorCode, Providers, AccountStatus } from '../../../common/enums';
 import { User } from '../../../common/entities';
-import { Emitter } from '@socket.io/redis-emitter';
 import { InjectEmitter } from '../chat/ws-emitter.module';
 
 export interface AuthRequest extends Request {

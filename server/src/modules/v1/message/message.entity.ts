@@ -7,11 +7,11 @@ import { Room } from '../room/room.entity'
 @Entity()
 export class Message extends AbstractEntity<Message> {
 
-    @ManyToOne(() => Room, room => room.messages)
+    @ManyToOne(() => Room, room => room.messages, { onDelete: 'CASCADE' })
     @JoinTable()
     public room: Room
 
-    @ManyToOne(() => User, user => user.messages)
+    @ManyToOne(() => User, user => user.messages, { onDelete: 'CASCADE' })
     @JoinColumn()
     public author: User
 

@@ -13,7 +13,6 @@ import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './services/chat.service';
 import { User } from '../../../common/entities';
-import { UserService } from '../user/user.service';
 import { RoomService } from '../room/room.service';
 import { ConnectedUserService } from './services/connected-user.service';
 import { JoinedRoomService } from './services/joined-room.service';
@@ -38,7 +37,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     constructor(
         private readonly chatService: ChatService,
-        private readonly userService: UserService,
         private readonly roomService: RoomService,
         private readonly connectedUserService: ConnectedUserService,
         private readonly joinedRoomService: JoinedRoomService,
@@ -46,6 +44,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     ) {}
 
     public async onModuleInit() {
+        this.connectedUserService.deleteAll()
+        this.joinedRoomService.deleteAll()
         this.logger.log('Module has been initialized')
     }
 
@@ -89,10 +89,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const createdMessage = await this.messageService.create(socket.user, roomId, message)
         const room = await this.roomService.getRoomForMessages(createdMessage.room.id)
         const joinedUsers = await this.joinedRoomService.findByRoom(room)
-        console.log(joinedUsers)
         for(const user of joinedUsers) {
-            console.log(user.socketId)
-            console.log(socket.id)
             this.server.to(user.socketId).emit('message:created', createdMessage)
         }
     }
@@ -100,20 +97,28 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @SubscribeMessage('room:create')
     public async onRoomCreate(
         @ConnectedSocket() socket: UserSocket,
-        @MessageBody() data: { message: string, roomId: string }
+        @MessageBody() data: { name: string, description?: string, public?: boolean}
     ) {
-        console.log(socket);
+        const createdRoom = await this.roomService.createRoom(data, socket.user)
+        for (const user of createdRoom.users) {
+            const connections = await this.connectedUserService.findByUser(user)
+            console.log('connections', connections)
+            const rooms = await this.roomService.getUserRooms(user.id)
+            for (const connection of connections) {
+                this.server.to(connection.socketId).emit('room:all', rooms)
+            }
+        }
     }
 
     @SubscribeMessage('room:join')
     public async onRoomJoin(
         @ConnectedSocket() socket: UserSocket,
-        @MessageBody() data: { message: string, roomId: string }
+        @MessageBody() data: { roomId: string }
     ) {
         const { roomId } = data
         const messages = await this.messageService.findMessagesForRoom(roomId)
         const room = await this.roomService.getRoom(roomId, { relationIds: false })
         await this.joinedRoomService.create({ socketId: socket.id, user: socket.data.user, room })
-        await this.server.to(socket.id).emit('messages:all', messages)
+        this.server.to(socket.id).emit('room:messages', messages)
     }
 }

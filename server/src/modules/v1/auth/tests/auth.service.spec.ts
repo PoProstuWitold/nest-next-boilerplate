@@ -12,6 +12,9 @@ import { AuthService } from '../auth.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'
 import { UserModule } from '../../../../modules/v1/user/user.module'
 import { WsEmitterClientOptions, WsEmitterModule } from '../../../../modules/v1/chat/ws-emitter.module'
+import { Room } from '../../room/room.entity'
+import { Message } from '../../message/message.entity'
+import { ConnectedUser, JoinedRoom } from '../../chat/entites'
 
 describe('AuthService', () => {
     let module: TestingModule
@@ -25,7 +28,7 @@ describe('AuthService', () => {
                     isGlobal: true
                 }),
                 UserModule,
-                TypeOrmModule.forRootAsync(createTestConfiguration([User])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, ConnectedUser, JoinedRoom])),
                 TypeOrmModule.forFeature([User]),
                 JwtModule.registerAsync(createJwtConfiguration()),
                 BullModule.registerQueueAsync({
@@ -66,11 +69,11 @@ describe('AuthService', () => {
 
         service = module.get<AuthService>(AuthService)
         repository = module.get<UserRepository>(getRepositoryToken(User))
-        repository.clear()
+        await repository.query(`DELETE FROM "user"`)
     })
 
     afterAll(async () => {
-        repository.clear()
+        await repository.query(`DELETE FROM "user"`)
         module.close()
     })
 

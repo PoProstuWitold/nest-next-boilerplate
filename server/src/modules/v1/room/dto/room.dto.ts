@@ -1,5 +1,5 @@
 export class RoomDto {
     name?: string
     description?: string
-    visible?: boolean
+    isPublic?: boolean
 }

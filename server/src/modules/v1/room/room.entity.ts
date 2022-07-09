@@ -22,13 +22,13 @@ export class Room extends AbstractEntity<Room> {
         type: 'boolean',
         default: true
     })
-    public visible: boolean
+    public isPublic: boolean
 
     @ManyToMany(() => User)
     @JoinTable()
     public users: User[]
 
-    @OneToMany(() => JoinedRoom, joinedRoom => joinedRoom.room)
+    @OneToMany(() => JoinedRoom, joinedRoom => joinedRoom.room, { onDelete: 'CASCADE' })
     public joinedUsers: JoinedRoom[]
 
     @ManyToMany(() => User)
@@ -38,6 +38,6 @@ export class Room extends AbstractEntity<Room> {
     @ManyToOne(() => User)
     public owner: User
 
-    @OneToMany(() => Message, message => message.room)
+    @OneToMany(() => Message, message => message.room, { onDelete: 'CASCADE' })
     public messages: Message[]
 }

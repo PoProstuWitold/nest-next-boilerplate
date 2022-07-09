@@ -8,6 +8,9 @@ import { createTestConfiguration } from '../../../../../test/test-utils'
 import { UserRepository } from '../repositories/user.repository'
 import { UserService } from '../user.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'
+import { Room } from '../../room/room.entity'
+import { Message } from '../../message/message.entity'
+import { ConnectedUser, JoinedRoom } from '../../chat/entites'
 
 describe('UserService', () => {
     let module: TestingModule
@@ -21,7 +24,7 @@ describe('UserService', () => {
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
-                TypeOrmModule.forRootAsync(createTestConfiguration([User])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, ConnectedUser, JoinedRoom])),
                 TypeOrmModule.forFeature([User])
             ],
             providers: [
@@ -31,11 +34,11 @@ describe('UserService', () => {
 
         service = module.get<UserService>(UserService)
         repository = module.get<UserRepository>(getRepositoryToken(User))
-        repository.clear()
+        await repository.query(`DELETE FROM "user"`)
     })
 
     afterAll(async () => {
-        repository.clear()
+        await repository.query(`DELETE FROM "user"`)
         module.close()
     })
 

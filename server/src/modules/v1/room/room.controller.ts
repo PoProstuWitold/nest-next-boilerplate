@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { CurrentUser } from 'common/decorators';
-import { User } from 'common/entities';
+import { CurrentUser } from '../../../common/decorators';
+import { User } from '../../../common/entities';
 import { JwtAuthGuard, VerifiedGuard } from '../../../common/guards';
 import { ModGuard } from './guards/ModGuard';
 import { OwnershipGuard } from './guards/OwnershipGuard';

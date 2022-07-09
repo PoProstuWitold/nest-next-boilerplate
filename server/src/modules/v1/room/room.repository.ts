@@ -13,17 +13,15 @@ export class RoomRepository extends Repository<Room> {
         const room: Room = new Room({
             name: dto.name,
             description: dto.description,
-            visible: dto.visible,
+            isPublic: dto.isPublic,
             owner,
-            users: [],
-            mods: []
+            users: [owner],
+            mods: [owner]
         })
 
         try {
-            const newRoom = this.addOwner(owner, room)
-            await this.save(newRoom)
-            console.log(newRoom)
-            return newRoom
+            await this.save(room)
+            return room
         } catch (err) {
             console.log(err)
             throw new UnprocessableEntityException('Something went wrong with saving room')
@@ -38,18 +36,13 @@ export class RoomRepository extends Repository<Room> {
                 // ],
                 loadRelationIds: relationIds || false,
                 where: {
-                    visible: true, id
+                    // isPublic: true, 
+                    id
                 }
             })
             return room
         } catch (err) {
             throw new NotFoundException('Room with this id does not exist')
         }
-    }
-
-    private addOwner(owner: User, room: Room) {
-        room.users.push(owner)
-        room.mods.push(owner)
-        return room
     }
 }

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
-import { EqualOperator, FindOperator, FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { User } from '../../../../common/entities';
 import { ConnectedUser } from '../entites';
 
 @Injectable()
@@ -13,11 +12,11 @@ export class ConnectedUserService {
     ) {}
     
     public async create(connectedUser: any): Promise<any> {
-        return this.connectedUserRepository.save(connectedUser);
+        return this.connectedUserRepository.save(connectedUser)
     }
     
-    public async findByUser(user: boolean | FindOperator<User> | FindOptionsWhere<User> | FindOptionsWhere<User>[] | EqualOperator<User>): Promise<any[]> {
-        return this.connectedUserRepository.find({ where: { user } })
+    public async findByUser(user: any): Promise<any[]> {
+        return this.connectedUserRepository.find(user)
     }
     
     public async deleteBySocketId(socketId: string) {

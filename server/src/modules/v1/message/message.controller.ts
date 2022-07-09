@@ -37,7 +37,7 @@ export class MessageController {
         return this.messageService.create(user, roomId, text)
     }
 
-    @UseGuards(JwtAuthGuard, VerifiedGuard, MembershipGuard)
+    @UseGuards(JwtAuthGuard, VerifiedGuard)
     @Get('')
     async getUserMessages(
         @CurrentUser() user: User

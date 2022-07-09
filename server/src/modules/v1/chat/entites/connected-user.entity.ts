@@ -7,7 +7,7 @@ export class ConnectedUser extends AbstractEntity<User> {
     @Column()
     public socketId: string;
 
-    @ManyToOne(() => User, user => user.connections)
+    @ManyToOne(() => User, user => user.connections, { onDelete: 'CASCADE' })
     @JoinColumn()
     public user: User
 }
