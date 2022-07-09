@@ -63,7 +63,7 @@ Run Docker containers
 
 ### 1. Docker
 ```bash
-docker-compose up 
+docker compose up 
 ```
 
 ## Without Docker
@@ -136,6 +136,7 @@ yarn
 - Account confirmation
 - Password recover
 - Profile update
+- Chat
 
 ## TO DO
 - [x] Local login
@@ -146,6 +147,7 @@ yarn
 - [x] Password recover & change features
 - [x] Queues
 - [x] Refresh tokens
+- [ ] Chat
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

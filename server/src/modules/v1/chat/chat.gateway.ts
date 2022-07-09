@@ -71,6 +71,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     public async handleDisconnect(socket: UserSocket): Promise<void> {
         socket.user = undefined
         await this.connectedUserService.deleteBySocketId(socket.id)
+        await this.joinedRoomService.deleteBySocketId(socket.id)
         socket.disconnect()
         this.logger.log(`Connection ended`)
         return
@@ -117,6 +118,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     ) {
         const { roomId } = data
         const messages = await this.messageService.findMessagesForRoom(roomId)
+        await this.roomService.addToRoom('user', socket.user.id, roomId)
         const room = await this.roomService.getRoom(roomId, { relationIds: false })
         await this.joinedRoomService.create({ socketId: socket.id, user: socket.data.user, room })
         this.server.to(socket.id).emit('room:messages', messages)

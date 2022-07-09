@@ -47,7 +47,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                                 <IoProvider>
                                     {!authRoute && <NavBar/>}
                                     <Component {...pageProps}/>
-                                    {!authRoute && <Footer/>}   
+                                    {!authRoute || pathname === '/chat' && <Footer/>}   
                                 </IoProvider>                   
                             </AuthProvider>
                         </PersistGate>

@@ -93,7 +93,7 @@ export class MessageService {
                 'room.id',
                 'room.name'
             ])
-            .orderBy('message.created_at', 'DESC')
+            .orderBy('message.created_at', 'ASC')
             .getMany()
     
         return query

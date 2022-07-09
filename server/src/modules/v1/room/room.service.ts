@@ -38,16 +38,16 @@ export class RoomService {
             //     'owner', 'users', 'mods'
             // ],
             loadRelationIds: true,
-            where: {
-                isPublic: true
-            }
+            // where: {
+            //     isPublic: true
+            // }
         })
     }
 
     public async getUserRooms(userId: string) {
         const query = await this.roomRepository
             .createQueryBuilder('room')
-            .where('users.id = :userId', { userId })
+            // .where('users.id = :userId', { userId })
             .leftJoinAndSelect('room.users', 'users')
             .leftJoinAndSelect('room.mods', 'mods')
             .leftJoinAndSelect('room.owner', 'owner')
