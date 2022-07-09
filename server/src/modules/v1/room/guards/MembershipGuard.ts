@@ -10,7 +10,7 @@ export class MembershipGuard implements CanActivate {
         context: ExecutionContext,
     ): Promise<boolean> {
         const request = context.switchToHttp().getRequest()
-        const roomId = request.params.id
+        const roomId = request.params.id || request.params.roomId
         const user = request.user
         const room = await this.roomService.getRoom(roomId, { relationIds: true })
         const member = room.users.includes(user.id)

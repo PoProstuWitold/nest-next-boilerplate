@@ -47,14 +47,15 @@ export class RoomService {
     public async getUserRooms(userId: string) {
         const query = await this.roomRepository
             .createQueryBuilder('room')
-            // .where('users.id = :userId', { userId })
-            .leftJoinAndSelect('room.users', 'users')
+            .where('users.id = :userId', { userId })
+            .leftJoin('room.users', 'users')
+            .leftJoinAndSelect('room.users', 'all_users')
             .leftJoinAndSelect('room.mods', 'mods')
             .leftJoinAndSelect('room.owner', 'owner')
             .select([
                 'room',
-                'users.id',
-                'users.displayName',
+                'all_users.id',
+                'all_users.displayName',
                 'mods.id',
                 'mods.displayName',
                 'owner.id',

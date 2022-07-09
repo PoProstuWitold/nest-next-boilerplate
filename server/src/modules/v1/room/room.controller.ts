@@ -39,7 +39,8 @@ export class RoomController {
     @UseGuards(JwtAuthGuard, VerifiedGuard)
     @Get('my/rooms')
     async getUsersRoom(
-        @CurrentUser('id', new ParseUUIDPipe()) userId: string
+        @CurrentUser('id', new ParseUUIDPipe()) userId: string,
+        @CurrentUser() user: User
     ) {
         return this.roomService.getUserRooms(userId)
     }
@@ -71,7 +72,7 @@ export class RoomController {
         return this.roomService.deleteRoom(id)
     }
 
-    @UseGuards(JwtAuthGuard, VerifiedGuard, ModGuard)
+    @UseGuards(JwtAuthGuard, MembershipGuard, VerifiedGuard, ModGuard)
     @Post('add-user/:roomId')
     async addUser(
         @Body() data: AddRemoveUserDto,
@@ -80,7 +81,7 @@ export class RoomController {
         return this.roomService.addToRoom(data.type, data.userId, roomId)
     }
 
-    @UseGuards(JwtAuthGuard, VerifiedGuard, ModGuard)
+    @UseGuards(JwtAuthGuard, MembershipGuard, VerifiedGuard, ModGuard)
     @Delete('remove-user/:roomId')
     async removeUser(
         @Body() data: AddRemoveUserDto,

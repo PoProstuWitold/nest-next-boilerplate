@@ -19,8 +19,11 @@ export const Message: React.FC<MessageProps> = ({ text, author }) => {
 
     return (
         <li className={`flex ${author.id === user.id ? "justify-end" : "justify-start"}`}>
+            <div className="relative">
+            <span className="text-xs">{author.displayName}</span>
             <div className={`relative max-w-xl px-4 py-2 rounded shadow ${author.id === user.id ? "bg-secondary" : "bg-accent"}`}>
                     <span className="block">{text}</span>
+            </div>
             </div>
         </li>
     )

@@ -1,15 +1,15 @@
 import Head from 'next/head'
 import { useSelector } from 'react-redux'
+import { FiSettings } from 'react-icons/fi'
+import { useEffect, useRef, useState } from 'react'
 
 import { ChatButton } from '../../components/chat/ChatButton'
 import { Message } from '../../components/chat/Message'
 import { MessageInput } from '../../components/chat/MessageInput'
-import { Container } from '../../components/Container'
 import { RootState } from '../../store/store'
 import { AuthOption, withAuth } from '../../utils/withAuth'
 import { useAuthenticatedSocket } from '../../utils/useSocket'
-import { useEffect, useRef, useState } from 'react'
-import axios from 'axios'
+import { CreateChatForm } from '../../components/chat/CreateChatForm'
 
 interface ChatProps {
 
@@ -49,8 +49,9 @@ const Chat: React.FC<ChatProps> = ({}) => {
             })
 
             socket.on('message:created', async (message) => {
-                console.log('message', message)
-                setMessages((messages: any[]) => [...messages, message])
+                if(message.room.id === activeRoom.id) {
+                    setMessages((messages: any[]) => [...messages, message])
+                }
             })
           
             socket.on('room:all', async (rooms) => {
@@ -77,7 +78,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
                 socket.off('room:messages')
             }
         }
-    }, [socket, rooms])
+    }, [socket, rooms, activeRoom])
 
     if(!user) {
         return (
@@ -85,7 +86,20 @@ const Chat: React.FC<ChatProps> = ({}) => {
         )
     }
 
+    const isUserModOrOwner = (room: any) => {
+        let modOrOwner: boolean
+        modOrOwner = room.owner === user.id
+        for(const mod of room.mods) {
+            if(mod.id === user.id) {
+                return modOrOwner = true
+            }
+        }
+
+        return modOrOwner
+    }
+
     const setActiveRoomAndGetMessages = async (room: any ) => {
+        socket.emit('room:leave')
         setActiveRoom(room)
         socket.emit('room:join', ({ roomId: room.id }))
     }
@@ -103,7 +117,10 @@ const Chat: React.FC<ChatProps> = ({}) => {
                         <div className="p-5 lg:w-1/3">
                             <div className="shadow-2xl bg-base-200 rounded-xl">
                                 <ul className="overflow-auto h-[32rem]">
-                                    <h2 className="my-2 mb-2 ml-2 text-lg">Chats</h2>
+                                    <div className="inline-flex">
+                                        <h2 className="m-2 text-2xl">Chats</h2>
+                                        <label htmlFor="create-chat" className="m-2 btn btn-sm">add</label>
+                                    </div>
                                     <li>
                                         {rooms && rooms.map((room: any, index: number) =>
                                             <div key={index} onClick={() => setActiveRoomAndGetMessages(room)} className={room === activeRoom ? "bg-base-300" : ""}>
@@ -120,10 +137,13 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                     {rooms && activeRoom &&
                                         <>
                                             <div className="relative flex items-center p-3 border-b border-primary-focus">
-                                                <img className="object-cover w-10 h-10 rounded-full" src="https://cdn.pixabay.com/photo/2018/01/15/07/51/woman-3083383__340.jpg" alt="username" />
+                                                <img className="object-cover w-10 h-10 rounded-full" src="http://simpleicon.com/wp-content/uploads/multy-user.png" alt="username" />
                                                 <span className="block ml-2 font-bold">{activeRoom.name}</span>
-                                                <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3">
-                                                </span>
+                                                {activeRoom.users && isUserModOrOwner(activeRoom) &&
+                                                    <button type="submit" className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
+                                                        <FiSettings/> <p className="ml-2">Edit</p>
+                                                    </button>
+                                                }
                                             </div>
                                             <div className="relative w-full p-6 overflow-y-auto h-[40rem]">
                                                 <ul className="space-y-2">
@@ -150,6 +170,13 @@ const Chat: React.FC<ChatProps> = ({}) => {
                         </div>
                     </div>
                 </div>
+            </div>
+            <input type="checkbox" id="create-chat" className="modal-toggle" />
+            <div className="modal">
+            <div className="modal-box">
+            <label htmlFor="create-chat" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                <CreateChatForm/>
+            </div>
             </div>
         </>
     )

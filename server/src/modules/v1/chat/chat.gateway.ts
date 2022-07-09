@@ -123,4 +123,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         await this.joinedRoomService.create({ socketId: socket.id, user: socket.data.user, room })
         this.server.to(socket.id).emit('room:messages', messages)
     }
+
+    @SubscribeMessage('room:leave')
+    public async onRoomLeave(
+        @ConnectedSocket() socket: UserSocket
+    ) {
+        await this.joinedRoomService.deleteBySocketId(socket.id)
+    }
 }
