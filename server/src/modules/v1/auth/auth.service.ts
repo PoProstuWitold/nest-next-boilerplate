@@ -8,14 +8,12 @@ import { createHash } from 'crypto';
 import { nanoid } from 'nanoid'
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull'
-import { Emitter } from '@socket.io/redis-emitter';
 
 import { UserService } from '../user/user.service';
 import { CreateAccountDto, LoginDto, PasswordValuesDto } from '../../../common/dtos';
 import { UniqueViolation, InvalidCredentials, SocialProvider } from '../../../common/exceptions';
 import { PostgresErrorCode, Providers, AccountStatus } from '../../../common/enums';
 import { User } from '../../../common/entities';
-import { InjectEmitter } from '../chat/ws-emitter.module';
 
 export interface AuthRequest extends Request {
     user: IUser
@@ -32,8 +30,7 @@ export class AuthService {
         private readonly userService: UserService,
         private readonly configService: ConfigService,
         private readonly redisService: RedisService,
-        @InjectQueue('mail-queue') private mailQueue: Queue,
-        @InjectEmitter() private readonly emitter: Emitter
+        @InjectQueue('mail-queue') private mailQueue: Queue
     ) {}
 
     public async register(registrationData: CreateAccountDto, req: Request) {
@@ -87,7 +84,6 @@ export class AuthService {
     }
 
     public async logout(req: Request) {
-        this.emitter.of('/chat').emit('destroy-handshake')
         if(req.cookies && req.cookies['refresh_token']) {
                 const refreshTokenCookie = req.cookies['refresh_token']
                 const verifiedRefresh = await this.jwtService.verifyAsync(refreshTokenCookie, {
@@ -358,7 +354,6 @@ export class AuthService {
     }
 
     public async getProfile(req: Request) {
-        this.emitter.of('/chat').emit('pong')
         return {
             user: req.user
         }

@@ -14,9 +14,8 @@ import { Server, Socket } from 'socket.io';
 import { ChatService } from './services/chat.service';
 import { User } from '../../../common/entities';
 import { RoomService } from '../room/room.service';
-import { ConnectedUserService } from './services/connected-user.service';
-import { JoinedRoomService } from './services/joined-room.service';
 import { MessageService } from '../message/message.service';
+import { Room } from '../room/room.entity';
 
 interface UserSocket extends Socket {
     user: User
@@ -38,14 +37,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     constructor(
         private readonly chatService: ChatService,
         private readonly roomService: RoomService,
-        private readonly connectedUserService: ConnectedUserService,
-        private readonly joinedRoomService: JoinedRoomService,
         private readonly messageService: MessageService
     ) {}
 
     public async onModuleInit() {
-        this.connectedUserService.deleteAll()
-        this.joinedRoomService.deleteAll()
         this.logger.log('Module has been initialized')
     }
 
@@ -58,7 +53,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             }
             socket.user = user
             const rooms = await this.roomService.getUserRooms(user.id)
-            await this.connectedUserService.create({ socketId: socket.id, user })
+            socket.join(this.getRoomsId(rooms))
+            socket.join(user.id)
             this.logger.log(`Connection established: ${user.id}`)
             this.server.to(socket.id).emit('room:all', rooms)
             return 
@@ -70,8 +66,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     public async handleDisconnect(socket: UserSocket): Promise<void> {
         socket.user = undefined
-        await this.connectedUserService.deleteBySocketId(socket.id)
-        await this.joinedRoomService.deleteBySocketId(socket.id)
         socket.disconnect()
         this.logger.log(`Connection ended`)
         return
@@ -88,10 +82,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     ) {
         const { message, roomId } = data
         const createdMessage = await this.messageService.create(socket.user, roomId, message)
-        const room = await this.roomService.getRoomForMessages(createdMessage.room.id)
-        const joinedUsers = await this.joinedRoomService.findByRoom(room)
-        for(const user of joinedUsers) {
-            this.server.to(user.socketId).emit('message:created', createdMessage)
+        for(const room of socket.rooms) {
+            if(createdMessage.room.id === room) {
+                this.server.to(room).emit('message:created', createdMessage)
+            }
         }
     }
 
@@ -102,12 +96,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     ) {
         const createdRoom = await this.roomService.createRoom(data, socket.user)
         for (const user of createdRoom.users) {
-            const connections = await this.connectedUserService.findByUser(user)
-            console.log('connections', connections)
             const rooms = await this.roomService.getUserRooms(user.id)
-            for (const connection of connections) {
-                this.server.to(connection.socketId).emit('room:all', rooms)
-            }
+            this.server.to(socket.id).emit('room:all', rooms)
         }
     }
 
@@ -118,16 +108,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     ) {
         const { roomId } = data
         const messages = await this.messageService.findMessagesForRoom(roomId)
-        await this.roomService.addToRoom('user', socket.user.id, roomId)
-        const room = await this.roomService.getRoom(roomId, { relationIds: false })
-        await this.joinedRoomService.create({ socketId: socket.id, user: socket.data.user, room })
         this.server.to(socket.id).emit('room:messages', messages)
     }
 
     @SubscribeMessage('room:leave')
     public async onRoomLeave(
         @ConnectedSocket() socket: UserSocket
-    ) {
-        await this.joinedRoomService.deleteBySocketId(socket.id)
+    ) {}
+
+    private getRoomsId(rooms: Room[]) {
+        let roomsIds: string[] = []
+        for(const room of rooms) {
+            roomsIds.push(room.id)
+        }
+        return roomsIds
     }
 }

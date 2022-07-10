@@ -7,6 +7,7 @@ import { AiTwotoneEdit } from 'react-icons/ai'
 
 import { RootState } from '../../store/store'
 import { ErrorField } from '../../components/ErrorField'
+import { useAuthenticatedSocket } from '../../utils/useSocket'
 
 type ChatRoomValues = {
     name: string | null;
@@ -19,7 +20,7 @@ interface CreateChatFormProps {
 }
 
 export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
-
+    const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
     const [ApiErrors, setAPIErrors] = useState<any>({})
     const [ApiResponse, setAPIResponse] = useState<any>('')
     
@@ -42,9 +43,10 @@ export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
     const submitChatRoom = async (values: ChatRoomValues, helpers: FormikHelpers<ChatRoomValues>) => {
         try {
             console.log(values)
-            const res = await axios.post('/room', values)
-            console.log(res)
-            setAPIResponse(res.data)
+            // const res = await axios.post('/room', values)
+            // setAPIResponse(res.data)
+            socket.emit('room:create', values)
+            
         } catch (err) {
             console.log(err)
             if(err instanceof AxiosError) {

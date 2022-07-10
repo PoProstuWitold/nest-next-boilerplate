@@ -10,6 +10,8 @@ import { RoomDto } from './dto/room.dto';
 import { RoomService } from './room.service';
 import { AddRemoveUserDto } from './dto/add-remove-user.dto';
 import { MembershipGuard } from './guards/MembershipGuard';
+import { ConnectedSocket } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
 
 
 @ApiTags('v1/room')
@@ -40,7 +42,6 @@ export class RoomController {
     @Get('my/rooms')
     async getUsersRoom(
         @CurrentUser('id', new ParseUUIDPipe()) userId: string,
-        @CurrentUser() user: User
     ) {
         return this.roomService.getUserRooms(userId)
     }

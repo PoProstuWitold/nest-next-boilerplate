@@ -1,10 +1,12 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
+import { Emitter } from '@socket.io/redis-emitter';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { User } from '../../../common/entities';
 import { PostgresErrorCode } from '../../../common/enums';
 import { UniqueViolation } from '../../../common/exceptions';
+import { InjectEmitter } from '../chat/ws-emitter.module';
 import { UserService } from '../user/user.service';
 import { Room } from './room.entity';
 import { RoomRepository } from './room.repository';
@@ -14,7 +16,8 @@ export class RoomService {
     constructor(
         @InjectRepository(RoomRepository) 
         private readonly roomRepository: RoomRepository,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        @InjectEmitter() private readonly emitter: Emitter 
     ) {}
 
 
@@ -124,15 +127,22 @@ export class RoomService {
         const room = await this.roomRepository.getRoom(roomId, true)
         const user = await this.userService.getUserByField('id', userId)
 
-        if(type === 'user') {
-            //@ts-ignore
-            if(!room.users.includes(user.id)) {
-                await this.roomRepository
-                .createQueryBuilder()
-                .relation(Room, 'users')
-                .of(room)
-                .add(user)
+        //@ts-ignore
+        const isUser = room.users.includes(user.id)
+        //@ts-ignore
+        const isMod = room.mods.includes(user.id)
 
+        if(type === 'user') {
+            if(!isUser) {
+                await this.roomRepository
+                    .createQueryBuilder()
+                    .relation(Room, 'users')
+                    .of(room)
+                    .add(user)
+
+                    const rooms = await this.getUserRooms(user.id)
+
+                    this.emitter.of('/chat').to(user.id).emit('room:all', rooms)
                 return {
                     success: true,
                     message: 'User added to room'
@@ -148,8 +158,7 @@ export class RoomService {
         
 
         if(type === 'mod') {
-            //@ts-ignore
-            if(!room.mods.includes(user.id)) {
+            if(!isMod) {
                 await this.roomRepository
                 .createQueryBuilder()
                 .relation(Room, 'mods')
@@ -162,18 +171,40 @@ export class RoomService {
                 }
             }
 
+            //@ts-ignore
+            if(!isUser) {
+                await this.roomRepository
+                .createQueryBuilder()
+                .relation(Room, 'users')
+                .relation(Room, 'mods')
+                .of(room)
+                .add(user)
+    
+                return {
+                    success: true,
+                    message: 'User added to room and moderators'
+                }
+            }
+
             return {
                 success: false,
-                message: 'User not added to moderators'
+                message: 'User not added to room and moderators'
             }
         }
     }
 
-    public async removeFromRoom(type: 'user' | 'mod' = 'user', userId: string, roomId: string) {
+    public async removeFromRoom(type: 'user' | 'mod', userId: string, roomId: string) {
         const room = await this.roomRepository.getRoom(roomId, true)
         const user = await this.userService.getUserByField('id', userId)
+
         //@ts-ignore
-        if(user.id === room.owner) {
+        const isUser = room.users.includes(user.id)
+        //@ts-ignore
+        const isMod = room.mods.includes(user.id)
+        //@ts-ignore
+        const isOwner = user.id === room.owner
+
+        if(isOwner) {
             return {
                 success: false,
                 message: "Owner cannot be removed from their room"
@@ -181,23 +212,33 @@ export class RoomService {
         }
 
         if(type === 'user') {
-            //@ts-ignore
-            if(room.users.includes(user.id)) {
+            if(isUser) {
                 await this.roomRepository
-                .createQueryBuilder()
-                .relation(Room, 'users')
-                .of(room)
-                .remove(user)
+                    .createQueryBuilder()
+                    .relation(Room, 'users')
+                    .of(room)
+                    .remove(user)
 
-                await this.roomRepository
-                .createQueryBuilder()
-                .relation(Room, 'mods')
-                .of(room)
-                .remove(user)
+                    const rooms = await this.getUserRooms(user.id)
 
+                    this.emitter.of('/chat').to(user.id).emit('room:all', rooms)
                 return {
                     success: true,
                     message: 'User removed from room'
+                }
+            } 
+
+            if(isMod) {
+                await this.roomRepository
+                    .createQueryBuilder()
+                    .relation(Room, 'users')
+                    .relation(Room, 'mods')
+                    .of(room)
+                    .remove(user)
+
+                return {
+                    success: true,
+                    message: 'User removed from room and moderators'
                 }
             } 
 
@@ -210,13 +251,12 @@ export class RoomService {
         
 
         if(type === 'mod') {
-            //@ts-ignore
-            if(room.mods.includes(user.id)) {
+            if(isMod) {
                 await this.roomRepository
-                .createQueryBuilder()
-                .relation(Room, 'mods')
-                .of(room)
-                .remove(user)
+                    .createQueryBuilder()
+                    .relation(Room, 'mods')
+                    .of(room)
+                    .remove(user)
     
                 return {
                     success: true,

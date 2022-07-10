@@ -12,7 +12,6 @@ import { MainController } from '../src/modules/app.controller';
 import { WsEmitterClientOptions, WsEmitterModule } from '../src/modules/v1/chat/ws-emitter.module';
 import { Room } from '../src/modules/v1/room/room.entity';
 import { Message } from '../src/modules/v1/message/message.entity';
-import { ConnectedUser, JoinedRoom } from '../src/modules/v1/chat/entites';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication
@@ -24,7 +23,7 @@ describe('AppController (e2e)', () => {
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
-                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, ConnectedUser, JoinedRoom])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message])),
                 V1Module,
                 RedisModule.forRootAsync({
                     useFactory: async (): Promise<RedisModuleOptions> => {

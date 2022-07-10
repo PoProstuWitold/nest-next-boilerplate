@@ -2,7 +2,6 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typ
 
 
 import { AbstractEntity, User } from '../../../common/entities'
-import { JoinedRoom } from '../chat/entites';
 import { Message } from '../message/message.entity';
 
 @Entity()
@@ -27,9 +26,6 @@ export class Room extends AbstractEntity<Room> {
     @ManyToMany(() => User)
     @JoinTable()
     public users: User[]
-
-    @OneToMany(() => JoinedRoom, joinedRoom => joinedRoom.room, { onDelete: 'CASCADE' })
-    public joinedUsers: JoinedRoom[]
 
     @ManyToMany(() => User)
     @JoinTable()

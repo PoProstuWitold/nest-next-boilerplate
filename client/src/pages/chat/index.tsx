@@ -49,6 +49,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
             })
 
             socket.on('message:created', async (message) => {
+                console.log(message)
                 if(message.room.id === activeRoom.id) {
                     setMessages((messages: any[]) => [...messages, message])
                 }
@@ -56,6 +57,10 @@ const Chat: React.FC<ChatProps> = ({}) => {
           
             socket.on('room:all', async (rooms) => {
                 setRooms(rooms)
+                if(!rooms.length) {
+                    setMessages('')
+                    setActiveRoom(false)
+                }
                 console.log('rooms', rooms)
             })
           
@@ -140,17 +145,18 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                                 <img className="object-cover w-10 h-10 rounded-full" src="http://simpleicon.com/wp-content/uploads/multy-user.png" alt="username" />
                                                 <span className="block ml-2 font-bold">{activeRoom.name}</span>
                                                 {activeRoom.users && isUserModOrOwner(activeRoom) &&
-                                                    <button type="submit" className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
+                                                    <>
+                                                        <button className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
                                                         <FiSettings/> <p className="ml-2">Edit</p>
-                                                    </button>
+                                                        </button>
+                                                        <button className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
+                                                            <FiSettings/> <p className="ml-2">Invite</p>
+                                                        </button>
+                                                    </>
                                                 }
                                             </div>
                                             <div className="relative w-full p-6 overflow-y-auto h-[40rem]">
                                                 <ul className="space-y-2">
-                                                    {/* <Message text="hi" author={user}/>
-                                                    <Message text="Hiiii" author={user}/>
-                                                    <Message text="how are you?" author={user}/>
-                                                    <Message text="Lorem ipsum dolor sit, amet consectetur adipisicing elit." author={user}/> */}
                                                     {messages && messages.map((message: any, index: number) =>
                                                         <div key={index}>
                                                             <Message text={message.text} author={message.author}/>
