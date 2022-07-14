@@ -14,7 +14,6 @@ type MessageValues = {
 export const MessageInput: React.FC<MessageInputProps> = ({ roomId }) => {
 
     const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
-
     const messageValues: MessageValues = { text: '' }
     const messageSchema = Yup.object().shape({
         text: Yup.string().required('Email cannot be empty or whitespace')
@@ -34,13 +33,18 @@ export const MessageInput: React.FC<MessageInputProps> = ({ roomId }) => {
     }
 
     return (
+        <>
+        {/* //TO DO - 'user' is typing feautre
+        <div className="flex items-center justify-between w-full pl-5 mb-2">
+            typing
+        </div> */}
         <div className="flex items-center justify-between w-full p-3 border-t border-gray-300">
             <Formik
                 initialValues={messageValues} 
                 onSubmit={submitMessage}
                 validationSchema={messageSchema}
             >
-            {({ isSubmitting, errors, touched }: FormikState<MessageValues>) => (
+            {({ isSubmitting }: FormikState<MessageValues>) => (
                 <Form className="flex items-center justify-between w-full p-3 ">
                         <Field placeholder="Type your message" type="text" name="text" className={`block w-full outline-none transition duration-200 input`}/>
                         <button type="submit" disabled={isSubmitting} className="w-1/6 ml-6 btn">
@@ -50,5 +54,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ roomId }) => {
             )}
             </Formik>
         </div>
+        </>
     )
 }

@@ -7,11 +7,12 @@ import {
     OnGatewayInit,
     SubscribeMessage,
     WebSocketGateway,
-    WebSocketServer
+    WebSocketServer,
+    WsException
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { ChatService } from './services/chat.service';
+import { ChatService } from './chat.service';
 import { User } from '../../../common/entities';
 import { RoomService } from '../room/room.service';
 import { MessageService } from '../message/message.service';
@@ -59,16 +60,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             this.server.to(socket.id).emit('room:all', rooms)
             return 
         } catch (err) {
-            socket.disconnect(true)
-            throw err
+            this.logger.error(err)
+            throw new WsException(err)
         }
     }
 
     public async handleDisconnect(socket: UserSocket): Promise<void> {
-        socket.user = undefined
-        socket.disconnect()
-        this.logger.log(`Connection ended`)
-        return
+        try {
+            socket.disconnect()
+            this.logger.log(`Connection ended`)
+            return
+        } catch (err) {
+            this.logger.error(err)
+            throw new WsException(err)
+        }
     }
 
     public async afterInit() {
@@ -80,24 +85,55 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         @ConnectedSocket() socket: UserSocket,
         @MessageBody() data: { message: string, roomId: string }
     ) {
-        const { message, roomId } = data
-        const createdMessage = await this.messageService.create(socket.user, roomId, message)
-        for(const room of socket.rooms) {
-            if(createdMessage.room.id === room) {
-                this.server.to(room).emit('message:created', createdMessage)
+        try {
+            const { message, roomId } = data
+            const createdMessage = await this.messageService.create(socket.user, roomId, message)
+            for(const room of socket.rooms) {
+                if(createdMessage.room.id === room) {
+                    this.server.to(room).emit('message:created', createdMessage)
+                }
             }
+        } catch (err) {
+            this.logger.error(err)
+            throw new WsException(err)
         }
     }
 
     @SubscribeMessage('room:create')
     public async onRoomCreate(
         @ConnectedSocket() socket: UserSocket,
-        @MessageBody() data: { name: string, description?: string, public?: boolean}
+        @MessageBody() data: { name: string, description?: string, isPublic?: boolean}
     ) {
-        const createdRoom = await this.roomService.createRoom(data, socket.user)
-        for (const user of createdRoom.users) {
-            const rooms = await this.roomService.getUserRooms(user.id)
-            this.server.to(socket.id).emit('room:all', rooms)
+        try {
+            const createdRoom = await this.roomService.createRoom(data, socket.user)
+            socket.join(createdRoom.id)
+            for (const user of createdRoom.users) {
+                const rooms = await this.roomService.getUserRooms(user.id)
+                this.server.to(socket.id).emit('room:all', rooms)
+            }
+        } catch (err) {
+            this.server.to(socket.id).emit('error:room-create', err)
+            this.logger.error(err)
+            throw new WsException(err)
+        }
+    }
+
+    @SubscribeMessage('room:edit')
+    public async onRoomEdit(
+        @ConnectedSocket() socket: UserSocket,
+        @MessageBody() data: { name: string, description?: string, isPublic?: boolean, roomId: string}
+    ) {
+        try {
+            const { name, description, isPublic, roomId } = data
+            const updatedRoom = await this.roomService.updateRoom(roomId, { name, description, isPublic})
+            if(updatedRoom.success) {
+                const rooms = await this.roomService.getUserRooms(socket.user.id)
+                this.server.to(socket.id).emit('room:all', rooms)
+            }
+        } catch (err) {
+            this.server.to(socket.id).emit('error:room-edit', err)
+            this.logger.error(err)
+            throw new WsException(err)
         }
     }
 
@@ -106,9 +142,46 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         @ConnectedSocket() socket: UserSocket,
         @MessageBody() data: { roomId: string }
     ) {
-        const { roomId } = data
-        const messages = await this.messageService.findMessagesForRoom(roomId)
-        this.server.to(socket.id).emit('room:messages', messages)
+        try {
+            const { roomId } = data
+            const messages = await this.messageService.findMessagesForRoom(roomId)
+            this.server.to(socket.id).emit('room:messages', messages)
+        } catch (err) {
+            this.logger.error(err)
+            throw new WsException(err)
+        }
+    }
+
+    @SubscribeMessage('room:delete')
+    public async onRoomDelete(
+        @ConnectedSocket() socket: UserSocket,
+        @MessageBody() data: { roomId: string, owner: any }
+    ) {
+        try {
+            const { roomId, owner } = data
+            if(owner.id === socket.user.id) {
+                await this.roomService.deleteRoom(roomId)
+                const rooms = await this.roomService.getUserRooms(socket.user.id)
+                this.server.to(socket.id).emit('room:all', rooms)
+            }
+        } catch (err) {
+            this.logger.error(err)
+            throw new WsException(err)
+        }
+    }
+
+
+    @SubscribeMessage('room:all')
+    public async onRoomAll(
+        @ConnectedSocket() socket: UserSocket
+    ) {
+        try {
+            const rooms = await this.roomService.getUserRooms(socket.user.id)
+            this.server.to(socket.id).emit('room:all', rooms)
+        } catch (err) {
+            this.logger.error(err)
+            throw new WsException(err)
+        }
     }
 
     @SubscribeMessage('room:leave')

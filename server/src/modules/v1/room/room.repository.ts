@@ -1,4 +1,4 @@
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 import { FindOperator, Repository } from 'typeorm'
 
 import { User } from '../../../common/entities'
@@ -23,8 +23,7 @@ export class RoomRepository extends Repository<Room> {
             await this.save(room)
             return room
         } catch (err) {
-            console.log(err)
-            throw new UnprocessableEntityException('Something went wrong with saving room')
+            throw err
         }
     }
 

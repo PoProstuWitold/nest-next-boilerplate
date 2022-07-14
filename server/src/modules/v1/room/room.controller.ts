@@ -35,7 +35,7 @@ export class RoomController {
     async getRoom(
         @Param('id', new ParseUUIDPipe()) id: string
     ) {
-        return this.roomService.getRoom(id, { relationIds: true })
+        return this.roomService.getRoomWithRelations(id)
     }
 
     @UseGuards(JwtAuthGuard, VerifiedGuard)

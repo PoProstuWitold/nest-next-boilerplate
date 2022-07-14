@@ -14,29 +14,38 @@ type ChatRoomValues = {
     isPublic: boolean | null;
 }
 
-interface CreateChatFormProps {
-
+interface EditChatFormProps {
+    room: any
 }
 
-export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
+export const EditChatForm: React.FC<EditChatFormProps> = ({ room }) => {
     const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
     
     let userState = useSelector((state: RootState) => state.user)
     const { user, authenticated } = userState
-    const createChatRoomValues: ChatRoomValues = {
+    let editChatRoomValues: ChatRoomValues = {
         name: '',
         description: '',
-        isPublic: true
+        isPublic: true,
+    }
+
+    if(room) {
+        editChatRoomValues = {
+            name: room.name,
+            description: room.description,
+            isPublic: room.isPublic,
+        }
     }
 
     const [wsError, setWsError] = useState<any>('')
 
-    const createChatRoomSchema = Yup.object().shape({
+    const editChatRoomSchema = Yup.object().shape({
         name: Yup.string(),
         description: Yup.string(),
         isPublic: Yup.boolean()
     })
     
+
     useEffect(() => {
         if(socket) {
             socket.on('connect', () => {
@@ -47,10 +56,12 @@ export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
                 console.log('Socket disconnected')
             })
 
-            socket.on('error:room-create', async (error) => {
+            socket.on('error:room-edit', async (error) => {
                 console.log('error', error)
                 setWsError(error)
             })
+
+            console.log(room)
 
             return () => {
                 socket.off('connect')
@@ -62,7 +73,8 @@ export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
 
     const submitChatRoom = async (values: ChatRoomValues, helpers: FormikHelpers<ChatRoomValues>) => {
         try {
-            socket.emit('room:create', values)
+            const { name, description, isPublic } = values
+            socket.emit('room:edit', { name, description, isPublic, roomId: room.id })
             setTimeout(() => {
                 helpers.resetForm()
                 setWsError('')
@@ -72,17 +84,22 @@ export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
         }
     }
 
+    const deleteRoom = () => {
+        socket.emit('room:delete', { roomId: room.id, owner: room.owner })
+    }
+
     return (
         <>
             <div>
                     <div className="mx-auto w-96">
-                    <p className="m-10 mx-auto text-lg font-bold text-center">PoProstuWitold</p>
+                    <p className="m-10 mx-auto text-lg font-bold text-center">Chat: {room.name}</p>
                     {wsError ? <p className="p-4 m-10 mx-auto font-bold text-center border rounded-xl border-error text-md text-error">{wsError.name}</p> : null}
                     {authenticated && user !== null ? 
                     <Formik
-                        initialValues={createChatRoomValues} 
+                        enableReinitialize
+                        initialValues={editChatRoomValues} 
                         onSubmit={submitChatRoom}
-                        validationSchema={createChatRoomSchema}
+                        validationSchema={editChatRoomSchema}
                     >
                         {({ isSubmitting, errors, touched }: FormikState<ChatRoomValues>) => (
                             <Form>
@@ -94,7 +111,7 @@ export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
                                         <Field placeholder="Enter your chat name" type="text" name="name" className={`w-full p-3 transition duration-200 rounded input`}/>
                                         <label className="label">
                                             {errors.name && touched.name ? <ErrorField error={errors.name}/> : null}
-                                            {wsError && wsError.response.errors.name ? <ErrorField error={wsError.response.errors.name}/> : null}
+                                            {wsError && wsError.response.errors.name && touched.name ? <ErrorField error={wsError.response.errors.name}/> : null}
                                         </label>
                                         
                                     </div>
@@ -107,7 +124,7 @@ export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
                                         <Field placeholder="Enter your chat description" type="text" name="description" className={`w-full p-3 transition duration-200 rounded input`}/>
                                         <label className="label">
                                             {errors.description && touched.description ? <ErrorField error={errors.description}/> : null}
-                                            {wsError && wsError.response.errors.description ? <ErrorField error={wsError.response.errors.description}/> : null}
+                                            {wsError && wsError.response.errors.description && touched.description ? <ErrorField error={wsError.response.errors.description}/> : null}
                                         </label>
                                         
                                     </div>
@@ -120,14 +137,24 @@ export const CreateChatForm: React.FC<CreateChatFormProps> = ({}) => {
                                         </label>
                                         <label className="label">
                                             {errors.isPublic && touched.isPublic ? <ErrorField error={errors.isPublic}/> : null}
-                                            {wsError && wsError.response.errors.isPublic ? <ErrorField error={wsError.response.errors.isPublic}/> : null}
+                                            {wsError && wsError.response.errors.isPublic && touched.isPublic ? <ErrorField error={wsError.response.errors.isPublic}/> : null}
                                         </label>
                                         
                                     </div>
                                 </div>
                                 
+                                {room && room.owner.id === user.id ?
+                                    <div>
+                                        <div className="flex flex-row items-stretch">
+                                                <span onClick={deleteRoom} className="mb-6 font-semibold btn-ghost btn-sm rounded-btn btn btn-outline label-text">
+                                                    Delete room
+                                                </span>
+                                        </div>
+                                    </div> : null
+                                }
+
                                 <button type="submit" disabled={isSubmitting} className={`w-full btn font-semibold ${isSubmitting ? 'btn loading' : ''}`}>
-                                    <AiTwotoneEdit/> <p className="ml-2">Create chatroom</p>
+                                    <AiTwotoneEdit/> <p className="ml-2">Edit chatroom</p>
                                 </button>
                             </Form>
                         )}

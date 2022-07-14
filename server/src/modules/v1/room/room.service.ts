@@ -59,10 +59,13 @@ export class RoomService {
                 'room',
                 'all_users.id',
                 'all_users.displayName',
+                'all_users.image',
                 'mods.id',
                 'mods.displayName',
+                'mods.image',
                 'owner.id',
-                'owner.displayName'
+                'owner.displayName',
+                'owner.image',
             ])
             .orderBy('room.updated_at', 'DESC')
             .getMany()
@@ -72,6 +75,32 @@ export class RoomService {
 
     public async getRoom(id: string, { relationIds }: { relationIds: boolean }) {
         return this.roomRepository.getRoom(id, relationIds)
+    }
+
+    public async getRoomWithRelations(id: string) {
+        const query = await this.roomRepository
+            .createQueryBuilder('room')
+            .where("room.id = :id", { id })
+            .leftJoin('room.users', 'users')
+            .leftJoinAndSelect('room.users', 'all_users')
+            .leftJoinAndSelect('room.mods', 'mods')
+            .leftJoinAndSelect('room.owner', 'owner')
+            .select([
+                'room',
+                'all_users.id',
+                'all_users.displayName',
+                'all_users.image',
+                'mods.id',
+                'mods.displayName',
+                'mods.image',
+                'owner.id',
+                'owner.displayName',
+                'owner.image',
+            ])
+            .orderBy('room.updated_at', 'DESC')
+            .getOne()
+
+        return query
     }
 
     public async getRoomForMessages(id: string) {

@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useSelector } from 'react-redux'
 import { FiSettings } from 'react-icons/fi'
+import { IoIosPeople} from 'react-icons/io'
 import { useEffect, useRef, useState } from 'react'
 
 import { ChatButton } from '../../components/chat/ChatButton'
@@ -10,6 +11,9 @@ import { RootState } from '../../store/store'
 import { AuthOption, withAuth } from '../../utils/withAuth'
 import { useAuthenticatedSocket } from '../../utils/useSocket'
 import { CreateChatForm } from '../../components/chat/CreateChatForm'
+import { EditChatForm } from '../../components/chat/EditChatForm'
+import { Members } from '../../components/chat/Members'
+import { isRoomMod } from '../../utils/room'
 
 interface ChatProps {
 
@@ -18,21 +22,19 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({}) => {
 
+    let userState = useSelector((state: RootState) => state.user)
+    const { user } = userState
+
     const messagesEndRef = useRef<null | HTMLDivElement>(null)
     const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
 
     const [rooms, setRooms] = useState<any>('')
     const [activeRoom, setActiveRoom] = useState<any>(false)
     const [messages, setMessages] = useState<any>('')
-
+    
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }
-
-    
-    console.log(socket)
-    let userState = useSelector((state: RootState) => state.user)
-    const { user } = userState
     
     useEffect(() => {
         scrollToBottom()
@@ -41,7 +43,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
     useEffect(() => {
         if(socket) {
             socket.on('connect', () => {
-                console.log('Socket connected', socket)
+                console.log('Socket connected')
             })
           
             socket.on('disconnect', () => {
@@ -68,16 +70,10 @@ const Chat: React.FC<ChatProps> = ({}) => {
                 console.log('messages', messages)
                 setMessages(messages)
             })
-          
-          
-            socket.on('pong', () => {
-                console.log('YAYAYAYAYA!')
-            })
 
             return () => {
                 socket.off('connect')
                 socket.off('disconnect')
-                socket.off('pong')
                 socket.off('message:created')
                 socket.off('room:all')
                 socket.off('room:messages')
@@ -89,18 +85,6 @@ const Chat: React.FC<ChatProps> = ({}) => {
         return (
             <></>
         )
-    }
-
-    const isUserModOrOwner = (room: any) => {
-        let modOrOwner: boolean
-        modOrOwner = room.owner === user.id
-        for(const mod of room.mods) {
-            if(mod.id === user.id) {
-                return modOrOwner = true
-            }
-        }
-
-        return modOrOwner
     }
 
     const setActiveRoomAndGetMessages = async (room: any ) => {
@@ -121,15 +105,30 @@ const Chat: React.FC<ChatProps> = ({}) => {
                     <div className="flex flex-col lg:flex-row">
                         <div className="p-5 lg:w-1/3">
                             <div className="shadow-2xl bg-base-200 rounded-xl">
-                                <ul className="overflow-auto h-[32rem]">
+                                <ul className="overflow-auto h-[25rem]">
                                     <div className="inline-flex">
                                         <h2 className="m-2 text-2xl">Chats</h2>
                                         <label htmlFor="create-chat" className="m-2 btn btn-sm">add</label>
                                     </div>
+                                    {/* ROOMS */}
                                     <li>
                                         {rooms && rooms.map((room: any, index: number) =>
                                             <div key={index} onClick={() => setActiveRoomAndGetMessages(room)} className={room === activeRoom ? "bg-base-300" : ""}>
-                                                <ChatButton name={room.name} description={room.description} />
+                                                <ChatButton room={room} />
+                                            </div>
+                                        )}
+                                    </li>
+                                </ul>
+                                <ul className="overflow-auto h-[25rem]">
+                                    <div className="inline-flex">
+                                        <h2 className="m-2 text-2xl">Converastions</h2>
+                                        <label htmlFor="create-chat" className="m-2 btn btn-sm">add</label>
+                                    </div>
+                                    {/* CONVERSATIONS */}
+                                    <li>
+                                        {rooms && rooms.map((room: any, index: number) =>
+                                            <div key={index} onClick={() => setActiveRoomAndGetMessages(room)} className={room === activeRoom ? "bg-base-300" : ""}>
+                                                <ChatButton room={room} />
                                             </div>
                                         )}
                                     </li>
@@ -144,26 +143,30 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                             <div className="relative flex items-center p-3 border-b border-primary-focus">
                                                 <img className="object-cover w-10 h-10 rounded-full" src="http://simpleicon.com/wp-content/uploads/multy-user.png" alt="username" />
                                                 <span className="block ml-2 font-bold">{activeRoom.name}</span>
-                                                {activeRoom.users && isUserModOrOwner(activeRoom) &&
+                                                <label htmlFor="members" className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
+                                                    <IoIosPeople/> <p className="ml-2">Members</p>
+                                                </label>
+                                                {activeRoom.users && isRoomMod(activeRoom, user) &&
                                                     <>
-                                                        <button className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
-                                                        <FiSettings/> <p className="ml-2">Edit</p>
-                                                        </button>
-                                                        <button className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
-                                                            <FiSettings/> <p className="ml-2">Invite</p>
-                                                        </button>
+                                                        <label htmlFor="edit-chat" className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
+                                                            <FiSettings/> <p className="ml-2">Edit</p>
+                                                        </label>
                                                     </>
                                                 }
                                             </div>
                                             <div className="relative w-full p-6 overflow-y-auto h-[40rem]">
                                                 <ul className="space-y-2">
-                                                    {messages && messages.map((message: any, index: number) =>
-                                                        <div key={index}>
-                                                            <Message text={message.text} author={message.author}/>
-                                                        </div>
-                                                        
-                                                        )
+                                                    { 
+                                                        messages && messages.map((message: any, index: number, messagesMap: any[]) => {
+                                                            const nextMsg = messagesMap[index-1]
+                                                            return (
+                                                                <div key={index}>
+                                                                <Message msg={message} author={message.author} nextMsg={nextMsg}/>
+                                                            </div>
+                                                            )
+                                                        })
                                                     }
+
                                                     <div ref={messagesEndRef} />
                                                 </ul>
                                             </div>
@@ -179,10 +182,24 @@ const Chat: React.FC<ChatProps> = ({}) => {
             </div>
             <input type="checkbox" id="create-chat" className="modal-toggle" />
             <div className="modal">
-            <div className="modal-box">
-            <label htmlFor="create-chat" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
-                <CreateChatForm/>
+                <div className="modal-box">
+                    <label htmlFor="create-chat" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                    <CreateChatForm/>
+                </div>
             </div>
+            <input type="checkbox" id="edit-chat" className="modal-toggle" />
+            <div className="modal">
+                <div className="modal-box">
+                    <label htmlFor="edit-chat" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                    <EditChatForm room={activeRoom}/>
+                </div>
+            </div>
+            <input type="checkbox" id="members" className="modal-toggle" />
+            <div className="modal">
+                <div className="modal-box">
+                    <label htmlFor="members" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
+                    <Members room={activeRoom}/>
+                </div>
             </div>
         </>
     )
