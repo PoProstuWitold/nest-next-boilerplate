@@ -16,7 +16,7 @@ import { ChatService } from './chat.service';
 import { User } from '../../../common/entities';
 import { RoomService } from '../room/room.service';
 import { MessageService } from '../message/message.service';
-import { Room } from '../room/room.entity';
+import { Room } from '../room/entities/room.entity';
 
 interface UserSocket extends Socket {
     user: User
@@ -188,6 +188,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     public async onRoomLeave(
         @ConnectedSocket() socket: UserSocket
     ) {}
+
+    // @SubscribeMessage('room:user-added')
+    // public async onRoomUserAdded(
+    //     @ConnectedSocket() socket: UserSocket,
+    //     @MessageBody() data: { roomId: string }
+    // ) {
+    //     try {
+    //         const { roomId } = data
+    //         socket.join(roomId)
+    //         const createdMessage = await this.messageService.create(undefined, roomId, `User ${socket.user.displayName} joined to room. GLHF!`)
+    //         for(const room of socket.rooms) {
+    //             if(createdMessage.room.id === room) {
+    //                 this.server.to(room).emit('message:created', createdMessage)
+    //             }
+    //         }
+    //     } catch (err) {
+    //         this.logger.error(err)
+    //         throw new WsException(err)
+    //     }
+    // }
 
     private getRoomsId(rooms: Room[]) {
         let roomsIds: string[] = []

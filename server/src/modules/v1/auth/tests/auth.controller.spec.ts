@@ -12,7 +12,7 @@ import { User } from '../../../../common/entities'
 import { createJwtConfiguration, createTestConfiguration } from '../../../../../test/test-utils'
 import { UserRepository } from '../../user/repositories/user.repository'
 import { WsEmitterClientOptions, WsEmitterModule } from '../../../../modules/v1/chat/ws-emitter.module'
-import { Room } from '../../room/room.entity'
+import { Invitation, Room } from '../../room/entities'
 import { Message } from '../../message/message.entity'
 
 describe('AuthController', () => {
@@ -28,7 +28,7 @@ describe('AuthController', () => {
                     isGlobal: true
                 }),
                 UserModule,
-                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation])),
                 TypeOrmModule.forFeature([User]),
                 JwtModule.registerAsync(createJwtConfiguration()),
                 BullModule.registerQueueAsync({

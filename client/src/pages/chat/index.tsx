@@ -79,7 +79,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
                 socket.off('room:messages')
             }
         }
-    }, [socket, rooms, activeRoom])
+    }, [socket, rooms, activeRoom, user])
 
     if(!user) {
         return (
@@ -161,8 +161,8 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                                             const nextMsg = messagesMap[index-1]
                                                             return (
                                                                 <div key={index}>
-                                                                <Message msg={message} author={message.author} nextMsg={nextMsg}/>
-                                                            </div>
+                                                                    {message.author ? <Message msg={message} author={message.author} nextMsg={nextMsg}/> : <Message msg={message} nextMsg={nextMsg}/>}
+                                                                </div>
                                                             )
                                                         })
                                                     }

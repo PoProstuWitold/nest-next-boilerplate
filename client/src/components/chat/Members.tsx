@@ -1,9 +1,7 @@
-import { useSelector } from 'react-redux'
-
-import { RootState } from '../../store/store'
 import { useAuthenticatedSocket } from '../../utils/useSocket'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { MemberCard } from './MemberCard'
+import axios from 'axios'
 
 interface MembersProps {
     room: any
@@ -11,10 +9,7 @@ interface MembersProps {
 
 export const Members: React.FC<MembersProps> = ({ room }) => {
     const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
-    
-    let userState = useSelector((state: RootState) => state.user)
-    const { user, authenticated } = userState
-    
+    const [invitationLink, setInvitationLink] = useState<any | null>(null)
 
     useEffect(() => {
         if(socket) {
@@ -34,12 +29,30 @@ export const Members: React.FC<MembersProps> = ({ room }) => {
         }
     }, [socket])
 
+    const createInvitation = async(room: any) => {
+        try {
+            const res = await axios.post(`/room/invite/${room.id}`)
+            setInvitationLink(res.data)
+        } catch (err) {
+            
+        }
+    }
+
     return (
         <>
             <div className="mx-auto w-96">
                 <p className="m-10 mx-auto text-lg font-bold text-center">Chat: {room.name}</p>
                 <div className="relative flex items-center p-3">
                     <div className="relative w-full overflow-y-auto h-[40rem]">
+                        <div>
+                            <button className="w-full btn btn-sm btn-outline" onClick={() => createInvitation(room)}>Get invitation link</button>
+                            {invitationLink &&
+                                <div className="p-4 my-10 text-sm font-bold border text-success rounded-xl border-success">
+                                    <p className="text-sm">Copy & Send to people you want to invite</p>
+                                    <p className="overflow-x-scroll text-sm">{`http://localhost:3000/invite?code=${invitationLink.code}`}</p>
+                                </div>
+                            }
+                        </div>
                         <ul role="list" className="divide-y">
                             { 
                                 room && room.users.map((user: any, index: number) => {

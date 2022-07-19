@@ -1,10 +1,10 @@
 import { NotFoundException } from '@nestjs/common'
 import { FindOperator, Repository } from 'typeorm'
 
-import { User } from '../../../common/entities'
-import { CustomRepository } from '../../../database/typeorm-ex.decorator'
-import { RoomDto } from './dto/room.dto'
-import { Room } from './room.entity'
+import { User } from '../../../../common/entities'
+import { CustomRepository } from '../../../../database/typeorm-ex.decorator'
+import { RoomDto } from '../dto/room.dto'
+import { Room } from '../entities/room.entity'
 
 @CustomRepository(Room)
 export class RoomRepository extends Repository<Room> {

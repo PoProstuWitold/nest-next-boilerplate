@@ -49,19 +49,27 @@ export class MessageService {
         }
     }
 
-    public async create(user: User, roomId: string, text: string) {
+    public async create(user: User | null, roomId: string, text: string) {
         try {
             const room = await this.roomService.getRoom(roomId, { relationIds: false })
 
             // const urls = await this.getUrls(text)
             // console.log('urls', urls)
-
-            const message = this.messageRepository.create({
-                author: user,
-                room,
-                text
-            })
-            return this.messageRepository.save(message)
+            if(user) {
+                const message = this.messageRepository.create({
+                    author: user,
+                    room,
+                    text
+                })
+                return this.messageRepository.save(message)
+            }
+            if(!user) {
+                const message = this.messageRepository.create({
+                    room,
+                    text
+                })
+                return this.messageRepository.save(message)
+            }
             // const message = await this.messageRepository
             //     .createQueryBuilder('message')
             //     .insert()

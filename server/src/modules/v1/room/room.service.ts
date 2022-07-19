@@ -8,18 +8,82 @@ import { PostgresErrorCode } from '../../../common/enums';
 import { UniqueViolation } from '../../../common/exceptions';
 import { InjectEmitter } from '../chat/ws-emitter.module';
 import { UserService } from '../user/user.service';
-import { Room } from './room.entity';
-import { RoomRepository } from './room.repository';
+import { InvitationRepository, RoomRepository } from './repositories';
+import { Invitation, Room } from './entities';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class RoomService {
     constructor(
         @InjectRepository(RoomRepository) 
         private readonly roomRepository: RoomRepository,
+        @InjectRepository(InvitationRepository) 
+        private readonly invitationRepository: InvitationRepository,
         private readonly userService: UserService,
         @InjectEmitter() private readonly emitter: Emitter 
     ) {}
 
+    public async inviteToRoom(userId: string, roomId: string) {
+        const code = nanoid()
+        let invitation = new Invitation({
+            userId,
+            roomId,
+            code,
+            expiresAt: new Date(new Date().getDate() + 1)
+        })
+
+        return this.invitationRepository.save(invitation)
+    }
+
+    public async getInvitationByCode(code: string) {
+        try {
+            const query = await this.invitationRepository
+                .createQueryBuilder('invitation')
+                .where('code = :code', { code })
+                .leftJoinAndSelect('invitation.user', 'user')
+                .leftJoinAndSelect('invitation.room', 'room')
+                .leftJoinAndSelect('room.owner', 'owner')
+                .select([
+                    'invitation',
+                    'user.id',
+                    'user.displayName',
+                    'user.image',
+                    'room.id',
+                    'room.name',
+                    'room.description',
+                    'owner.id',
+                    'owner.displayName',
+                    'owner.image'
+                ])
+                .getOne()
+            return query
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    public async getInvitations() {
+        try {
+            // return this.messageRepository.find({ relations: ['author'] })
+            const query = await this.invitationRepository
+                .createQueryBuilder('invitation')
+                .where({})
+                .leftJoinAndSelect('invitation.user', 'user')
+                .leftJoinAndSelect('invitation.room', 'room')
+                .select([
+                    'invitation',
+                    'user.id',
+                    'user.displayName',
+                    'room.id',
+                    'room.name'
+                ])
+                .orderBy('invitation.created_at', 'DESC')
+                .getMany()
+            return query
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     public async createRoom(dto: Partial<Room>, owner: User) {
         try {
@@ -225,6 +289,9 @@ export class RoomService {
     public async removeFromRoom(type: 'user' | 'mod', userId: string, roomId: string) {
         const room = await this.roomRepository.getRoom(roomId, true)
         const user = await this.userService.getUserByField('id', userId)
+
+        // MAYBE?
+        // room.users = <any>room.users.push(<any>userId)
 
         //@ts-ignore
         const isUser = room.users.includes(user.id)

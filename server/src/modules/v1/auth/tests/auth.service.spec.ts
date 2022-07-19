@@ -12,7 +12,7 @@ import { AuthService } from '../auth.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'
 import { UserModule } from '../../../../modules/v1/user/user.module'
 import { WsEmitterClientOptions, WsEmitterModule } from '../../../../modules/v1/chat/ws-emitter.module'
-import { Room } from '../../room/room.entity'
+import { Invitation, Room } from '../../room/entities'
 import { Message } from '../../message/message.entity'
 
 describe('AuthService', () => {
@@ -27,7 +27,7 @@ describe('AuthService', () => {
                     isGlobal: true
                 }),
                 UserModule,
-                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation])),
                 TypeOrmModule.forFeature([User]),
                 JwtModule.registerAsync(createJwtConfiguration()),
                 BullModule.registerQueueAsync({

@@ -5,14 +5,14 @@ import { TypeOrmExModule } from '../../../database/typeorm-ex.module';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { RoomController } from './room.controller';
-import { Room } from './room.entity';
-import { RoomRepository } from './room.repository';
+import { Room, Invitation } from './entities';
+import { RoomRepository, InvitationRepository } from './repositories';
 import { RoomService } from './room.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Room]),
-        TypeOrmExModule.forCustomRepository([RoomRepository]),
+        TypeOrmModule.forFeature([Room, Invitation]),
+        TypeOrmExModule.forCustomRepository([RoomRepository, InvitationRepository]),
         UserModule,
         AuthModule
     ],

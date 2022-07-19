@@ -10,7 +10,7 @@ import { User } from '../src/common/entities';
 import { V1Module } from '../src/modules/v1/v1.module';
 import { MainController } from '../src/modules/app.controller';
 import { WsEmitterClientOptions, WsEmitterModule } from '../src/modules/v1/chat/ws-emitter.module';
-import { Room } from '../src/modules/v1/room/room.entity';
+import { Invitation, Room } from '../src/modules/v1/room/entities';
 import { Message } from '../src/modules/v1/message/message.entity';
 
 describe('AppController (e2e)', () => {
@@ -23,7 +23,7 @@ describe('AppController (e2e)', () => {
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
-                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation])),
                 V1Module,
                 RedisModule.forRootAsync({
                     useFactory: async (): Promise<RedisModuleOptions> => {

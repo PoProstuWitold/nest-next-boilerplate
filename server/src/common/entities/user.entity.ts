@@ -4,7 +4,7 @@ import * as argon2 from 'argon2'
 
 import { AbstractEntity } from './'
 import { Providers, AccountStatus, Role } from '../enums'
-import { Room } from '../../modules/v1/room/room.entity'
+import { Invitation, Room } from '../../modules/v1/room/entities'
 import { Message } from '../../modules/v1/message/message.entity'
 
 @Entity()
@@ -96,6 +96,9 @@ export class User extends AbstractEntity<User> {
 
     @OneToMany(() => Message, message => message.author)
     public messages: Message[]
+
+    @OneToMany(() => Invitation, invitation => invitation.user)
+    public invitations: Invitation[]
 
     @BeforeInsert()
     async hashPassword() {

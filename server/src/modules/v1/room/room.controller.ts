@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../../../common/decorators';
@@ -10,8 +10,6 @@ import { RoomDto } from './dto/room.dto';
 import { RoomService } from './room.service';
 import { AddRemoveUserDto } from './dto/add-remove-user.dto';
 import { MembershipGuard } from './guards/MembershipGuard';
-import { ConnectedSocket } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
 
 
 @ApiTags('v1/room')
@@ -23,6 +21,30 @@ export class RoomController {
     constructor(
         private readonly roomService: RoomService,
     ) {}
+
+    @UseGuards(JwtAuthGuard)
+    @Get('invitation')
+    async getInvitations(
+        @Query('code') code: string
+    ) {
+        console.log(code)
+        return this.roomService.getInvitationByCode(code)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('invitations')
+    async getInvitation() {
+        return this.roomService.getInvitations()
+    }
+
+    @UseGuards(JwtAuthGuard, MembershipGuard)
+    @Post('invite/:roomId')
+    async inviteToRoom(
+        @CurrentUser('id') userId: string,
+        @Param('roomId', new ParseUUIDPipe()) roomId: string
+    ) {
+        return this.roomService.inviteToRoom(userId, roomId)
+    }
 
     @UseGuards(JwtAuthGuard)
     @Get()
@@ -73,7 +95,7 @@ export class RoomController {
         return this.roomService.deleteRoom(id)
     }
 
-    @UseGuards(JwtAuthGuard, MembershipGuard, VerifiedGuard, ModGuard)
+    @UseGuards(JwtAuthGuard)
     @Post('add-user/:roomId')
     async addUser(
         @Body() data: AddRemoveUserDto,
