@@ -25,14 +25,24 @@ export class RoomService {
 
     public async inviteToRoom(userId: string, roomId: string) {
         const code = nanoid()
-        let invitation = new Invitation({
-            userId,
-            roomId,
-            code,
-            expiresAt: new Date(new Date().getDate() + 1)
+        let invitation: Invitation
+        invitation = await this.invitationRepository.findOne({
+            where: {
+                userId, roomId
+            }
         })
 
-        return this.invitationRepository.save(invitation)
+        if(!invitation) {
+            invitation = new Invitation({
+                userId,
+                roomId,
+                code
+            })
+    
+            return this.invitationRepository.save(invitation)
+        }
+
+        return invitation
     }
 
     public async getInvitationByCode(code: string) {

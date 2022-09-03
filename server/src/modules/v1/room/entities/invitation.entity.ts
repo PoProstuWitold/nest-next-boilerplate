@@ -7,15 +7,14 @@ import { Room } from './room.entity';
 @Entity()
 export class Invitation extends AbstractEntity<Invitation> {
 
-    @Index()
     @Column({
-        nullable: true,
+        nullable: false,
         name: 'code'
     })
     public code: string
 
     @Column({
-        nullable: true,
+        nullable: false,
         name: 'user_id'
     })
     public userId: string
@@ -25,7 +24,7 @@ export class Invitation extends AbstractEntity<Invitation> {
     public user: User
 
     @Column({
-        nullable: true,
+        nullable: false,
         name: 'room_id'
     })
     public roomId: string
@@ -37,6 +36,7 @@ export class Invitation extends AbstractEntity<Invitation> {
     @Column({
         type: 'timestamp without time zone',
         name: 'expires_at',
+        nullable: true
     })
     public expiresAt: Date
 

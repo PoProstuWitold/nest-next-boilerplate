@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany
 
 import { AbstractEntity, User } from '../../../../common/entities'
 import { Message } from '../../message/message.entity';
+import { Invitation } from './invitation.entity';
 
 @Entity()
 export class Room extends AbstractEntity<Room> {
@@ -43,4 +44,7 @@ export class Room extends AbstractEntity<Room> {
 
     @OneToMany(() => Message, message => message.room, { onDelete: 'CASCADE' })
     public messages: Message[]
+
+    @OneToMany(() => Invitation, invitation => invitation.room, { onDelete: 'CASCADE' })
+    public invitations: Invitation[]
 }

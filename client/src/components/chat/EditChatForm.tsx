@@ -14,11 +14,12 @@ type ChatRoomValues = {
     isPublic: boolean | null;
 }
 
-interface EditChatFormProps {
-    room: any
-}
+interface EditChatFormProps {}
 
-export const EditChatForm: React.FC<EditChatFormProps> = ({ room }) => {
+export const EditChatForm: React.FC<EditChatFormProps> = () => {
+    let roomState = useSelector((state: RootState) => state.room)
+    const { activeRoom } = roomState
+    
     const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
     
     let userState = useSelector((state: RootState) => state.user)
@@ -29,11 +30,15 @@ export const EditChatForm: React.FC<EditChatFormProps> = ({ room }) => {
         isPublic: true,
     }
 
-    if(room) {
+    if(!activeRoom) {
+        return <></>
+    }
+
+    if(activeRoom) {
         editChatRoomValues = {
-            name: room.name,
-            description: room.description,
-            isPublic: room.isPublic,
+            name: activeRoom.name,
+            description: activeRoom.description,
+            isPublic: activeRoom.isPublic,
         }
     }
 
@@ -61,7 +66,7 @@ export const EditChatForm: React.FC<EditChatFormProps> = ({ room }) => {
                 setWsError(error)
             })
 
-            console.log(room)
+            console.log(activeRoom)
 
             return () => {
                 socket.off('connect')
@@ -74,7 +79,7 @@ export const EditChatForm: React.FC<EditChatFormProps> = ({ room }) => {
     const submitChatRoom = async (values: ChatRoomValues, helpers: FormikHelpers<ChatRoomValues>) => {
         try {
             const { name, description, isPublic } = values
-            socket.emit('room:edit', { name, description, isPublic, roomId: room.id })
+            socket.emit('room:edit', { name, description, isPublic, roomId: activeRoom.id })
             setTimeout(() => {
                 helpers.resetForm()
                 setWsError('')
@@ -85,14 +90,14 @@ export const EditChatForm: React.FC<EditChatFormProps> = ({ room }) => {
     }
 
     const deleteRoom = () => {
-        socket.emit('room:delete', { roomId: room.id, owner: room.owner })
+        socket.emit('room:delete', { roomId: activeRoom.id, owner: activeRoom.owner })
     }
 
     return (
         <>
             <div>
                     <div className="mx-auto w-96">
-                    <p className="m-10 mx-auto text-lg font-bold text-center">Chat: {room.name}</p>
+                    <p className="m-10 mx-auto text-lg font-bold text-center">Chat: {activeRoom.name}</p>
                     {wsError ? <p className="p-4 m-10 mx-auto font-bold text-center border rounded-xl border-error text-md text-error">{wsError.name}</p> : null}
                     {authenticated && user !== null ? 
                     <Formik
@@ -143,7 +148,7 @@ export const EditChatForm: React.FC<EditChatFormProps> = ({ room }) => {
                                     </div>
                                 </div>
                                 
-                                {room && room.owner.id === user.id ?
+                                {activeRoom && activeRoom.owner.id === user.id ?
                                     <div>
                                         <div className="flex flex-row items-stretch">
                                                 <span onClick={deleteRoom} className="mb-6 font-semibold btn-ghost btn-sm rounded-btn btn btn-outline label-text">

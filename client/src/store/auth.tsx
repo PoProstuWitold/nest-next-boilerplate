@@ -11,7 +11,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         async function loadUser() {
             try {
-                dispatch.user.getUserProfileAsync()
+                await dispatch.user.getUserProfileAsync()
+                await dispatch.room.setRooms()
             } catch (err) {
                 console.error(err)
             }

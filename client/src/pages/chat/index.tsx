@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { FiSettings } from 'react-icons/fi'
 import { IoIosPeople} from 'react-icons/io'
 import { useEffect, useRef, useState } from 'react'
@@ -7,13 +7,14 @@ import { useEffect, useRef, useState } from 'react'
 import { ChatButton } from '../../components/chat/ChatButton'
 import { Message } from '../../components/chat/Message'
 import { MessageInput } from '../../components/chat/MessageInput'
-import { RootState } from '../../store/store'
+import { Dispatch, RootState } from '../../store/store'
 import { AuthOption, withAuth } from '../../utils/withAuth'
 import { useAuthenticatedSocket } from '../../utils/useSocket'
 import { CreateChatForm } from '../../components/chat/CreateChatForm'
 import { EditChatForm } from '../../components/chat/EditChatForm'
 import { Members } from '../../components/chat/Members'
 import { isRoomMod } from '../../utils/room'
+import { Room } from '../../utils/types'
 
 interface ChatProps {
 
@@ -22,14 +23,16 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({}) => {
 
+    const dispatch = useDispatch<Dispatch>()
+
     let userState = useSelector((state: RootState) => state.user)
     const { user } = userState
 
+    let roomState = useSelector((state: RootState) => state.room)
+    const { rooms, activeRoom } = roomState
     const messagesEndRef = useRef<null | HTMLDivElement>(null)
     const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
 
-    const [rooms, setRooms] = useState<any>('')
-    const [activeRoom, setActiveRoom] = useState<any>(false)
     const [messages, setMessages] = useState<any>('')
     
     const scrollToBottom = () => {
@@ -37,8 +40,24 @@ const Chat: React.FC<ChatProps> = ({}) => {
     }
     
     useEffect(() => {
+        socket.emit('room:all')
+        socket.on('room:all', async (rooms) => {
+            await dispatch.room.setRooms()
+            if(!rooms.length) {
+                setMessages('')
+                dispatch.room.setActiveRoom(null)
+            }
+            console.log('rooms', rooms)
+        })
+    }, [])
+
+    useEffect(() => {
         scrollToBottom()
     }, [messages])
+
+    useEffect(() => {
+        console.log('roomsState', roomState)
+    }, [rooms])
 
     useEffect(() => {
         if(socket) {
@@ -52,16 +71,22 @@ const Chat: React.FC<ChatProps> = ({}) => {
 
             socket.on('message:created', async (message) => {
                 console.log(message)
-                if(message.room.id === activeRoom.id) {
+                if(activeRoom && message.room.id === activeRoom.id) {
                     setMessages((messages: any[]) => [...messages, message])
                 }
             })
           
             socket.on('room:all', async (rooms) => {
-                setRooms(rooms)
+                await dispatch.room.setRooms()
+
+                if(activeRoom) {
+                    const updated = await rooms.find((room: Room) => room.id === activeRoom.id)
+                    await dispatch.room.setActiveRoom(updated)
+                }
+                
                 if(!rooms.length) {
                     setMessages('')
-                    setActiveRoom(false)
+                    dispatch.room.setActiveRoom(null)
                 }
                 console.log('rooms', rooms)
             })
@@ -89,7 +114,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
 
     const setActiveRoomAndGetMessages = async (room: any ) => {
         socket.emit('room:leave')
-        setActiveRoom(room)
+        dispatch.room.setActiveRoom(room)
         socket.emit('room:join', ({ roomId: room.id }))
     }
 
@@ -126,11 +151,11 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                     </div>
                                     {/* CONVERSATIONS */}
                                     <li>
-                                        {rooms && rooms.map((room: any, index: number) =>
+                                        {/* {rooms && rooms.map((room: any, index: number) =>
                                             <div key={index} onClick={() => setActiveRoomAndGetMessages(room)} className={room === activeRoom ? "bg-base-300" : ""}>
                                                 <ChatButton room={room} />
                                             </div>
-                                        )}
+                                        )} */}
                                     </li>
                                 </ul>
                             </div>
@@ -191,14 +216,14 @@ const Chat: React.FC<ChatProps> = ({}) => {
             <div className="modal">
                 <div className="modal-box">
                     <label htmlFor="edit-chat" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
-                    <EditChatForm room={activeRoom}/>
+                    <EditChatForm/>
                 </div>
             </div>
             <input type="checkbox" id="members" className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box">
                     <label htmlFor="members" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
-                    <Members room={activeRoom}/>
+                    <Members/>
                 </div>
             </div>
         </>

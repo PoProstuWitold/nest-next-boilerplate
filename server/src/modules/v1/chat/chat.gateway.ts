@@ -128,8 +128,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             const updatedRoom = await this.roomService.updateRoom(roomId, { name, description, isPublic})
             if(updatedRoom.success) {
                 const rooms = await this.roomService.getUserRooms(socket.user.id)
-                this.server.to(socket.id).emit('room:all', rooms)
+                this.server.emit('room:all', rooms)
             }
+        } catch (err) {
+            this.server.to(socket.id).emit('error:room-edit', err)
+            this.logger.error(err)
+            throw new WsException(err)
+        }
+    }
+
+    @SubscribeMessage('room:members')
+    public async onRoomMembers(
+        @ConnectedSocket() socket: UserSocket
+    ) {
+        try {
+            const rooms = await this.roomService.getUserRooms(socket.user.id)
+            this.server.emit('room:all', rooms)
         } catch (err) {
             this.server.to(socket.id).emit('error:room-edit', err)
             this.logger.error(err)

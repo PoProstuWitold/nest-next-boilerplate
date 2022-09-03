@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { TbDots } from 'react-icons/tb'
 import axios from 'axios'
 
 import { RootState } from '../../store/store'
 import { isRoomMember, isRoomMod, isRoomOwner } from '../../utils/room'
+import { useAuthenticatedSocket } from '../../utils/useSocket'
 
 interface MemberCardProps {
     userFromRoom: any
@@ -15,7 +16,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
 
     let userState = useSelector((state: RootState) => state.user)
     const { user } = userState
-
+    const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
     const isMe = (userOne: any, userTwo: any) => {
         return userOne.id === userTwo.id
     }
@@ -23,6 +24,28 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
     if(!user) {
         return <></>
     }
+
+    useEffect(() => {
+        if(socket) {
+            socket.on('connect', () => {
+                console.log('Socket connected')
+            })
+          
+            socket.on('disconnect', () => {
+                console.log('Socket disconnected')
+            })
+
+            socket.on('error:room-edit', async (error) => {
+                console.log('error', error)
+            })
+
+            return () => {
+                socket.off('connect')
+                socket.off('disconnect')
+                socket.off('error')
+            }
+        }
+    }, [socket])
 
     const sendMessage = async () => {
         try {
@@ -51,6 +74,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
                 type: 'mod'
             })
             console.log(res)
+            socket.emit('room:members')
         } catch (err) {
             console.error(err)
         }
@@ -65,6 +89,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
                 }
             })
             console.log(res)
+            socket.emit('room:members')
         } catch (err) {
             console.error(err)
         }
@@ -79,11 +104,13 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
                 }
             })
             console.log(res)
+            socket.emit('room:members')
         } catch (err) {
             console.error(err)
         }
     }
 
+    
     return (
         <>
             <li className="pt-3 pb-0 sm:pt-4">
