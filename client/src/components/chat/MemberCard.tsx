@@ -144,7 +144,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
                             <li>
                                 <button onClick={() => showProfile()}>Profile</button>
                             </li>
-                            {!isRoomMod(room, userFromRoom) && !isRoomOwner(room, userFromRoom) && !isMe(user, userFromRoom) &&
+                            {!isRoomMod(room, userFromRoom) && isRoomMod(room, user) && !isRoomOwner(room, userFromRoom) && !isMe(user, userFromRoom) &&
                                 <li>
                                     <button onClick={() => kickUser()}>Kick</button>
                                 </li>
@@ -154,7 +154,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
                                     <button onClick={() => giveMod()}>Give mod</button>
                                 </li>
                             }
-                            {isRoomMod(room, userFromRoom) && !isRoomOwner(room, userFromRoom) && !isMe(user, userFromRoom) &&
+                            {isRoomMod(room, userFromRoom) && isRoomMod(room, user) && !isRoomOwner(room, userFromRoom) && !isMe(user, userFromRoom) &&
                                 <li>
                                     <button onClick={() => takeMod()}>Take mod</button>
                                 </li>

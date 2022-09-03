@@ -23,13 +23,17 @@ export const Members: React.FC<MembersProps> = () => {
                 console.log('Socket disconnected')
             })
 
+            if(invitationLink && activeRoom && invitationLink.roomId !== activeRoom.id) {
+                setInvitationLink(null)
+            }
+
             return () => {
                 socket.off('connect')
                 socket.off('disconnect')
                 socket.off('error')
             }
         }
-    }, [socket])
+    }, [socket, invitationLink, activeRoom])
 
     const createInvitation = async(room: any) => {
         try {
