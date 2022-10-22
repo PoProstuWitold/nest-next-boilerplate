@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToOne } from 'typeorm'
 
 import { AbstractEntity, User } from '../../../common/entities'
 import { Room } from '../room/entities'
+import { Conversation } from '../conversation/conversation.entity'
 
 @Entity()
 export class Message extends AbstractEntity<Message> {
@@ -10,6 +11,10 @@ export class Message extends AbstractEntity<Message> {
     @ManyToOne(() => Room, room => room.messages, { onDelete: 'CASCADE', nullable: true })
     @JoinTable()
     public room: Room
+
+    @ManyToOne(() => Conversation, conversation => conversation.messages, { onDelete: 'CASCADE', nullable: true })
+    @JoinTable()
+    public conversation: Conversation
 
     // @Column({
     //     name: 'author_id',

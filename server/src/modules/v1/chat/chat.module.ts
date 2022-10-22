@@ -6,6 +6,7 @@ import { ChatService } from './chat.service';
 import { UserModule } from '../user/user.module';
 import { RoomModule } from '../room/room.module';
 import { MessageModule } from '../message/message.module';
+import { ConversationModule } from '../conversation/conversation.module';
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import { MessageModule } from '../message/message.module';
         UserModule,
         RoomModule,
         MessageModule,
+        ConversationModule
     ],
     providers: [
         ChatGateway,

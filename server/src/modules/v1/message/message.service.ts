@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOperator } from 'typeorm';
 
 import { User } from '../../../common/entities';
+import { ConversationService } from '../conversation/conversation.service';
+import { Room } from '../room/entities';
 import { RoomService } from '../room/room.service';
+import { Message } from './message.entity';
 import { MessageRepository } from './message.repository';
 
 @Injectable()
@@ -11,7 +14,8 @@ export class MessageService {
     constructor(
         @InjectRepository(MessageRepository) 
         private readonly messageRepository: MessageRepository,
-        private readonly roomService: RoomService
+        private readonly roomService: RoomService,
+        private readonly conversationService: ConversationService
     ) {}
 
 
@@ -49,25 +53,47 @@ export class MessageService {
         }
     }
 
-    public async create(user: User | null, roomId: string, text: string) {
+    public async create(user: User | null, type: 'room' | 'conversation', id: string, text: string) {
         try {
-            const room = await this.roomService.getRoom(roomId, { relationIds: false })
+            let chat: any
+            
 
-            // const urls = await this.getUrls(text)
-            // console.log('urls', urls)
+            if(type === 'room') {
+                chat = await this.roomService.getRoom(id, { relationIds: false })
+            } else if(type === 'conversation') {
+                chat = await this.conversationService.getConversation(id)
+            }
+
             if(user) {
-                const message = this.messageRepository.create({
-                    author: user,
-                    room,
-                    text
-                })
+                let message: Message
+                if(type === 'room') {
+                    message = this.messageRepository.create({
+                        author: user,
+                        room: chat,
+                        text
+                    })
+                } else if(type === 'conversation') {
+                    message = this.messageRepository.create({
+                        author: user,
+                        conversation: chat,
+                        text
+                    })
+                }
                 return this.messageRepository.save(message)
             }
             if(!user) {
-                const message = this.messageRepository.create({
-                    room,
-                    text
-                })
+                let message: Message
+                if(type === 'room') {
+                    message = this.messageRepository.create({
+                        room: chat,
+                        text
+                    })
+                } else if(type === 'conversation') {
+                    message = this.messageRepository.create({
+                        conversation: chat,
+                        text
+                    })
+                }
                 return this.messageRepository.save(message)
             }
             // const message = await this.messageRepository
@@ -100,6 +126,25 @@ export class MessageService {
                 'author.displayName',
                 'room.id',
                 'room.name'
+            ])
+            .orderBy('message.created_at', 'ASC')
+            .getMany()
+    
+        return query
+    }
+
+    async findMessagesForConversation(conversationId: string): Promise<any> {
+        const conversation = await this.conversationService.getConversation(conversationId)
+        const query = await this.messageRepository
+            .createQueryBuilder('message')
+            .leftJoin('message.conversation', 'conversation')
+            .where('conversation.id = :conversationId', { conversationId: conversation.id })
+            .leftJoinAndSelect('message.author', 'author')
+            .select([
+                'message',
+                'author.id',
+                'author.displayName',
+                'conversation.id'
             ])
             .orderBy('message.created_at', 'ASC')
             .getMany()

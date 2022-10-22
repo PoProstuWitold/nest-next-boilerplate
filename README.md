@@ -136,7 +136,9 @@ yarn
 - Account confirmation
 - Password recover
 - Profile update
-- Chat
+- Multiple themes with the ability to add your own
+- Group chat with basic permissions
+- Private chat (also with yourself)
 
 ## TO DO
 - [x] Local login
@@ -147,7 +149,10 @@ yarn
 - [x] Password recover & change features
 - [x] Queues
 - [x] Refresh tokens
-- [ ] Chat
+- [X] Chat
+- [ ] Make URL preview
+- [ ] Enable sending images and maybe videos
+- [ ] Public profile page
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

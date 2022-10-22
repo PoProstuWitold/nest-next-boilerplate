@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeOrmExModule } from '../../../database/typeorm-ex.module';
 import { AuthModule } from '../auth/auth.module';
+import { ConversationModule } from '../conversation/conversation.module';
 import { RoomModule } from '../room/room.module';
 import { UserModule } from '../user/user.module';
 import { MessageController } from './message.controller';
@@ -16,7 +17,8 @@ import { MessageService } from './message.service';
         TypeOrmExModule.forCustomRepository([MessageRepository]),
         RoomModule,
         AuthModule,
-        UserModule
+        UserModule,
+        ConversationModule
     ],
     controllers: [MessageController],
     providers: [MessageService],

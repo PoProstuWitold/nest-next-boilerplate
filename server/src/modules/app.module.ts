@@ -11,6 +11,7 @@ import { WsEmitterClientOptions, WsEmitterModule } from './v1/chat/ws-emitter.mo
 import { User } from '../common/entities'
 import { Invitation, Room } from './v1/room/entities'
 import { Message } from './v1/message/message.entity'
+import { Conversation } from './v1/conversation/conversation.entity'
 
 @Module({
     imports: [
@@ -27,7 +28,7 @@ import { Message } from './v1/message/message.entity'
                     username: configService.get('DB_USERNAME'),
                     password: configService.get('DB_PASSWORD'),
                     database: configService.get('DB_DATABASE'),
-                    entities: [User, Room, Invitation, Message],
+                    entities: [User, Room, Invitation, Message, Conversation],
                     synchronize: true
                 } as TypeOrmModuleAsyncOptions
             }

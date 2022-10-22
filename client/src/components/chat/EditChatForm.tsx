@@ -17,6 +17,8 @@ type ChatRoomValues = {
 interface EditChatFormProps {}
 
 export const EditChatForm: React.FC<EditChatFormProps> = () => {
+    
+    const [wsError, setWsError] = useState<any>('')
     let roomState = useSelector((state: RootState) => state.room)
     const { activeRoom } = roomState
     
@@ -29,20 +31,6 @@ export const EditChatForm: React.FC<EditChatFormProps> = () => {
         description: '',
         isPublic: true,
     }
-
-    if(!activeRoom) {
-        return <></>
-    }
-
-    if(activeRoom) {
-        editChatRoomValues = {
-            name: activeRoom.name,
-            description: activeRoom.description,
-            isPublic: activeRoom.isPublic,
-        }
-    }
-
-    const [wsError, setWsError] = useState<any>('')
 
     const editChatRoomSchema = Yup.object().shape({
         name: Yup.string(),
@@ -62,11 +50,9 @@ export const EditChatForm: React.FC<EditChatFormProps> = () => {
             })
 
             socket.on('error:room-edit', async (error) => {
-                console.log('error', error)
+                console.log('error:room-edit', error)
                 setWsError(error)
             })
-
-            console.log(activeRoom)
 
             return () => {
                 socket.off('connect')
@@ -75,6 +61,19 @@ export const EditChatForm: React.FC<EditChatFormProps> = () => {
             }
         }
     }, [socket])
+
+
+    if(!activeRoom) {
+        return <></>
+    }
+
+    if(activeRoom) {
+        editChatRoomValues = {
+            name: activeRoom.name,
+            description: activeRoom.description,
+            isPublic: activeRoom.isPublic,
+        }
+    }
 
     const submitChatRoom = async (values: ChatRoomValues, helpers: FormikHelpers<ChatRoomValues>) => {
         try {
@@ -85,7 +84,7 @@ export const EditChatForm: React.FC<EditChatFormProps> = () => {
                 setWsError('')
             }, 3000)
         } catch (err) {
-            console.log(err)
+            console.error(err)
         }
     }
 

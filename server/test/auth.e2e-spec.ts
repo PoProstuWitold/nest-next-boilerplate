@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../src/common/guards/jwt-auth.guard';
 import { WsEmitterClientOptions, WsEmitterModule } from '../src/modules/v1/chat/ws-emitter.module';
 import { Invitation, Room } from '../src/modules/v1/room/entities';
 import { Message } from '../src/modules/v1/message/message.entity';
+import { Conversation } from '../src/modules/v1/conversation/conversation.entity';
 
 describe('AuthController (e2e)', () => {
     let moduleFixture: TestingModule
@@ -28,7 +29,7 @@ describe('AuthController (e2e)', () => {
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
-                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation, Conversation])),
                 V1Module,
                 RedisModule.forRootAsync({
                     useFactory: async (): Promise<RedisModuleOptions> => {

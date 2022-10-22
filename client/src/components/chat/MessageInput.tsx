@@ -4,14 +4,15 @@ import * as Yup from 'yup'
 import { useAuthenticatedSocket } from '../../utils/useSocket'
 
 interface MessageInputProps {
-    roomId: string
+    chatId: string
+    type: 'room' | 'conversation'
 }
 
 type MessageValues = {
     text: string
 }
 
-export const MessageInput: React.FC<MessageInputProps> = ({ roomId }) => {
+export const MessageInput: React.FC<MessageInputProps> = ({ chatId, type }) => {
 
     const { socket } = useAuthenticatedSocket('ws://localhost:4000/chat')
     const messageValues: MessageValues = { text: '' }
@@ -19,16 +20,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({ roomId }) => {
         text: Yup.string().required('Email cannot be empty or whitespace')
     })
     const submitMessage = async (values: MessageValues, helpers: FormikHelpers<MessageValues>) => {
-        console.log(values)
         helpers.resetForm()
         setTimeout(() => helpers.setSubmitting(false), 2000)
         try {
             socket.emit('message:create', {
                 message: values.text,
-                roomId
+                chatId,
+                type
             })
         } catch (err: any) {
-            console.log('ERROR', err)
+            console.error('Submit Message Error', err)
         }
     }
 

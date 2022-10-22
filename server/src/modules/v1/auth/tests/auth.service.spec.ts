@@ -14,6 +14,7 @@ import { UserModule } from '../../../../modules/v1/user/user.module'
 import { WsEmitterClientOptions, WsEmitterModule } from '../../../../modules/v1/chat/ws-emitter.module'
 import { Invitation, Room } from '../../room/entities'
 import { Message } from '../../message/message.entity'
+import { Conversation } from '../../conversation/conversation.entity'
 
 describe('AuthService', () => {
     let module: TestingModule
@@ -27,7 +28,7 @@ describe('AuthService', () => {
                     isGlobal: true
                 }),
                 UserModule,
-                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation, Conversation])),
                 TypeOrmModule.forFeature([User]),
                 JwtModule.registerAsync(createJwtConfiguration()),
                 BullModule.registerQueueAsync({

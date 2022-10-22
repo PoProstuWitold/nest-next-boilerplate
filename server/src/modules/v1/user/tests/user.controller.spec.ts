@@ -9,6 +9,7 @@ import { UserService } from '../user.service'
 import { UserController } from '../user.controller'
 import { Invitation, Room } from '../../room/entities'
 import { Message } from '../../message/message.entity'
+import { Conversation } from '../../conversation/conversation.entity'
 
 describe('UserController', () => {
     let module: TestingModule
@@ -22,7 +23,7 @@ describe('UserController', () => {
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
-                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation, Conversation])),
                 TypeOrmModule.forFeature([User])
             ],
             controllers: [

@@ -10,6 +10,7 @@ import { UserService } from '../user.service'
 import { LocalUser } from '../../../../../test/mocks/user.mock'
 import { Invitation, Room } from '../../room/entities'
 import { Message } from '../../message/message.entity'
+import { Conversation } from '../../conversation/conversation.entity'
 
 describe('UserService', () => {
     let module: TestingModule
@@ -23,7 +24,7 @@ describe('UserService', () => {
                 ConfigModule.forRoot({
                     isGlobal: true
                 }),
-                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation])),
+                TypeOrmModule.forRootAsync(createTestConfiguration([User, Room, Message, Invitation, Conversation])),
                 TypeOrmModule.forFeature([User])
             ],
             providers: [

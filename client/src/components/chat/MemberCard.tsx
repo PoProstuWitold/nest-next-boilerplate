@@ -6,6 +6,7 @@ import axios from 'axios'
 import { RootState } from '../../store/store'
 import { isRoomMember, isRoomMod, isRoomOwner } from '../../utils/room'
 import { useAuthenticatedSocket } from '../../utils/useSocket'
+import { User } from '../../utils/types'
 
 interface MemberCardProps {
     userFromRoom: any
@@ -36,7 +37,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
             })
 
             socket.on('error:room-edit', async (error) => {
-                console.log('error', error)
+                console.log('error:room-edit', error)
             })
 
             return () => {
@@ -47,11 +48,13 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
         }
     }, [socket])
 
-    const sendMessage = async () => {
+    const sendMessage = async (userFromRoom: User) => {
         try {
-            // TO DO
-            // Create conversations/private messaging
-            console.log('private messaging')
+            const values = {
+                creator: user.displayName,
+                participant: userFromRoom.displayName
+            }
+            socket.emit('conversation:create', values)
         } catch (err) {
             console.error(err)
         }
@@ -69,11 +72,10 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
 
     const giveMod = async () => {
         try {
-            const res = await axios.post(`/room/add-user/${room.id}`, {
+            await axios.post(`/room/add-user/${room.id}`, {
                 userId: userFromRoom.id,
                 type: 'mod'
             })
-            console.log(res)
             socket.emit('room:members')
         } catch (err) {
             console.error(err)
@@ -82,13 +84,12 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
 
     const takeMod = async () => {
         try {
-            const res = await axios.delete(`/room/remove-user/${room.id}`, {
+            await axios.delete(`/room/remove-user/${room.id}`, {
                 data: {
                     userId: userFromRoom.id,
                     type: 'mod'
                 }
             })
-            console.log(res)
             socket.emit('room:members')
         } catch (err) {
             console.error(err)
@@ -97,13 +98,12 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
 
     const kickUser = async () => {
         try {
-            const res = await axios.delete(`/room/remove-user/${room.id}`, {
+            await axios.delete(`/room/remove-user/${room.id}`, {
                 data: {
                     userId: userFromRoom.id,
                     type: 'user'
                 }
             })
-            console.log(res)
             socket.emit('room:members')
         } catch (err) {
             console.error(err)
@@ -138,7 +138,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ userFromRoom, room }) =>
                         <ul tabIndex={0} className="p-2 shadow dropdown-content menu bg-base-200 rounded-box w-52">
                             {!isMe(user, userFromRoom) &&
                                 <li>
-                                    <button onClick={() => sendMessage()}>Send message</button>
+                                    <button onClick={() => sendMessage(userFromRoom)}>Send message</button>
                                 </li>
                             }
                             <li>

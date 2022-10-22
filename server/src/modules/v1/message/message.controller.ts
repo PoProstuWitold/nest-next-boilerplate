@@ -32,9 +32,10 @@ export class MessageController {
     async createMessage(
         @CurrentUser() user: User,
         @Param('roomId', new ParseUUIDPipe()) roomId: string,
-        @Body('text') text: string
+        @Body('text') text: string,
+        @Body('type') type: 'room' | 'conversation'
     ) {
-        return this.messageService.create(user, roomId, text)
+        return this.messageService.create(user, type, roomId, text)
     }
 
     @UseGuards(JwtAuthGuard, VerifiedGuard)

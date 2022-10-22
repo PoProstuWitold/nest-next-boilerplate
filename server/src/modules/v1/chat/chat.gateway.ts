@@ -17,6 +17,9 @@ import { User } from '../../../common/entities';
 import { RoomService } from '../room/room.service';
 import { MessageService } from '../message/message.service';
 import { Room } from '../room/entities/room.entity';
+import { ConversationService } from '../conversation/conversation.service';
+import { UserService } from '../user/user.service';
+import { Conversation } from '../conversation/conversation.entity';
 
 interface UserSocket extends Socket {
     user: User
@@ -38,7 +41,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     constructor(
         private readonly chatService: ChatService,
         private readonly roomService: RoomService,
-        private readonly messageService: MessageService
+        private readonly messageService: MessageService,
+        private readonly conversationService: ConversationService,
+        private readonly userService: UserService
     ) {}
 
     public async onModuleInit() {
@@ -54,10 +59,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             }
             socket.user = user
             const rooms = await this.roomService.getUserRooms(user.id)
-            socket.join(this.getRoomsId(rooms))
+            const conversations = await this.conversationService.getUserConversations(user.id)
+            socket.join(this.getChatIds(rooms))
+            socket.join(this.getChatIds(conversations))
             socket.join(user.id)
             this.logger.log(`Connection established: ${user.id}`)
             this.server.to(socket.id).emit('room:all', rooms)
+            this.server.to(socket.id).emit('conversation:all', conversations)
             return 
         } catch (err) {
             this.logger.error(err)
@@ -83,13 +91,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @SubscribeMessage('message:create')
     public async onMessageAdd(
         @ConnectedSocket() socket: UserSocket,
-        @MessageBody() data: { message: string, roomId: string }
+        @MessageBody() data: { message: string, chatId: string, type: 'room' | 'conversation' }
     ) {
         try {
-            const { message, roomId } = data
-            const createdMessage = await this.messageService.create(socket.user, roomId, message)
+            const { message, chatId, type } = data
+            const createdMessage = await this.messageService.create(socket.user, type, chatId, message)
             for(const room of socket.rooms) {
-                if(createdMessage.room.id === room) {
+                if(createdMessage.room && createdMessage.room.id === room) {
+                    this.server.to(room).emit('message:created', createdMessage)
+                }
+                if(createdMessage.conversation && createdMessage.conversation.id === room) {
                     this.server.to(room).emit('message:created', createdMessage)
                 }
             }
@@ -198,36 +209,61 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
     }
 
-    @SubscribeMessage('room:leave')
-    public async onRoomLeave(
-        @ConnectedSocket() socket: UserSocket
-    ) {}
-
-    // @SubscribeMessage('room:user-added')
-    // public async onRoomUserAdded(
-    //     @ConnectedSocket() socket: UserSocket,
-    //     @MessageBody() data: { roomId: string }
-    // ) {
-    //     try {
-    //         const { roomId } = data
-    //         socket.join(roomId)
-    //         const createdMessage = await this.messageService.create(undefined, roomId, `User ${socket.user.displayName} joined to room. GLHF!`)
-    //         for(const room of socket.rooms) {
-    //             if(createdMessage.room.id === room) {
-    //                 this.server.to(room).emit('message:created', createdMessage)
-    //             }
-    //         }
-    //     } catch (err) {
-    //         this.logger.error(err)
-    //         throw new WsException(err)
-    //     }
-    // }
-
-    private getRoomsId(rooms: Room[]) {
-        let roomsIds: string[] = []
-        for(const room of rooms) {
-            roomsIds.push(room.id)
+    @SubscribeMessage('conversation:create')
+    public async onConversationCreate(
+        @ConnectedSocket() socket: UserSocket,
+        @MessageBody() data: { participant: string}
+    ) {
+        try {
+            const participant = await this.userService.getUserByField('displayName', data.participant)
+            const existingConversation = await this.conversationService.findIfExists(socket.user.displayName, participant.displayName)
+            if(!existingConversation) {
+                await this.conversationService.createConversation(socket.user, participant)
+            }
+            
+            const conversations = await this.conversationService.getUserConversations(socket.user.id)
+            this.server.to(socket.id).emit('conversation:all', conversations)
+        } catch (err) {
+            this.server.to(socket.id).emit('error:conversation-create', err)
+            this.logger.error(err)
+            throw new WsException(err)
         }
-        return roomsIds
+    }
+
+    @SubscribeMessage('conversation:join')
+    public async onConversationJoin(
+        @ConnectedSocket() socket: UserSocket,
+        @MessageBody() data: { conversationId: string }
+    ) {
+        try {
+            const { conversationId } = data
+            const messages = await this.messageService.findMessagesForConversation(conversationId)
+            this.server.to(socket.id).emit('conversation:messages', messages)
+        } catch (err) {
+            this.logger.error(err)
+            throw new WsException(err)
+        }
+    }
+
+
+    @SubscribeMessage('conversation:all')
+    public async onConversationAll(
+        @ConnectedSocket() socket: UserSocket
+    ) {
+        try {
+            const conversations = await this.conversationService.getUserConversations(socket.user.id)
+            this.server.to(socket.id).emit('conversation:all', conversations)
+        } catch (err) {
+            this.logger.error(err)
+            throw new WsException(err)
+        }
+    }
+
+    private getChatIds(chats: Room[] | Conversation[]) {
+        let chatIds: string[] = []
+        for(const chat of chats) {
+            chatIds.push(chat.id)
+        }
+        return chatIds
     }
 }
