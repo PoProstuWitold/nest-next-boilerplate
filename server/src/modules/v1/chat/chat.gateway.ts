@@ -217,8 +217,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         try {
             const participant = await this.userService.getUserByField('displayName', data.participant)
             const existingConversation = await this.conversationService.findIfExists(socket.user.displayName, participant.displayName)
+            let conversation: Conversation
             if(!existingConversation) {
-                await this.conversationService.createConversation(socket.user, participant)
+                conversation = await this.conversationService.createConversation(socket.user, participant)
+                socket.join(conversation.id)
             }
             
             const conversations = await this.conversationService.getUserConversations(socket.user.id)
