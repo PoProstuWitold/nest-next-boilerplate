@@ -31,8 +31,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Pnpm Setup
+      run: npm install -g pnpm
     - name: Install
-      run: yarn
+      run: pnpm install --no-frozen-lockfile
     - name: Test
-      run: yarn test
+      run: pnpm test:e2e
     
