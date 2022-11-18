@@ -19,6 +19,10 @@ jobs:
       postgres-tests:
         image: postgres:alpine
         env:
+          OAUTH_GOOGLE_ID: secret
+          OAUTH_GOOGLE_SECRET: secret
+          OAUTH_FACEBOOK_ID: secret
+          OAUTH_FACEBOOK_SECRET: secret
           POSTGRES_USER: tests
           POSTGRES_PASSWORD: tests
           POSTGRES_DB: postgres-tests
