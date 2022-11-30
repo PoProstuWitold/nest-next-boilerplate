@@ -5,13 +5,14 @@ FROM node:alpine AS development
 
 WORKDIR /poprostuwitold/server
 
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN npm install
+RUN npm install -g pnpm
+RUN pnpm install
 
 COPY . .
 
-RUN npm run build
+RUN pnpm run build
 
 ################
 ## PRODUCTION ##

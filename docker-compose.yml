@@ -28,7 +28,7 @@ services:
     volumes:
       - ./server:/poprostuwitold/server
       - /poprostuwitold/server/node_modules/
-    command: npm run start:debug
+    command: pnpm run start:debug
     depends_on: 
       - postgres-main
       - redis-main
@@ -47,7 +47,7 @@ services:
     volumes:
       - ./workers/queues:/poprostuwitold/workers/queues
       - /poprostuwitold/workers/queues/node_modules/
-    command: npm run start:debug
+    command: pnpm run start:debug
     depends_on: 
       - server
     networks:

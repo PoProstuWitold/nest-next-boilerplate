@@ -2,12 +2,13 @@ FROM node:alpine
 
 WORKDIR /poprostuwitold/client
 
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN npm install
+RUN npm install -g pnpm
+RUN pnpm install
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+CMD ["pnpm", "run", "dev"]
