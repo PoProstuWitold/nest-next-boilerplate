@@ -35,7 +35,7 @@ export class MailProcessor {
 
             await this.redisService.getClient().set(`confirm-account:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
 
-            await this.mailerService.sendMail({
+            const email = await this.mailerService.sendMail({
                 to: user.email,
                 subject: 'Confirm your email',
                 template: 'confirm-email',
@@ -43,9 +43,11 @@ export class MailProcessor {
                     token
                 }
             })
+
+            console.log(email)
         } catch (err) {
-            
-        }
+            console.log(err)
+        }   
     }
 
     @Process('reset')
@@ -55,7 +57,7 @@ export class MailProcessor {
 
             await this.redisService.getClient().set(`reset-password:${token}`, user.id, 'EX', 1000 * 60 * 60 * 1) // 1 hour until expires
     
-            await this.mailerService.sendMail({
+            const email = await this.mailerService.sendMail({
                 to: user.email,
                 subject: 'Reset your password',
                 template: 'reset-password',
@@ -63,8 +65,10 @@ export class MailProcessor {
                     token
                 }
             })
+
+            console.log(email)
         } catch (err) {
-            
+            console.log(err)
         }
     }
 }
