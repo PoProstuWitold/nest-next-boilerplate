@@ -61,7 +61,6 @@ specifiers:
   rxjs: ^7.5.7
   socket.io: ^4.5.4
   supertest: ^6.3.1
-  swagger-ui-express: ^4.6.0
   ts-jest: ^29.0.3
   ts-loader: ^9.4.1
   ts-node: ^10.9.1
@@ -108,7 +107,6 @@ dependencies:
   rimraf: 3.0.2
   rxjs: 7.5.7
   socket.io: 4.5.4
-  swagger-ui-express: 4.6.0
   typeorm: 0.3.10_zfbzyadn2rnu3hf3pysto5crhm
   uuid: 9.0.0
 
@@ -5627,19 +5625,6 @@ packages:
 
   /swagger-ui-dist/4.15.1:
     resolution: {integrity: sha512-DlZARu6ckUFqDe0j5IPayO4k0gQvYQw9Un02MhxAgaMtVnTH2vmyyDe+yKeV0r1LiiPx3JbasdS/5Yyb/AV3iw==}
-    dev: false
-
-  /swagger-ui-dist/4.15.5:
-    resolution: {integrity: sha512-V3eIa28lwB6gg7/wfNvAbjwJYmDXy1Jo1POjyTzlB6wPcHiGlRxq39TSjYGVjQrUSAzpv+a7nzp7mDxgNy57xA==}
-    dev: false
-
-  /swagger-ui-express/4.6.0:
-    resolution: {integrity: sha512-ZxpQFp1JR2RF8Ar++CyJzEDdvufa08ujNUJgMVTMWPi86CuQeVdBtvaeO/ysrz6dJAYXf9kbVNhWD7JWocwqsA==}
-    engines: {node: '>= v0.10.32'}
-    peerDependencies:
-      express: '>=4.0.0'
-    dependencies:
-      swagger-ui-dist: 4.15.5
     dev: false
 
   /symbol-observable/4.0.0:
