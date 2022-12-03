@@ -1,6 +1,6 @@
 export const SERVER_URL = 'http://localhost:4000/api/v1'
 export const authRoutes = ['/login/success', '/login/error', '/login', '/me']
-export const Themes = [
+export const themes = [
     {
         name: 'Light'
     },
@@ -11,12 +11,18 @@ export const Themes = [
         name: 'Emerald'
     },
     {
-        name: 'Cyberpunk'
+        name: 'Synthwave'
     },
     {
-        name: 'Night'
+        name: 'Retro'
     },
     {
-        name: 'Chrupcio'
-    }
+        name: 'Halloween'
+    },
+    {
+        name: 'Forest'
+    },
+    {
+        name: 'Winter'
+    },
 ]

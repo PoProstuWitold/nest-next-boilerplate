@@ -40,9 +40,9 @@ export const Message: React.FC<MessageProps> = ({ msg, author, nextMsg }) => {
                     </div>
                     <div className={`flex ${author.id === user.id ? "justify-end" : "justify-start"}`}>
                         <div className="relative">
-                            <div className={`tooltip ${author.id === user.id ? "tooltip-left" : "tooltip-right"}`} data-tip={`${hour} ${date}`}>
+                            <div className={`tooltip text-primary-content ${author.id === user.id ? "tooltip-left" : "tooltip-right"}`} data-tip={`${hour} ${date}`}>
                                 <div className={`relative hover:cursor-pointer max-w-xl px-4 py-2 rounded shadow ${author.id === user.id ? "bg-secondary" : "bg-accent"}`}>
-                                    <span className="block">{msg.text}</span>
+                                    <span className="block text-primary-content">{msg.text}</span>
                                 </div>
                             </div>
                         </div>
