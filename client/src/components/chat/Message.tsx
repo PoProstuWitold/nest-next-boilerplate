@@ -1,8 +1,10 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { MdVerifiedUser } from 'react-icons/md'
+
 import { RootState } from '../../store/store'
 import { User } from '../../utils/types'
+
 
 interface MessageProps {
     msg: any

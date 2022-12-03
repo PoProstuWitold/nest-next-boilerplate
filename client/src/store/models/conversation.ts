@@ -43,6 +43,7 @@ export const conversation = createModel<RootModel>()({
             } catch (err: any) {
                 console.error(err)
                 let axiosError: AxiosError;
+                dispatch.conversation.SET_CONVERSATIONS([])
                 if(err instanceof AxiosError) {
                     axiosError = err.response?.data
                     return axiosError
@@ -55,6 +56,7 @@ export const conversation = createModel<RootModel>()({
                 dispatch.conversation.SET_ACTIVE_CONVERSATION(conversation)
             } catch (err: any) {
                 console.error(err)
+                dispatch.conversation.SET_ACTIVE_CONVERSATION(null)
                 return err
             }
         }

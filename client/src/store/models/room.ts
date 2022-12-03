@@ -44,6 +44,7 @@ export const room = createModel<RootModel>()({
             } catch (err: any) {
                 console.log(err)
                 let axiosError: AxiosError;
+                dispatch.room.SET_ROOMS([])
                 if(err instanceof AxiosError) {
                     axiosError = err.response?.data
                     return axiosError
@@ -56,6 +57,7 @@ export const room = createModel<RootModel>()({
                 dispatch.room.SET_ACTIVE_ROOM(room)
             } catch (err: any) {
                 console.log(err)
+                dispatch.room.SET_ACTIVE_ROOM(null)
                 return err
             }
         }

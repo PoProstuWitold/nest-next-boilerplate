@@ -1,9 +1,11 @@
-import { useAuthenticatedSocket } from '../../utils/useSocket'
 import { useEffect, useState } from 'react'
-import { MemberCard } from './MemberCard'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
+
+import { MemberCard } from './MemberCard'
+import { useAuthenticatedSocket } from '../../utils/useSocket'
 import { RootState } from '../../store/store'
+
 
 interface MembersProps {}
 
@@ -50,10 +52,10 @@ export const Members: React.FC<MembersProps> = () => {
 
     return (
         <>
-            <div className="mx-auto w-96">
+            <div className="mx-auto">
                 <p className="m-10 mx-auto text-lg font-bold text-center">Chat: {activeRoom.name}</p>
                 <div className="relative flex items-center p-3">
-                    <div className="relative w-full overflow-y-auto h-[40rem]">
+                    <div className="relative w-full overflow-y-auto">
                         <div>
                             <button className="w-full btn btn-sm btn-outline" onClick={() => createInvitation(activeRoom)}>Get invitation link</button>
                             {invitationLink &&

@@ -32,7 +32,7 @@ const Me: React.FC<MeProps> = ({}) => {
                                     <div className="flex justify-center align-center">
                                         <div className="avatar">
                                             <div className="w-full rounded-lg">
-                                                <Image src={user.image} width="100" height="100"/>
+                                                <Image src={user.image} width="100" height="100" alt="user image"/>
                                             </div>
                                         </div>
                                         <div className="flex flex-col justify-center mx-auto align-center">

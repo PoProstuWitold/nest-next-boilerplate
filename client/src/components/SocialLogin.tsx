@@ -1,5 +1,6 @@
 import { BsGoogle, BsFacebook } from 'react-icons/bs'
 
+
 interface SocialLoginProps {
     provider: 'Google' | 'Facebook'
     url: string

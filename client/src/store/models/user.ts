@@ -80,12 +80,15 @@ export const user = createModel<RootModel>()({
         },
         async logoutAsync() {
             try {
+                await dispatch.room.setRooms([])
+                await dispatch.room.setActiveRoom(null)
+                await dispatch.conversation.setConversations([])
+                await dispatch.conversation.setActiveConversation(null)
+                
                 await axios.delete('/auth/logout')
                 dispatch.user.LOGOUT()
             } catch (err) {
-                if(err instanceof AxiosError) {
-                    dispatch.user.LOGOUT()
-                }
+                dispatch.user.LOGOUT()
             }
         },
         async getUserProfileAsync() {

@@ -7,7 +7,7 @@ import { RootState } from '../../store/store'
 import { ErrorField } from '../../components/ErrorField'
 import { useAuthenticatedSocket } from '../../utils/useSocket'
 import { useEffect, useState } from 'react'
-import { User } from '../../utils/types'
+
 
 type ConversastionValues = {
     creator: string | null,
@@ -104,7 +104,7 @@ export const CreateConversationForm: React.FC<CreateConversationFormProps> = ({}
                                         <Field placeholder="Enter exact chat participant name" type="text" name="participant" className={`w-full p-3 transition duration-200 rounded input`}/>
                                         <label className="label">
                                             {errors.participant && touched.participant ? <ErrorField error={errors.participant}/> : null}
-                                            {wsError && wsError.response.errors.participant ? <ErrorField error={wsError.response.errors.participant}/> : null}
+                                            {wsError && wsError.response && wsError.response.errors && wsError.response.errors.participant ? <ErrorField error={wsError.response.errors.participant}/> : null}
                                         </label>
                                         
                                     </div>

@@ -3,6 +3,7 @@ import * as Yup from 'yup'
 
 import { useAuthenticatedSocket } from '../../utils/useSocket'
 
+
 interface MessageInputProps {
     chatId: string
     type: 'room' | 'conversation'

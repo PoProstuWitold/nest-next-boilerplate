@@ -8,6 +8,7 @@ import { authRoutes, Themes } from '../utils/constants'
 import { Dispatch, RootState } from '../store/store'
 import { useAuthenticatedSocket } from '../utils/useSocket'
 
+
 interface NavBarProps {
 
 }

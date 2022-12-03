@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             try {
                 await dispatch.user.getUserProfileAsync()
                 await dispatch.room.setRooms()
+                await dispatch.conversation.setConversations()
             } catch (err) {
                 console.error(err)
             }

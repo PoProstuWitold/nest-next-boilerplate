@@ -17,6 +17,7 @@ import { isRoomMod } from '../../utils/room'
 import { Room } from '../../utils/types'
 import { CreateConversationForm } from '../../components/chat/CreateConversationForm'
 
+
 interface ChatProps {
 
 }
@@ -309,7 +310,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
             </div>
             <input type="checkbox" id="members" className="modal-toggle" />
             <div className="modal">
-                <div className="modal-box">
+                <div className="min-w-content modal-box">
                     <label htmlFor="members" className="absolute btn btn-sm btn-circle right-2 top-2">✕</label>
                     <Members/>
                 </div>

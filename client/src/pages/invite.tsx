@@ -3,9 +3,11 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+
 import { Container } from '../components/Container'
 import { RootState } from '../store/store'
 import { useAuthenticatedSocket } from '../utils/useSocket'
+
 
 interface InviteProps {
 
@@ -88,7 +90,7 @@ const Index: React.FC<InviteProps> = ({}) => {
                 <meta name="description" content="Welcome to Witq"/>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Container defaultHeight={false}>
+            <Container>
                 <div>
                     <div>
                     {ApiResponse &&
