@@ -74,8 +74,13 @@ const Chat: React.FC<ChatProps> = ({}) => {
                 console.log('Socket connected')
             })
           
-            socket.on('disconnect', () => {
-                console.log('Socket disconnected')
+            socket.on('disconnect', async () => {
+                try {
+                    console.log('Socket disconnected')
+                    await dispatch.user.reconnect()
+                } catch (err) {
+                    console.log('Reconnection failed')
+                }
             })
 
             socket.on('message:created', async (message) => {

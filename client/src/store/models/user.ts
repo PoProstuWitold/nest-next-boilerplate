@@ -99,6 +99,20 @@ export const user = createModel<RootModel>()({
             } catch (err) {
                 dispatch.user.LOGOUT()
             }
+        },
+        async reconnect() {
+            const ms = 2000
+            const recInterval = setInterval( async () => {
+                try {
+                    let { data } = await axios.get('/auth/me')
+                    console.log(data)
+                    dispatch.user.SET_USER(data.user)
+                    console.log('Reconnected')
+                    clearInterval(recInterval)
+                } catch (err) {
+                    console.log(`Reconnection attempt failed`)
+                }
+            }, ms)
         }
     })
 })

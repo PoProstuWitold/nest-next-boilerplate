@@ -12,7 +12,10 @@ export const useAuthenticatedSocket = (namespace: string) => {
         reconnectionDelayMax: 10000,
         port: 4000,
         host: 'localhost',
-        hostname: 'localhost'
+        hostname: 'localhost',
+        reconnection: true,
+        reconnectionDelay: 2000,
+        reconnectionAttempts: 50
     })
     
     return socket

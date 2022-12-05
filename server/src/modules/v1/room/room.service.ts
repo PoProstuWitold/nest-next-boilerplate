@@ -98,7 +98,18 @@ export class RoomService {
     public async createRoom(dto: Partial<Room>, owner: User) {
         try {
             console.log(owner.id)
-            const room = await this.roomRepository.createRoom(dto, owner)
+            // const room = await this.roomRepository.createRoom(dto, owner)
+            const room: Room = new Room({
+                name: dto.name,
+                description: dto.description,
+                isPublic: dto.isPublic,
+                owner,
+                users: [owner],
+                mods: [owner]
+            })
+
+            await this.roomRepository.save(room)
+                    
             return room
         } catch (err) {
             if(err.code == PostgresErrorCode.UniqueViolation) {
@@ -110,15 +121,7 @@ export class RoomService {
     }
 
     public async getRooms() {
-        return this.roomRepository.find({
-            // relations: [
-            //     'owner', 'users', 'mods'
-            // ],
-            loadRelationIds: true,
-            // where: {
-            //     isPublic: true
-            // }
-        })
+        return this.roomRepository.find()
     }
 
     public async getUserRooms(userId: string) {
@@ -148,7 +151,13 @@ export class RoomService {
     }
 
     public async getRoom(id: string, { relationIds }: { relationIds: boolean }) {
-        return this.roomRepository.getRoom(id, relationIds)
+        const room: Room = await this.roomRepository.findOneOrFail({
+            loadRelationIds: relationIds || false,
+            where: {
+                id
+            }
+        })
+        return room
     }
 
     public async getRoomWithRelations(id: string) {
@@ -227,7 +236,7 @@ export class RoomService {
     }
 
     public async addToRoom(type: 'user' | 'mod', userId: string, roomId: string) {
-        const room = await this.roomRepository.getRoom(roomId, true)
+        const room = await this.getRoom(roomId, { relationIds: true })
         const user = await this.userService.getUserByField('id', userId)
 
         //@ts-ignore
@@ -297,7 +306,7 @@ export class RoomService {
     }
 
     public async removeFromRoom(type: 'user' | 'mod', userId: string, roomId: string) {
-        const room = await this.roomRepository.getRoom(roomId, true)
+        const room = await this.getRoom(roomId, { relationIds: true })
         const user = await this.userService.getUserByField('id', userId)
 
         // MAYBE?
