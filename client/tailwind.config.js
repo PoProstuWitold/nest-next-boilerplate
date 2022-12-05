@@ -29,4 +29,4 @@ module.exports = {
             "light", "dark", "emerald", "synthwave", "retro", "halloween", "forest", "winter"
         ]
     }
-  };
+}

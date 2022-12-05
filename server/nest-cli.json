@@ -1,10 +1,10 @@
 {
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "compilerOptions": {
-    "assets": [
-      { "include": "**/*.hbs", "watchAssets": true },
-      { "include": "**/*.txt" }
-    ]
-  }
+	"collection": "@nestjs/schematics",
+	"sourceRoot": "src",
+	"compilerOptions": {
+		"assets": [
+			{ "include": "**/*.hbs", "watchAssets": true },
+			{ "include": "**/*.txt" }
+		]
+	}
 }

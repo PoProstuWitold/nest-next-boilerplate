@@ -1,45 +1,45 @@
 {
-  "name": "client",
-  "version": "1.0.0",
-  "description": "React Next client for nest-next-boilerplate app",
-  "author": "PoProstuWitold",
-  "private": true,
-  "license": "MIT",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@headlessui/react": "^1.7.4",
-    "@rematch/core": "^2.2.0",
-    "@rematch/loading": "^2.1.2",
-    "@rematch/persist": "^2.1.2",
-    "@tailwindcss/typography": "^0.5.8",
-    "axios": "^1.2.0",
-    "daisyui": "^2.42.1",
-    "formik": "^2.2.9",
-    "next": "13.0.5",
-    "next-themes": "^0.2.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-icons": "^4.7.1",
-    "react-redux": "^8.0.5",
-    "redux": "^4.2.0",
-    "socket.io-client": "^4.5.4",
-    "socket.io-react-hook": "^2.2.2",
-    "swr": "^1.3.0",
-    "yup": "^0.32.11"
-  },
-  "devDependencies": {
-    "@types/node": "^18.11.9",
-    "@types/react": "^18.0.25",
-    "autoprefixer": "^10.4.13",
-    "eslint": "8.28.0",
-    "eslint-config-next": "13.0.5",
-    "postcss": "^8.4.19",
-    "tailwindcss": "^3.2.4",
-    "typescript": "4.9.3"
-  }
+	"name": "client",
+	"version": "1.0.0",
+	"description": "React Next client for nest-next-boilerplate app",
+	"author": "PoProstuWitold",
+	"private": true,
+	"license": "MIT",
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"@headlessui/react": "^1.7.4",
+		"@rematch/core": "^2.2.0",
+		"@rematch/loading": "^2.1.2",
+		"@rematch/persist": "^2.1.2",
+		"@tailwindcss/typography": "^0.5.8",
+		"axios": "^1.2.0",
+		"daisyui": "^2.42.1",
+		"formik": "^2.2.9",
+		"next": "13.0.6",
+		"next-themes": "^0.2.1",
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"react-icons": "^4.7.1",
+		"react-redux": "^8.0.5",
+		"redux": "^4.2.0",
+		"socket.io-client": "^4.5.4",
+		"socket.io-react-hook": "^2.2.2",
+		"swr": "^1.3.0",
+		"yup": "^0.32.11"
+	},
+	"devDependencies": {
+		"@types/node": "^18.11.10",
+		"@types/react": "^18.0.26",
+		"autoprefixer": "^10.4.13",
+		"eslint": "8.29.0",
+		"eslint-config-next": "13.0.6",
+		"postcss": "^8.4.19",
+		"tailwindcss": "^3.2.4",
+		"typescript": "4.9.3"
+	}
 }
