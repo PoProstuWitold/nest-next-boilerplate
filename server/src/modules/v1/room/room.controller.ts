@@ -10,6 +10,7 @@ import { RoomDto } from './dto/room.dto';
 import { RoomService } from './room.service';
 import { AddRemoveUserDto } from './dto/add-remove-user.dto';
 import { MembershipGuard } from './guards/MembershipGuard';
+import { Throttle } from '@nestjs/throttler'
 
 
 @ApiTags('v1/room')
@@ -61,6 +62,7 @@ export class RoomController {
     }
 
     @UseGuards(JwtAuthGuard, VerifiedGuard)
+    @Throttle(60, 60)
     @Get('my/rooms')
     async getUsersRoom(
         @CurrentUser('id', new ParseUUIDPipe()) userId: string,

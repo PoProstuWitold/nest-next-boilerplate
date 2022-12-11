@@ -187,15 +187,15 @@ const Chat: React.FC<ChatProps> = ({}) => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             {/* <div className="mx-10 mt-10"> */}
-                <div className="shadow-2xl bg-base-200">
+                <div className="bg-base-200">
                     <div className="flex flex-col lg:flex-row">
                         <div className="p-5 lg:w-1/3">
-                            <div className="shadow-2xl bg-base-200 rounded-xl">
-                                <ul className="overflow-auto">
-                                    <div className="inline-flex">
-                                        <h2 className="m-2 text-2xl">Chats</h2>
-                                        <label htmlFor="create-chat" className="m-2 btn btn-sm">add</label>
-                                    </div>
+                            <div className="bg-base-200 rounded-xl">
+                                <div className="inline-flex">
+                                    <h2 className="m-2 text-2xl">Chats</h2>
+                                    <label htmlFor="create-chat" className="m-2 btn btn-sm">add</label>
+                                </div>
+                                <ul className="overflow-auto min-h-[11rem] max-h-[11rem]">
                                     {/* ROOMS */}
                                     <li>
                                         {rooms && rooms.map((room: any, index: number) =>
@@ -205,11 +205,11 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                         )}
                                     </li>
                                 </ul>
-                                <ul className="overflow-auto">
-                                    <div className="inline-flex">
-                                        <h2 className="m-2 text-2xl">Converastions</h2>
-                                        <label htmlFor="create-conversation" className="m-2 btn btn-sm">add</label>
-                                    </div>
+                                <div className="inline-flex">
+                                    <h2 className="m-2 text-2xl">Converastions</h2>
+                                    <label htmlFor="create-conversation" className="m-2 btn btn-sm">add</label>
+                                </div>
+                                <ul className="overflow-auto min-h-[11rem] max-h-[11rem]">
                                     {/* CONVERSATIONS */}
                                     <li>
                                         {conversations && conversations.map((conversation: any, index: number) =>
@@ -221,12 +221,12 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                 </ul>
                             </div>
                         </div>
-                        <div className="p-5 lg:w-2/3">
-                            <div className="shadow-2xl rounded-xl">
+                        <div className="border-4 chat chat-start lg:w-2/3 border-base-300">
+                            <div className="rounded-xl">
                                 <div className="w-full">
                                     {rooms && activeRoom &&
                                         <>
-                                            <div className="relative flex items-center p-3 border-b border-primary-focus">
+                                            <div className="relative flex items-center p-3 border-b-4 border-base-300">
                                                 <img className="object-cover w-10 h-10 rounded-full" src="http://simpleicon.com/wp-content/uploads/multy-user.png" alt="username" />
                                                 <span className="block ml-2 font-bold">{activeRoom.name}</span>
                                                 <label htmlFor="members" className={`ml-2 btn btn-sm btn-ghost font-semibold}`}>
@@ -262,7 +262,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                     }
                                     {conversations && activeConversation &&
                                         <>
-                                            <div className="relative flex items-center p-3 border-b border-primary-focus">
+                                            <div className="relative flex items-center p-3 border-b-4 border-base-300">
                                                 <img className="object-cover w-10 h-10 rounded-full" src="http://simpleicon.com/wp-content/uploads/multy-user.png" alt="username" />
                                                 <span className="block ml-2 font-bold">{getConversationName(activeConversation)}</span>
                                             </div>  

@@ -5,6 +5,7 @@ import { CurrentUser } from '../../../common/decorators';
 import { JwtAuthGuard, VerifiedGuard } from '../../../common/guards';
 import { User } from '../../../common/entities';
 import { ConversationService } from './conversation.service';
+import { Throttle } from '@nestjs/throttler'
 
 
 @ApiTags('v1/conversation')
@@ -33,6 +34,7 @@ export class ConversationController{
     }
 
     @UseGuards(JwtAuthGuard, VerifiedGuard)
+    @Throttle(60, 60)
     @Get('my/conversations')
     async getUserConversations(
         @CurrentUser('id', new ParseUUIDPipe()) userId: string,
