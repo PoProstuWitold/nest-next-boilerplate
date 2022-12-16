@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { User } from '../../../common/entities';
-import { UserRepository } from './repositories/user.repository';
 import { AccountStatus, PostgresErrorCode } from '../../../common/enums';
 import { UniqueViolation } from '../../../common/exceptions';
+import { Repository } from 'typeorm'
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User) 
-        private readonly userRepository: UserRepository
+        private readonly userRepository: Repository<User>
     ) {}
 
 

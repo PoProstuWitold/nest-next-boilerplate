@@ -8,17 +8,17 @@ import { PostgresErrorCode } from '../../../common/enums';
 import { UniqueViolation } from '../../../common/exceptions';
 import { InjectEmitter } from '../chat/ws-emitter.module';
 import { UserService } from '../user/user.service';
-import { InvitationRepository, RoomRepository } from './repositories';
 import { Invitation, Room } from './entities';
 import { nanoid } from 'nanoid';
+import { Repository } from 'typeorm'
 
 @Injectable()
 export class RoomService {
     constructor(
-        @InjectRepository(RoomRepository) 
-        private readonly roomRepository: RoomRepository,
-        @InjectRepository(InvitationRepository) 
-        private readonly invitationRepository: InvitationRepository,
+        @InjectRepository(Room) 
+        private readonly roomRepository: Repository<Room>,
+        @InjectRepository(Invitation) 
+        private readonly invitationRepository: Repository<Invitation>,
         private readonly userService: UserService,
         @InjectEmitter() private readonly emitter: Emitter 
     ) {}

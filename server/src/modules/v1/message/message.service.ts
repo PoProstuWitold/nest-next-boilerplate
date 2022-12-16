@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOperator } from 'typeorm';
+import { FindOperator, Repository } from 'typeorm';
 
 import { User } from '../../../common/entities';
 import { ConversationService } from '../conversation/conversation.service';
-import { Room } from '../room/entities';
 import { RoomService } from '../room/room.service';
 import { Message } from './message.entity';
-import { MessageRepository } from './message.repository';
 
 @Injectable()
 export class MessageService {
     constructor(
-        @InjectRepository(MessageRepository) 
-        private readonly messageRepository: MessageRepository,
+        @InjectRepository(Message) 
+        private readonly messageRepository: Repository<Message>,
         private readonly roomService: RoomService,
         private readonly conversationService: ConversationService
     ) {}

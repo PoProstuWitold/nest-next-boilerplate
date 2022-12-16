@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 import { PostgresErrorCode } from '../../../common/enums';
 import { UniqueViolation } from '../../../common/exceptions';
 import { User } from '../../../common/entities';
-import { ConversationRepository } from './conversation.repository';
+import { Conversation } from './conversation.entity'
 
 @Injectable()
 export class ConversationService {
     constructor(
-        @InjectRepository(ConversationRepository) 
-        private readonly conversationRepository: ConversationRepository,
+        @InjectRepository(Conversation) 
+        private readonly conversationRepository: Repository<Conversation>
     ) {}
 
     public async getConversations() {
@@ -46,9 +46,15 @@ export class ConversationService {
         return query
     }
 
-    public async createConversation(creator: User, recipent: User) {
+    public async createConversation(creator: User, recipient: User) {
         try {
-            const conversation = await this.conversationRepository.createConversation(creator, recipent)
+            // const conversation = await this.conversationRepository.createConversation(creator, recipent)
+            const conversation = new Conversation({
+                creator,
+                recipient
+            })
+
+            await this.conversationRepository.save(conversation)
             return conversation
         } catch (err) {
             if(err.code == PostgresErrorCode.UniqueViolation) {
@@ -61,7 +67,7 @@ export class ConversationService {
 
     public async findIfExists(user1: any, user2: any) {
         try {
-            const existingConversation = await await this.conversationRepository
+            const existingConversation = await this.conversationRepository
                 .createQueryBuilder('conversation')
                 .where(
                     new Brackets((qb) => {
