@@ -10,7 +10,7 @@ export class CreateAccountDto {
     @IsNotEmpty({
         message: 'Email cannot be empty or whitespace'
     })
-    @IsEmail({
+    @IsEmail({}, {
         message: 'Email should be email'
     })
     email: string
