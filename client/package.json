@@ -12,15 +12,15 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@headlessui/react": "^1.7.6",
+		"@headlessui/react": "^1.7.7",
 		"@rematch/core": "^2.2.0",
 		"@rematch/loading": "^2.1.2",
 		"@rematch/persist": "^2.1.2",
 		"@tailwindcss/typography": "^0.5.8",
 		"axios": "^1.2.1",
-		"daisyui": "^2.45.0",
+		"daisyui": "^2.46.0",
 		"formik": "^2.2.9",
-		"next": "13.0.7",
+		"next": "13.1.1",
 		"next-themes": "^0.2.1",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
@@ -33,11 +33,11 @@
 		"yup": "^0.32.11"
 	},
 	"devDependencies": {
-		"@types/node": "^18.11.15",
+		"@types/node": "^18.11.17",
 		"@types/react": "^18.0.26",
 		"autoprefixer": "^10.4.13",
-		"eslint": "8.29.0",
-		"eslint-config-next": "13.0.7",
+		"eslint": "8.30.0",
+		"eslint-config-next": "13.1.1",
 		"postcss": "^8.4.20",
 		"tailwindcss": "^3.2.4",
 		"typescript": "4.9.4"

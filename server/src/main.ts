@@ -1,5 +1,3 @@
-import { config } from 'dotenv'
-config()
 import { NestFactory, Reflector } from '@nestjs/core'
 import { ClassSerializerInterceptor, VersioningType } from '@nestjs/common'
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express'
@@ -20,15 +18,18 @@ export async function bootstrap(): Promise<NestExpressApplication> {
         AppModule,
         new ExpressAdapter()
     )
+
     const configService = app.get<ConfigService>(ConfigService)
     const reflector = app.get(Reflector)
 
     // GLOBAL MIDDLEWARES
     app.enableCors({
         credentials: true,
-        origin: configService.get('ORIGIN'),
+        origin: [
+            configService.get('ORIGIN')
+        ],
         optionsSuccessStatus: 200,
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
+        methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"]
     })
     app.enableVersioning({
         type: VersioningType.URI,
