@@ -148,10 +148,11 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
                                 {user.provider === 'local' ?
                                 <div>
                                     <div className="flex flex-row items-stretch">
-                                        <Link href="/account/password/change">
-                                            <a className="mb-6 font-semibold btn-ghost btn-sm rounded-btn btn btn-outline label-text">
-                                                Change password
-                                            </a>
+                                        <Link 
+                                            className="mb-6 font-semibold btn-ghost btn-sm rounded-btn btn btn-outline label-text" 
+                                            href="/account/password/change"
+                                        >
+                                            Change password
                                         </Link>
                                     </div>
                                 </div>

@@ -278,10 +278,10 @@ const Login: React.FC<LoginProps> = ({}) => {
                     </div>
             </div>    
             <div className="flex w-full m-auto mt-8 lg:w-4/12 md:w-10/12">
-                <Link href="/">
-                    <a className="m-auto mb-10 text-xl shadow-xl btn btn-ghost btn-sm rounded-btn lg:m-0 btn-primary btn-outline">
+                <Link href="/" className="m-auto mb-10 text-xl shadow-xl btn btn-ghost btn-sm rounded-btn lg:m-0 btn-primary btn-outline">
+                    <>
                         <FiArrowLeft/> Back to main site
-                    </a>
+                    </>
                 </Link>
             </div>
         </>

@@ -45,10 +45,8 @@ export const NavBar: React.FC<NavBarProps> = () => {
                             user && authenticated ?
                             <>
                                 <li>
-                                    <Link href="/me">
-                                        <a className="btn btn-ghost btn-sm rounded-btn">
-                                            Me
-                                        </a>
+                                    <Link href="/me" className="btn btn-ghost btn-sm rounded-btn">
+                                        Me
                                     </Link>
                                 </li>
                                 <li>
@@ -60,29 +58,23 @@ export const NavBar: React.FC<NavBarProps> = () => {
                                     </button>
                                 </li>
                                 <li>
-                                    <Link href="/chat">
-                                        <a className="btn btn-ghost btn-sm rounded-btn">
-                                            Chats
-                                        </a>
+                                    <Link href="/chat" className="btn btn-ghost btn-sm rounded-btn">
+                                        Chats
                                     </Link>
                                 </li>
                             </>
                             :
                             <div className="items-stretch hidden lg:flex">
-                                <Link href="/login">
-                                    <a className="btn btn-ghost btn-sm rounded-btn">
-                                        Sign in/Sign up
-                                    </a>
+                                <Link href="/login" className="btn btn-ghost btn-sm rounded-btn">
+                                    Sign in/Sign up
                                 </Link>
                             </div>
                         }
                         </ul>
                     </div>
                     <div className="flex-none px-2 mx-2">
-                        <Link href="/">
-                                <a className="text-lg font-bold">
-                                PoProstuWitold
-                                </a>
+                        <Link className="text-lg font-bold" href="/">
+                            PoProstuWitold
                         </Link>
                     </div>
                     <div className="hidden lg:flex-none lg:flex">
@@ -91,9 +83,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
                                 <>
                                     <li>
                                         <Link href="/me">
-                                            <a>
-                                                Me
-                                            </a>
+                                            Me
                                         </Link>
                                     </li>
                                     <li>
@@ -105,9 +95,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
                                     </li>
                                     <li>
                                         <Link href="/chat">
-                                            <a>
-                                                Chats
-                                            </a>
+                                            Chats
                                         </Link>
                                     </li>
                                 </>
@@ -115,9 +103,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
                                 <>
                                     <li>
                                         <Link href="/login">
-                                            <a>
-                                                Sign in/Sign up
-                                            </a>
+                                            Sign in/Sign up
                                         </Link>
                                     </li>
                                 </>
