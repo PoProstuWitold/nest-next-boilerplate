@@ -221,7 +221,7 @@ const Chat: React.FC<ChatProps> = ({}) => {
                                 </ul>
                             </div>
                         </div>
-                        <div className="border-4 chat chat-start lg:w-2/3 border-base-300">
+                        <div className="border-4 lg:w-2/3 border-base-300">
                             <div className="rounded-xl">
                                 <div className="w-full">
                                     {rooms && activeRoom &&
