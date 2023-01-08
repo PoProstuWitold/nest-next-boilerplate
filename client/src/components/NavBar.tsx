@@ -64,11 +64,13 @@ export const NavBar: React.FC<NavBarProps> = () => {
                                 </li>
                             </>
                             :
-                            <div className="items-stretch hidden lg:flex">
-                                <Link href="/login" className="btn btn-ghost btn-sm rounded-btn">
-                                    Sign in/Sign up
-                                </Link>
-                            </div>
+                            <>
+                                <li>
+                                    <Link href="/login" className="btn btn-ghost btn-sm rounded-btn">
+                                        Sign in/Sign up
+                                    </Link>
+                                </li>
+                            </>
                         }
                         </ul>
                     </div>

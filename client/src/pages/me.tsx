@@ -95,7 +95,7 @@ const Me: React.FC<MeProps> = ({}) => {
                                             </div>
                                             <div className="grid grid-cols-2">
                                                 <div className="px-4 py-2 font-semibold">Provider ID</div>
-                                                <div className="px-4 py-2">{user.providerId}</div>
+                                                <div className="px-4 py-2">{user.providerId || 'Same as user ID'}</div>
                                             </div>
                                         </div>
                                     </div>
