@@ -1,12 +1,10 @@
 # nest-next-boilerplate
-
-NodeJS boilerplate for building fullstack applications in TypeScript, TypeORM, NestJS and NextJS
+Boilerplate for Nest.js, Next.js, TypeScript stack. Includes social logins, account verification, password change & recover, real-time chats and more.
 
 # Usage
 
-###  0.
-Create **``.env``** file in **``server``** root directory and fill with following:
-
+###  0. Environmental variables
+0.1. Create **``.env``** file in **``server``** root directory and fill with following:
 ```code
 # APP
 NODE_ENV='development'
@@ -15,9 +13,9 @@ ORIGIN='http://localhost:3000'
 API_PREFIX='/api'
 
 # JWT AUTH
-JWT_ACCESS_SECRET_KEY='uAsBw6WxqD'
-JWT_ACCESS_EXPIRATION_TIME='5m
-JWT_REFRESH_SECRET_KEY='dwafagadfasdaw'
+JWT_ACCESS_SECRET_KEY='long-unpredictable-secret1'
+JWT_ACCESS_EXPIRATION_TIME='5m'
+JWT_REFRESH_SECRET_KEY='long-unpredictable-secret2'
 JWT_REFRESH_EXPIRATION_TIME='30d'
 
 # DATABASE
@@ -45,7 +43,7 @@ OAUTH_FACEBOOK_ID=[YOUR_FACEBOOK_ID]
 OAUTH_FACEBOOK_SECRET=[YOUR_FACEBOOK_SECRET]
 OAUTH_FACEBOOK_REDIRECT_URL='/api/v1/auth/facebook/redirect'
 ``` 
-Create **``.env``** file in **``workers > queues``** root directory and fill with following:
+0.2. Create **``.env``** file in **``workers/queues``** root directory and fill with following:
 
 ```code
 # MAIL
@@ -59,15 +57,14 @@ REDIS_PORT=6379
 ``` 
 
 ## With Docker
-Run Docker containers
 
-### 1. Docker
+### 1. Run Docker containers
 ```bash
 docker compose up 
 ```
 
 ## Without Docker
-### 1. Change contents of ``DATABASE`` and ``REDIS`` sections in env files
+### 1. Change contents of ``DATABASE`` and ``REDIS`` sections in ``env`` files
 **``server``**
 ```code
 ...
@@ -88,7 +85,7 @@ REDIS_PORT=[YOUR_REDIS_PORT]
 ...
 ```
 
-**``workers > queues``**
+**``workers/queues``**
 ```code
 ...
 
@@ -103,18 +100,19 @@ cd server
 ```bash
 npm install 
 # OR 
+pnpm install 
+# OR 
 yarn
 ```
 
 ### 2.2 Worker
 ```bash
-cd workers 
-```
-```bash
-cd queues 
+cd workers/queues
 ```
 ```bash
 npm install 
+# OR 
+pnpm install 
 # OR 
 yarn
 ```
@@ -125,6 +123,8 @@ cd client
 ```
 ```bash
 npm install 
+# OR 
+pnpm install 
 # OR 
 yarn
 ```
@@ -139,7 +139,20 @@ yarn
 - Multiple themes with the ability to add your own
 - Group chat with basic permissions
 - Private chat (also with yourself)
+- Rate limiting
 
+## TECH STACK
+- Backend:
+    - Nest.js
+    - PostgreSQL
+    - Redis
+    - WebSockets
+    - JWT
+    - Passport.js
+- Frontend
+    - Next.js
+    - Tailwind & DaisyUI
+    - Redux ([rematch](https://rematchjs.org/))
 ## TO DO
 - [x] Local login
 - [x] Google login
