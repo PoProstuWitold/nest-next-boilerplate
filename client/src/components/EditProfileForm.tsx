@@ -114,7 +114,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
                                         <Field placeholder="Enter your first name" type="text" name="firstName" className={`w-full p-3 transition duration-200 rounded input`}/>
                                         <label className="label">
                                             {errors.firstName && touched.firstName ? <ErrorField error={errors.firstName}/> : null}
-                                            {ApiErrors.firstName && touched.firstName ? <ErrorField error={ApiErrors.firstName}/> : null}
+                                            {ApiErrors && ApiErrors.firstName && touched.firstName ? <ErrorField error={ApiErrors.firstName}/> : null}
                                         </label>
                                         
                                     </div>
@@ -127,7 +127,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
                                         <Field placeholder="Enter your last name" type="text" name="lastName" className={`w-full p-3 transition duration-200 rounded input`}/>
                                         <label className="label">
                                             {errors.lastName && touched.lastName ? <ErrorField error={errors.lastName}/> : null}
-                                            {ApiErrors.lastName && touched.lastName ? <ErrorField error={ApiErrors.lastName}/> : null}
+                                            {ApiErrors && ApiErrors.lastName && touched.lastName ? <ErrorField error={ApiErrors.lastName}/> : null}
                                         </label>
                                         
                                     </div>
@@ -140,7 +140,7 @@ const EditProfileForm: React.FC<EditProfileProps> = ({}) => {
                                         <Field placeholder="Enter your nick name" type="text" name="displayName" className={`w-full p-3 transition duration-200 rounded input`}/>
                                         <label className="label">
                                             {errors.displayName && touched.displayName ? <ErrorField error={errors.displayName}/> : null}
-                                            {ApiErrors.displayName && touched.displayName ? <ErrorField error={ApiErrors.displayName}/> : null}
+                                            {ApiErrors && ApiErrors.displayName && touched.displayName ? <ErrorField error={ApiErrors.displayName}/> : null}
                                         </label>
                                         
                                     </div>
