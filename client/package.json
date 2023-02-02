@@ -17,8 +17,8 @@
 		"@rematch/loading": "^2.1.2",
 		"@rematch/persist": "^2.1.2",
 		"@tailwindcss/typography": "^0.5.9",
-		"axios": "^1.2.6",
-		"daisyui": "^2.49.0",
+		"axios": "^1.3.1",
+		"daisyui": "^2.50.0",
 		"formik": "^2.2.9",
 		"next": "13.1.6",
 		"next-themes": "^0.2.1",
@@ -40,6 +40,6 @@
 		"eslint-config-next": "13.1.6",
 		"postcss": "^8.4.21",
 		"tailwindcss": "^3.2.4",
-		"typescript": "4.9.4"
+		"typescript": "4.9.5"
 	}
 }
