@@ -12,13 +12,13 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@headlessui/react": "^1.7.8",
+		"@headlessui/react": "^1.7.11",
 		"@rematch/core": "^2.2.0",
 		"@rematch/loading": "^2.1.2",
 		"@rematch/persist": "^2.1.2",
 		"@tailwindcss/typography": "^0.5.9",
-		"axios": "^1.3.1",
-		"daisyui": "^2.50.0",
+		"axios": "^1.3.3",
+		"daisyui": "^2.50.1",
 		"formik": "^2.2.9",
 		"next": "13.1.6",
 		"next-themes": "^0.2.1",
@@ -27,19 +27,19 @@
 		"react-icons": "^4.7.1",
 		"react-redux": "^8.0.5",
 		"redux": "^4.2.1",
-		"socket.io-client": "^4.5.4",
+		"socket.io-client": "^4.6.0",
 		"socket.io-react-hook": "^2.2.2",
 		"swr": "^2.0.3",
-		"yup": "^0.32.11"
+		"yup": "^1.0.0"
 	},
 	"devDependencies": {
-		"@types/node": "^18.11.18",
-		"@types/react": "^18.0.27",
+		"@types/node": "^18.13.0",
+		"@types/react": "^18.0.28",
 		"autoprefixer": "^10.4.13",
-		"eslint": "8.33.0",
+		"eslint": "8.34.0",
 		"eslint-config-next": "13.1.6",
 		"postcss": "^8.4.21",
-		"tailwindcss": "^3.2.4",
+		"tailwindcss": "^3.2.7",
 		"typescript": "4.9.5"
 	}
 }
