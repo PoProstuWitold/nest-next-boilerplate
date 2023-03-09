@@ -1,7 +1,7 @@
 import { NestFactory, Reflector } from '@nestjs/core'
-import { ClassSerializerInterceptor, VersioningType } from '@nestjs/common'
+import { ClassSerializerInterceptor, HttpException, HttpStatus, ValidationPipe, VersioningType } from '@nestjs/common'
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express'
-import { useContainer } from 'class-validator'
+import { useContainer, ValidationError } from 'class-validator'
 import * as express from 'express'
 import { ConfigService } from '@nestjs/config'
 import helmet from 'helmet'
@@ -10,7 +10,6 @@ import * as compression from 'compression'
 
 import { AppModule } from './modules/app.module'
 import { setupSwagger } from './common/swagger'
-import { CustomValidationPipe } from './common/pipes/custom-validation.pipe'
 import { RedisIoAdapter } from './modules/v1/chat/chat.adapter'
 
 export async function bootstrap(): Promise<NestExpressApplication> {
@@ -56,7 +55,22 @@ export async function bootstrap(): Promise<NestExpressApplication> {
     // app.enable('trust proxy') //only if behind reverse proxy e. g. nginx
     app.setGlobalPrefix(configService.get('API_PREFIX') || '/api')
     app.useGlobalPipes(
-        new CustomValidationPipe()
+        new ValidationPipe({
+            exceptionFactory: (errors: ValidationError[]) => {
+                const result = {}
+
+                errors.forEach(error => {
+                    const constraints = Object.values(error.constraints)
+                    result[error.property] = constraints[0]
+                })
+                
+                throw new HttpException({
+                    statusCode: 400,
+                    message: 'Input data validation failed',
+                    errors: result
+                }, HttpStatus.BAD_REQUEST)
+            }
+        })
     )
 
     useContainer(app.select(AppModule), { fallbackOnErrors: true })

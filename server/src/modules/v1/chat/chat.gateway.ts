@@ -27,7 +27,7 @@ interface UserSocket extends Socket {
 
 @WebSocketGateway({
     cors: {
-        origin: 'http://localhost:3000',
+        origin: process.env.ORIGIN || 'http://localhost:3000',
         credentials: true
     },
     namespace: 'chat'
