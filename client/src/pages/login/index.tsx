@@ -124,8 +124,8 @@ const Login: React.FC<LoginProps> = ({}) => {
                     <div className="mx-auto w-96">
                     <p className="m-10 mx-auto text-lg font-bold text-center">PoProstuWitold</p>
                     <div className="box-border flex flex-wrap">
-                        <button onClick={() => changeForm('login')} className={`flex-1 w-64 p-4 mr-4 text-center rounded-lg ${FormType === 'login' ? 'bg-primary' : ''}`}>Sign in</button>
-                        <button onClick={() => changeForm('register')} className={`flex-1 w-64 p-4 text-center rounded-lg ${FormType === 'register' ? 'bg-primary' : ''}`}>Sign up</button>
+                        <button onClick={() => changeForm('login')} className={`flex-1 w-64 p-4 mr-4 text-center rounded-lg uppercase font-bold ${FormType === 'login' ? 'bg-primary' : ''}`}>Sign in</button>
+                        <button onClick={() => changeForm('register')} className={`flex-1 w-64 p-4 text-center rounded-lg uppercase font-bold ${FormType === 'register' ? 'bg-primary' : ''}`}>Sign up</button>
                     </div>
                     {FormType && FormType === 'login' ?
                         <Formik
