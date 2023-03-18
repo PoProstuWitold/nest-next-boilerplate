@@ -12,34 +12,34 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@headlessui/react": "^1.7.11",
+		"@headlessui/react": "^1.7.13",
 		"@rematch/core": "^2.2.0",
 		"@rematch/loading": "^2.1.2",
 		"@rematch/persist": "^2.1.2",
 		"@tailwindcss/typography": "^0.5.9",
-		"axios": "^1.3.3",
-		"daisyui": "^2.50.1",
+		"axios": "^1.3.4",
+		"daisyui": "^2.51.4",
 		"formik": "^2.2.9",
-		"next": "13.1.6",
+		"next": "13.2.4",
 		"next-themes": "^0.2.1",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
-		"react-icons": "^4.7.1",
+		"react-icons": "^4.8.0",
 		"react-redux": "^8.0.5",
 		"redux": "^4.2.1",
-		"socket.io-client": "^4.6.0",
-		"socket.io-react-hook": "^2.2.2",
-		"swr": "^2.0.3",
-		"yup": "^1.0.0"
+		"socket.io-client": "^4.6.1",
+		"socket.io-react-hook": "^2.4.0",
+		"swr": "^2.1.0",
+		"yup": "^1.0.2"
 	},
 	"devDependencies": {
-		"@types/node": "^18.13.0",
+		"@types/node": "^18.15.3",
 		"@types/react": "^18.0.28",
-		"autoprefixer": "^10.4.13",
-		"eslint": "8.34.0",
-		"eslint-config-next": "13.1.6",
+		"autoprefixer": "^10.4.14",
+		"eslint": "8.36.0",
+		"eslint-config-next": "13.2.4",
 		"postcss": "^8.4.21",
 		"tailwindcss": "^3.2.7",
-		"typescript": "4.9.5"
+		"typescript": "5.0.2"
 	}
 }
