@@ -55,6 +55,8 @@ SMPT_PASSWORD=[YOUR_SMTP_PASSWORD]
 REDIS_HOST='redis-main'
 REDIS_PORT=6379
 ``` 
+#### **Tip**
+For free email testing you can use service such as [Mailtrap](https://mailtrap.io/).
 
 ## With Docker
 
@@ -166,6 +168,7 @@ yarn
 - [ ] Make URL preview
 - [ ] Enable sending images and maybe videos
 - [ ] Public profile page
+- [ ] Refactor chat backend & UI
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
