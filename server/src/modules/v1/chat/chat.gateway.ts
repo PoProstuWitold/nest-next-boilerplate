@@ -169,6 +169,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     ) {
         try {
             const { roomId } = data
+            socket.join(roomId)
             const messages = await this.messageService.findMessagesForRoom(roomId)
             this.server.to(socket.id).emit('room:messages', messages)
         } catch (err) {

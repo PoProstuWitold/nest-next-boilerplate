@@ -75,7 +75,7 @@ const Index: React.FC<InviteProps> = ({}) => {
             console.log(res.data)
             if(res.data) {
                 setJoinRoomResponse(res.data)
-                socket.emit('room:user-added', { roomId: room.id })
+                socket.emit('room:join', { roomId: room.id })
             }
             
         } catch (err) {
