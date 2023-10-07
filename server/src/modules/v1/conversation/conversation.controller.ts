@@ -33,8 +33,8 @@ export class ConversationController{
         return this.conversationService.getConversation(id)
     }
 
-    @UseGuards(JwtAuthGuard, VerifiedGuard)
-    @Throttle(60, 60)
+    @UseGuards(JwtAuthGuard, VerifiedGuard) 
+	@Throttle({ default: { limit: 60, ttl: 60 } })
     @Get('my/conversations')
     async getUserConversations(
         @CurrentUser('id', new ParseUUIDPipe()) userId: string,

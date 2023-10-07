@@ -55,7 +55,7 @@ services:
     restart: unless-stopped
   postgres-main:
     container_name: postgres-nest
-    image: postgres:latest
+    image: postgres:15-alpine
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin

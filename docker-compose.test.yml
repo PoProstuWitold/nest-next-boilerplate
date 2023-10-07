@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres-tests:
     container_name: postgres-tests
-    image: postgres:alpine
+    image: postgres:15-alpine
     environment:
       POSTGRES_USER: tests
       POSTGRES_PASSWORD: tests

@@ -98,7 +98,7 @@ export class AuthController {
     })
     @UseGuards(JwtAuthGuard)
     @Get('me')
-    @SkipThrottle(true)
+    @SkipThrottle({ default: false })
     getProfile(@Req() req: Request) {
         return this.authService.getProfile(req)
     }

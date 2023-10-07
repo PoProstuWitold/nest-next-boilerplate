@@ -36,10 +36,10 @@ import { Conversation } from './v1/conversation/conversation.entity'
         ConfigModule.forRoot({
             isGlobal: true
         }),
-        ThrottlerModule.forRoot({
+        ThrottlerModule.forRoot([{
             ttl: 60,
             limit: 10,
-        }),
+        }]),
         RedisModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

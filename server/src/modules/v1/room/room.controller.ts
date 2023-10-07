@@ -62,7 +62,7 @@ export class RoomController {
     }
 
     @UseGuards(JwtAuthGuard, VerifiedGuard)
-    @Throttle(60, 60)
+    @Throttle({ default: { limit: 60, ttl: 60 } })
     @Get('my/rooms')
     async getUsersRoom(
         @CurrentUser('id', new ParseUUIDPipe()) userId: string,
