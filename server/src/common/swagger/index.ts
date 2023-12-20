@@ -5,11 +5,12 @@ import {
   SWAGGER_API_NAME,
   SWAGGER_API_DESCRIPTION,
   SWAGGER_API_CURRENT_VERSION,
+  SERVER_URL
 } from './constants'
 
 export const setupSwagger = (app: INestApplication) => {
-	const server = 'http://localhost:4000/api'
-	const docs = 'http://localhost:4000/api/docs'
+	const server = `${SERVER_URL}/api`
+	const docs = `${SERVER_URL}/api/docs`
 
     const options = new DocumentBuilder()
         .setTitle(SWAGGER_API_NAME)
@@ -23,5 +24,5 @@ export const setupSwagger = (app: INestApplication) => {
     SwaggerModule.setup(SWAGGER_API_ROOT, app, document)
 
     const logger = new Logger('Documentation')
-	logger.log(`API Documentation for "${server}" is avaible at "${docs}"`)
+	logger.log(`API Documentation for "${server}" is available at "${docs}"`)
 }
